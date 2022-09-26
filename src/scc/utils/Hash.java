@@ -11,6 +11,8 @@ import java.security.NoSuchAlgorithmException;
  *
  */
 public class Hash {
+
+	public static final int HASH_LENGTH = 16;
 	static MessageDigest md;
 
 	static {
@@ -20,6 +22,8 @@ public class Hash {
 			e.printStackTrace();
 		}
 	}
+
+	private static final String HASH_FMT = "%" + String.format("0%dX", HASH_LENGTH);
 	
 	synchronized public static byte[] digest(byte[] data) {
 		md.reset();
@@ -28,11 +32,11 @@ public class Hash {
 	};
 	
 	public static String of(String data) {
-		return String.format("%016X", new BigInteger(1,digest(data.getBytes())));
+		return String.format(HASH_FMT, new BigInteger(1,digest(data.getBytes())));
 	};
 	
 	public static String of(byte[] data) {
-		return String.format("%016X", new BigInteger(1,digest(data)));
+		return String.format(HASH_FMT, new BigInteger(1,digest(data)));
 	};
 	
 	synchronized public static String of(Object ...values) {

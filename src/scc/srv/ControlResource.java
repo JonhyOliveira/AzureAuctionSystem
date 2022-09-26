@@ -13,14 +13,14 @@ public class ControlResource
 {
 
 	/**
-	 * This methods just prints a string. It may be useful to check if the current 
+	 * This method just prints a string. It may be useful to check if the current
 	 * version is running on Azure.
 	 */
 	@Path("/version")
 	@GET
 	@Produces(MediaType.TEXT_PLAIN)
 	public String hello() {
-		return "v: 0001";
+		return "v: 0006";
 	}
 
 }
