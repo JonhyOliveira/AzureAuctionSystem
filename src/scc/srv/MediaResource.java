@@ -61,7 +61,7 @@ public class MediaResource
 		return blob.downloadContent().toBytes();
 	}
 
-	private static final String FILE_LIST_FMT = String.format("file id: %%-%d1$s - %%d bytes long", Hash.HASH_LENGTH);
+	private static final String FILE_LIST_FMT = String.format("file id: %%-%ds - %%d bytes long", Hash.HASH_LENGTH);
 
 	/**
 	 * Lists the ids of images stored.
