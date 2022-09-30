@@ -40,6 +40,8 @@ public class MediaResource
 	public String upload(byte[] contents) {
 		String key = Hash.of(contents);
 		BlobClient blob = containerClient.getBlobClient(key);
+		if (blob.exists())
+			throw new ForbiddenException("Can't overwrite file '%s'.".formatted(key));
 		blob.upload(BinaryData.fromBytes(contents));
 		return key;
 	}
@@ -55,11 +57,11 @@ public class MediaResource
 		//throw new ServiceUnavailableException();
 		BlobClient blob = containerClient.getBlobClient(id);
 		if (!blob.exists())
-			throw new ProcessingException("Not found");
+			throw new NotFoundException();
 		return blob.downloadContent().toBytes();
 	}
 
-	private static final String FILE_LIST_FMT = String.format("file id: <a href= %%1$s>%%-%d1$s</a> - %%d bytes long", Hash.HASH_LENGTH);
+	private static final String FILE_LIST_FMT = String.format("file id: %%-%d1$s - %%d bytes long", Hash.HASH_LENGTH);
 
 	/**
 	 * Lists the ids of images stored.
