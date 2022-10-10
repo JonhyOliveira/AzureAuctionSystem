@@ -29,21 +29,21 @@ public class Hash {
 		md.reset();
 		md.update(data);
 		return md.digest();
-	};
+	}
 	
 	public static String of(String data) {
 		return String.format(HASH_FMT, new BigInteger(1,digest(data.getBytes())));
-	};
+	}
 	
 	public static String of(byte[] data) {
 		return String.format(HASH_FMT, new BigInteger(1,digest(data)));
-	};
+	}
 	
 	synchronized public static String of(Object ...values) {
 		md.reset();
 		for( Object o : values )
 			md.update( o.toString().getBytes() );
 		return String.format("%016X", new BigInteger(1, md.digest()));
-	};
+	}
 	
 }
