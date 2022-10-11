@@ -48,7 +48,7 @@ public class CosmosDBLayer {
 		         .endpoint(CONNECTION_URL)
 		         .key(DB_KEY)
 		         // .directMode() // connects directly to backend node
-		         .gatewayMode() // one more hop (why ???)
+		         .gatewayMode() // one more hop (needed to work within FCT)
 		         .consistencyLevel(ConsistencyLevel.SESSION)
 		         .connectionSharingAcrossClientsEnabled(true)
 		         .contentResponseOnWriteEnabled(true)

@@ -21,7 +21,7 @@ public class TestUsers
 			String id = "0:" + System.currentTimeMillis();
 			CosmosItemResponse<UserDAO> res = null;
 			UserDAO u = new UserDAO();
-			u.setId(id);
+			u.setNickname(id);
 			u.setName("SCC " + id);
 			u.setPwd("super_secret");
 			u.setPhotoId("0:34253455");
@@ -49,7 +49,7 @@ public class TestUsers
 			id = "0:" + System.currentTimeMillis();
 			res = null;
 			u = new UserDAO();
-			u.setId(id);
+			u.setNickname(id);
 			u.setName("SCC " + id);
 			u.setPwd("super_secret");
 			u.setPhotoId("0:34253455");

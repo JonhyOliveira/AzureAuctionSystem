@@ -6,24 +6,24 @@ import java.util.Arrays;
  * Represents a User, as returned to the clients
  */
 public class User {
-	private String id;
+	private String nickname;
 	private String name;
 	private String pwd;
 	private String photoId;
 	private String[] channelIds;
-	public User(String id, String name, String pwd, String photoId, String[] channelIds) {
+	public User(String nickname, String name, String pwd, String photoId, String[] channelIds) {
 		super();
-		this.id = id;
+		this.nickname = nickname;
 		this.name = name;
 		this.pwd = pwd;
 		this.photoId = photoId;
 		this.channelIds = channelIds;
 	}
-	public String getId() {
-		return id;
+	public String getNickname() {
+		return nickname;
 	}
-	public void setId(String id) {
-		this.id = id;
+	public void setNickname(String nickname) {
+		this.nickname = nickname;
 	}
 	public String getName() {
 		return name;
@@ -51,7 +51,7 @@ public class User {
 	}
 	@Override
 	public String toString() {
-		return "User [id=" + id + ", name=" + name + ", pwd=" + pwd + ", photoId=" + photoId + ", channelIds="
+		return "User [nickname=" + nickname + ", name=" + name + ", pwd=" + pwd + ", photoId=" + photoId + ", channelIds="
 				+ Arrays.toString(channelIds) + "]";
 	}
 
