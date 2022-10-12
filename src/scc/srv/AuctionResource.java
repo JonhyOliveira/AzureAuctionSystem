@@ -14,11 +14,13 @@ public class AuctionResource {
 
     private static final CosmosDBLayer dbLayer = CosmosDBLayer.getInstance();
 
+    public AuctionResource() {}
+
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     public String create(Auction auction, @QueryParam(TOKEN_QUERY_PARAM) String authToken)
     {
-        throw new NotSupportedException();
+        throw new ServiceUnavailableException();
     }
 
     @PUT

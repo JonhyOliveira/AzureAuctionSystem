@@ -1,14 +1,9 @@
 package scc.database;
 
 import com.azure.cosmos.*;
-import com.azure.cosmos.models.CosmosItemRequestOptions;
-import com.azure.cosmos.models.CosmosItemResponse;
-import com.azure.cosmos.models.CosmosQueryRequestOptions;
-import com.azure.cosmos.models.PartitionKey;
+import com.azure.cosmos.models.*;
 import com.azure.cosmos.util.CosmosPagedIterable;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
@@ -76,10 +71,17 @@ public class CosmosDBLayer {
 		System.out.println("Got users table.");
 	}
 
-	public CosmosItemResponse<Object> delUserById(String id) {
+	public CosmosItemResponse<UserDAO> updateUser(String nickname, UserDAO newUser)
+	{
 		init();
-		PartitionKey key = new PartitionKey( id);
-		return users.deleteItem(id, key, new CosmosItemRequestOptions());
+		PartitionKey key = new PartitionKey(nickname);
+		return users.replaceItem(newUser, nickname, key, new CosmosItemRequestOptions());
+	}
+
+	public CosmosItemResponse<Object> delUserByNick(String nickname) {
+		init();
+		PartitionKey key = new PartitionKey( nickname);
+		return users.deleteItem(nickname, key, new CosmosItemRequestOptions());
 	}
 	
 	public CosmosItemResponse<Object> delUser(UserDAO user) {
@@ -92,9 +94,9 @@ public class CosmosDBLayer {
 		return users.createItem(user);
 	}
 	
-	public CosmosPagedIterable<UserDAO> getUserById( String id) {
+	public CosmosPagedIterable<UserDAO> getUserByNick( String nickname) {
 		init();
-		return users.queryItems("SELECT * FROM users WHERE users.id=\"" + id + "\"", new CosmosQueryRequestOptions(), UserDAO.class);
+		return users.queryItems("SELECT * FROM users WHERE users.id=\"" + nickname + "\"", new CosmosQueryRequestOptions(), UserDAO.class);
 	}
 
 	public CosmosPagedIterable<UserDAO> getUsers() {

@@ -11,7 +11,7 @@ public class MainApplication extends Application
 	private Set<Class<?>> resources = new HashSet<Class<?>>();
 
 	public MainApplication() {
-		resources.add(ControlResource.class);
+		resources.add( ControlResource.class);
 		singletons.add( new MediaResource());
 		singletons.add( new UserResource());
 		singletons.add( new AuctionResource());

@@ -1,6 +1,8 @@
 package scc.database;
 
-import java.util.Arrays;
+import scc.utils.Hash;
+
+import java.util.Objects;
 
 /**
  * Represents a User, as stored in the database
@@ -8,24 +10,22 @@ import java.util.Arrays;
 public class UserDAO {
 	private String _rid;
 	private String _ts;
-	private String nickname;
+	private String id;
 	private String name;
 	private String pwd;
 	private String photoId;
-	private String[] channelIds;
 
 	public UserDAO() {
 	}
 	public UserDAO( User u) {
-		this(u.getNickname(), u.getName(), u.getPwd(), u.getPhotoId(), u.getChannelIds());
+		this(u.getNickname(), u.getName(), u.getPwd(), u.getPhotoId());
 	}
-	public UserDAO(String nickname, String name, String pwd, String photoId, String[] channelIds) {
+	public UserDAO(String nickname, String name, String pwd, String photoId) {
 		super();
-		this.nickname = nickname;
+		this.id = nickname;
 		this.name = name;
 		this.pwd = pwd;
 		this.photoId = photoId;
-		this.channelIds = channelIds;
 	}
 	public String get_rid() {
 		return _rid;
@@ -39,11 +39,11 @@ public class UserDAO {
 	public void set_ts(String _ts) {
 		this._ts = _ts;
 	}
-	public String getNickname() {
-		return nickname;
+	public String getId() {
+		return id;
 	}
-	public void setNickname(String nickname) {
-		this.nickname = nickname;
+	public void setId(String id) {
+		this.id = id;
 	}
 	public String getName() {
 		return name;
@@ -63,19 +63,29 @@ public class UserDAO {
 	public void setPhotoId(String photoId) {
 		this.photoId = photoId;
 	}
-	public String[] getChannelIds() {
-		return channelIds == null ? new String[0] : channelIds ;
-	}
-	public void setChannelIds(String[] channelIds) {
-		this.channelIds = channelIds;
-	}
 	public User toUser() {
-		return new User(nickname, name, pwd, photoId, channelIds == null ? null : Arrays.copyOf(channelIds,channelIds.length));
+		return new User(id, name, pwd, photoId);
 	}
+
+	public UserDAO update(User user)
+	{
+		if (Objects.nonNull(user))
+		{
+			if (Objects.nonNull(user.getName()))
+				this.setName(user.getName());
+			if (Objects.nonNull(user.getPwd()))
+				this.setPwd(Hash.of(user.getPwd()));
+			if (Objects.nonNull(user.getPhotoId()))
+				this.setPhotoId(user.getPhotoId());
+		}
+
+		return this;
+	}
+
 	@Override
 	public String toString() {
-		return "UserDAO [_rid=" + _rid + ", _ts=" + _ts + ", nickname=" + nickname + ", name=" + name + ", pwd=" + pwd
-				+ ", photoId=" + photoId + ", channelIds=" + Arrays.toString(channelIds) + "]";
+		return "UserDAO [_rid=" + _rid + ", _ts=" + _ts + ", id=" + id + ", name=" + name + ", pwd=" + pwd
+				+ ", photoId=" + photoId + " ]";
 	}
 
 }

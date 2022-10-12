@@ -6,12 +6,12 @@ import com.azure.storage.blob.BlobContainerClient;
 import com.azure.storage.blob.BlobContainerClientBuilder;
 import com.azure.storage.blob.models.BlobItem;
 import jakarta.ws.rs.*;
+import scc.database.CosmosDBLayer;
 import scc.utils.Hash;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import jakarta.ws.rs.core.MediaType;
@@ -20,15 +20,30 @@ import jakarta.ws.rs.core.MediaType;
  * Resource for managing media files, such as images.
  */
 @Path("/media")
-public class MediaResource
-{
-	public static final String blobStoreConString = "DefaultEndpointsProtocol=https;AccountName=scc222358001;AccountKey=jml3xMDPLhWu8UYUMYbB6+CFI7qY2BDO6mI9aw9g0oWSShxEGDwuyXQiKHXTAyb1Atk0yX3PJVtG+AStxRY2LQ==;EndpointSuffix=core.windows.net";
+public class MediaResource {
 
-	Map<String,byte[]> map = new HashMap<String,byte[]>();
-	BlobContainerClient containerClient = new BlobContainerClientBuilder()
-			.connectionString(blobStoreConString)
-			.containerName("images")
-			.buildClient();
+	BlobContainerClient containerClient;
+
+	{
+		try {
+			InputStream fis = this.getClass().getClassLoader().getResourceAsStream("blobstore.properties");
+			Properties props = new Properties();
+
+			props.load(fis);
+
+			containerClient = new BlobContainerClientBuilder()
+					.connectionString(props.getProperty("CONN_STRING"))
+					.containerName("images")
+					.buildClient();
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+
+	}
+
+
+
+	public MediaResource() {}
 
 	/**
 	 * Post a new image.The id of the image is its hash.
@@ -54,7 +69,6 @@ public class MediaResource
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_OCTET_STREAM)
 	public byte[] download(@PathParam("id") String id) {
-		//throw new ServiceUnavailableException();
 		BlobClient blob = containerClient.getBlobClient(id);
 		if (!blob.exists())
 			throw new NotFoundException();
@@ -68,7 +82,7 @@ public class MediaResource
 	 */
 	@GET
 	@Path("/")
-	@Produces(MediaType.TEXT_HTML)
+	@Produces(MediaType.TEXT_PLAIN)
 	public String list() {
 		String res = containerClient.listBlobs().stream()
 				.map(blobItem -> String.format(FILE_LIST_FMT, blobItem.getName(), blobItem.getProperties().getContentLength()))
