@@ -8,7 +8,7 @@
   <packaging>war</packaging>  
   <properties> 
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>  
-    <authors>58001</authors> 
+    <authors>58001-52949-57797</authors>
   </properties>  
   <dependencies> 
     <dependency> 
