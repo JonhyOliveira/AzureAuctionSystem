@@ -24,9 +24,7 @@ public class CosmosDBLayer {
 			DB_KEY = props.getProperty("DB_PKEY");
 			DB_NAME = props.getProperty("DB_NAME");
 
-			System.out.println(CONNECTION_URL);
-			System.out.println(DB_KEY);
-			System.out.println(DB_NAME);
+			System.out.printf("CosmosDB = %s@%s\n", DB_NAME, CONNECTION_URL);
 
 		} catch (IOException e) {
 			throw new RuntimeException(e);
