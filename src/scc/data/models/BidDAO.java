@@ -1,11 +1,20 @@
 package scc.data.models;
 
+import scc.data.Bid;
+
 import java.util.Objects;
 
 public final class BidDAO extends DAO {
-    private final String auctionID;
-    private final String bidder;
-    private final Double amount;
+
+    private String id;
+    private String auctionID;
+    private String bidder;
+    private Double amount;
+
+    public BidDAO(String auctionID, Bid bid)
+    {
+        this(auctionID, bid.bidderNickname(), bid.amount());
+    }
 
     public BidDAO(String auctionID, String bidder, Double amount) {
         this.auctionID = auctionID;
@@ -13,16 +22,37 @@ public final class BidDAO extends DAO {
         this.amount = amount;
     }
 
-    public String auctionID() {
+    public String getId()
+    {
+        return this.id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getAuctionID() {
         return auctionID;
     }
 
-    public String bidder() {
+    public void setAuctionID(String auctionID) {
+        this.auctionID = auctionID;
+    }
+
+    public String getBidderNickname() {
         return bidder;
     }
 
-    public Double amount() {
+    public void setBidderNickname(String bidder) {
+        this.bidder = bidder;
+    }
+
+    public Double getAmount() {
         return amount;
+    }
+
+    public void setAmount(Double amount) {
+        this.amount = amount;
     }
 
     @Override
@@ -48,5 +78,9 @@ public final class BidDAO extends DAO {
                 "amount=" + amount + ']';
     }
 
+    public Bid toBid()
+    {
+        return new Bid(bidder, amount);
+    }
 
 }

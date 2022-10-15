@@ -3,7 +3,9 @@ package scc.data.layers;
 import com.azure.cosmos.*;
 import com.azure.cosmos.models.*;
 import com.azure.cosmos.util.CosmosPagedIterable;
+import scc.data.Bid;
 import scc.data.models.AuctionDAO;
+import scc.data.models.BidDAO;
 import scc.data.models.UserDAO;
 
 import java.io.IOException;
@@ -57,6 +59,8 @@ public class CosmosDBLayer {
 	private CosmosDatabase db;
 	private CosmosContainer users;
 	private CosmosContainer auctions;
+	private CosmosContainer bids;
+	private CosmosContainer questions;
 
 	
 	public CosmosDBLayer(CosmosClient client) {
@@ -66,20 +70,21 @@ public class CosmosDBLayer {
 	private synchronized void init() {
 		if( db != null)
 			return;
-		System.out.println("Initing...");
+
 		db = client.getDatabase(DB_NAME);
-		System.out.println("Got database.");
+
+		// containers
 		users = db.getContainer("users");
-		System.out.println("Got users table.");
 		auctions = db.getContainer("auctions");
-		System.out.println("Got auctions table.");
+		bids = db.getContainer("bids");
+		questions = db.getContainer("questions");
 	}
 
-	public CosmosItemResponse<UserDAO> updateUser(String nickname, UserDAO newUser)
+	public CosmosItemResponse<UserDAO> updateUser(UserDAO newUser)
 	{
 		init();
-		PartitionKey key = new PartitionKey(nickname);
-		return users.replaceItem(newUser, nickname, key, new CosmosItemRequestOptions());
+		PartitionKey key = new PartitionKey(newUser.getId());
+		return users.replaceItem(newUser, newUser.getId(), key, new CosmosItemRequestOptions());
 	}
 
 	public CosmosItemResponse<Object> delUserByNick(String nickname) {
@@ -108,18 +113,50 @@ public class CosmosDBLayer {
 		return users.queryItems("SELECT * FROM users ", new CosmosQueryRequestOptions(), UserDAO.class);
 	}
 
-	public CosmosPagedIterable<AuctionDAO> getAuctionByTitle(String title){
+	public CosmosPagedIterable<AuctionDAO> getAuctionByID(String auctionID){
 		init();
-		return auctions.queryItems("SELECT * FROM auctions WHERE auctions.title=\"" + title + "\"", new CosmosQueryRequestOptions(), AuctionDAO.class);
+		return auctions.queryItems("SELECT * FROM auctions WHERE auctions.id=\"" + auctionID + "\"", new CosmosQueryRequestOptions(), AuctionDAO.class);
 	}
 	public CosmosItemResponse<AuctionDAO> putAuction(AuctionDAO auction){
 		init();
 		return auctions.createItem(auction);
 	}
 
+	public CosmosItemResponse<AuctionDAO> updateAuction(AuctionDAO auction)
+	{
+		init();
+		PartitionKey key = new PartitionKey(auction.auctionID());
+		return users.replaceItem(auction, auction.auctionID(), key, new CosmosItemRequestOptions());
+	}
+
+	public CosmosItemResponse<Object> delAuctionByID(String auctionID)
+	{
+		init();
+		PartitionKey key = new PartitionKey(auctionID);
+		return auctions.deleteItem(auctionID, key, new CosmosItemRequestOptions());
+	}
+
+	public CosmosPagedIterable<BidDAO> getBidsByAuctionID(String auctionID)
+	{
+		init();
+		return bids.queryItems("SELECT * FROM bids WHERE bids.auction_id=\"" + auctionID + "\"",
+				new CosmosQueryRequestOptions(), BidDAO.class);
+	}
+
+	public CosmosPagedIterable<BidDAO> getTopBidsByAuctionID(String auctionID, Long n)
+	{
+		init();
+		return bids.queryItems("SELECT TOP " + n + " * FROM bids WHERE bids.auction_id=\"" + auctionID + "\" ORDER BY amount",
+				new CosmosQueryRequestOptions(), BidDAO.class);
+	}
+
+	public CosmosItemResponse<BidDAO> putBid(BidDAO bid) {
+		init();
+		return bids.createItem(bid);
+	}
+
 	public void close() {
 		client.close();
 	}
-	
-	
+
 }

@@ -3,9 +3,8 @@ package scc.srv;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import scc.data.layers.CosmosDBLayer;
+import scc.data.DataProxy;
 import scc.data.User;
-import scc.data.models.UserDAO;
 import scc.utils.Hash;
 
 import java.util.Objects;
@@ -14,7 +13,7 @@ import java.util.Optional;
 @Path("/user")
 public class UserResource {
 
-    private static final CosmosDBLayer dbLayer = CosmosDBLayer.getInstance();
+    private static final DataProxy dataProxy = DataProxy.getInstance();
 
     public UserResource() {}
 
@@ -26,13 +25,14 @@ public class UserResource {
     {
         validateUserFields(user, true);
 
-        if (dbLayer.getUserByNick(user.getNickname()).stream().findAny().isPresent())
-            throw new BadRequestException("User already exists");
+        if (dataProxy.getUser(user.nickname()).isPresent())
+            throw new ForbiddenException("User already exists");
 
-        user.setPwd(Hash.of(user.getPwd()));
-        UserDAO newUser = new UserDAO(user);
+        user.setPwd(Hash.of(user.pwd()));
 
-        return dbLayer.putUser(newUser).getItem().toUser().censored();
+        return dataProxy.createUser(user)
+                .map(User::censored)
+                .orElse(null);
 
     }
 
@@ -44,7 +44,7 @@ public class UserResource {
         if (Objects.requireNonNullElse(password, "").isBlank())
             throw new BadRequestException("Password can not be blank");
 
-        Optional<UserDAO> o = dbLayer.getUserByNick(nickname).stream().findAny();
+        Optional<User> o = dataProxy.getUser(nickname);
 
         if (o.isEmpty())
             throw new NotFoundException("User not found");
@@ -52,7 +52,7 @@ public class UserResource {
         if (! o.get().pwd().equals(Hash.of(password)))
             throw new NotAuthorizedException("Password Incorrect");
 
-        dbLayer.delUserByNick(nickname);
+        dataProxy.deleteUser(nickname);
     }
 
     @PUT
@@ -66,15 +66,17 @@ public class UserResource {
 
         validateUserFields(newUser, false);
 
-        Optional<UserDAO> o = dbLayer.getUserByNick(nickname).stream().findAny();
+        Optional<User> o = dataProxy.getUser(nickname);
 
         if (o.isEmpty())
             throw new NotFoundException("User not found");
 
         if (! o.get().pwd().equals(Hash.of(password)))
-            throw new NotAuthorizedException("Password Incorrect");
+            throw new NotAuthorizedException("Password Incorrect.");
 
-        return dbLayer.updateUser(nickname, o.get().patch(newUser)).getItem().toUser().censored();
+        return dataProxy.updateUserInfo(nickname, newUser)
+                .map(User::censored)
+                .orElse(null);
     }
 
     @GET
@@ -82,30 +84,30 @@ public class UserResource {
     @Produces(MediaType.APPLICATION_JSON)
     public User getUser(@PathParam("nickname") String nickname)
     {
-        Optional<UserDAO> o = dbLayer.getUserByNick(nickname).stream().findAny();
+        Optional<User> userOptional = dataProxy.getUser(nickname);
 
-        if (o.isEmpty())
+        if (userOptional.isEmpty())
             throw new NotFoundException();
 
-        return o.get().toUser().censored();
+        return userOptional.map(User::censored).orElse(null);
     }
 
     /**
      * Validates user fields
      * @throws WebApplicationException if a field contains an invalid
      */
-    private void validateUserFields(User user, boolean requireNonNull) throws WebApplicationException
+    void validateUserFields(User user, boolean requireNonNull) throws WebApplicationException
     {
         String error_message = null;
 
         if (Objects.isNull(user))
             error_message = "User can not be null";
         else {
-            if (Objects.requireNonNullElse(user.getPwd(), requireNonNull ? "" : "a").isBlank())
+            if (Objects.requireNonNullElse(user.pwd(), requireNonNull ? "" : "a").isBlank())
                 error_message = "Password can not be blank.";
-            if (Objects.requireNonNullElse(user.getName(), requireNonNull ? "" : "a").isBlank())
+            if (Objects.requireNonNullElse(user.name(), requireNonNull ? "" : "a").isBlank())
                 error_message = "Name can not be blank.";
-            if (Objects.requireNonNullElse(user.getNickname(), requireNonNull ? "" : "a").isBlank())
+            if (Objects.requireNonNullElse(user.nickname(), requireNonNull ? "" : "a").isBlank())
                 error_message = "Nickname can not be blank.";
         }
 

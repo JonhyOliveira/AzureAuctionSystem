@@ -1,37 +1,46 @@
 package scc.data.models;
 
 import scc.data.Auction;
-import scc.utils.Hash;
+
 import java.util.Objects;
+import java.util.Optional;
 
-public class AuctionDAO extends DAO {
+public final class AuctionDAO extends DAO {
 
+    private String auctionID;
     private String title;
-    private String desc;
-    private String photoId;
+    private String description;
+    private String thumbnailID;
     private String owner_nickname;
-    private long endTime;
-    private float minPrice;
-    private String aucStatus;
-    /*private List<AuctionResource.Bid> bids;
-    private List<AuctionResource.Question> questions;*/
-
+    private Long endTime;
+    private Float minPrice;
+    private boolean isClosed;
 
     public AuctionDAO(){ }
 
     public AuctionDAO (Auction auc){
-        this(auc.getTitle(), auc.getDesc(), auc.getPhotoId(), auc.getOwner_nickname(), auc.getEndTime(), auc.getMinPrice(), auc.getAucStatus());
+        this(auc.auctionID(), auc.title(), auc.description(), auc.photoId(), auc.ownerNickname(), auc.endTime(), auc.minPrice(), auc.isClosed());
     }
 
-    public AuctionDAO(String title, String desc, String photoId, String owner_nickname, long endTime, float minPrice, String aucStatus){
+    public AuctionDAO(String auctionID, String title, String description, String thumbnailID, String owner_nickname, long endTime, float minPrice, boolean aucStatus){
         super();
+        this.auctionID = auctionID;
         this.title = title;
-        this.desc = desc;
-        this.photoId = photoId;
+        this.description = description;
+        this.thumbnailID = thumbnailID;
         this.owner_nickname = owner_nickname;
         this.endTime = endTime;
         this.minPrice = minPrice;
-        this.aucStatus = aucStatus;
+        this.isClosed = aucStatus;
+    }
+
+    public String auctionID()
+    {
+        return auctionID;
+    }
+
+    public void setAuctionID(String auction_id) {
+        this.auctionID = auction_id;
     }
 
     public String getTitle() {
@@ -40,22 +49,22 @@ public class AuctionDAO extends DAO {
     public void setTitle(String title) {
         this.title = title;
     }
-    public String getDesc() {
-        return desc;
+    public String getDescription() {
+        return description;
     }
-    public void setDesc(String desc) {
-        this.desc = desc;
+    public void setDescription(String description) {
+        this.description = description;
     }
-    public String getPhotoId() {
-        return photoId;
+    public String getThumbnailID() {
+        return thumbnailID;
     }
-    public void setPhotoId(String photoId) {
-        this.photoId = photoId;
+    public void setThumbnailID(String thumbnailID) {
+        this.thumbnailID = thumbnailID;
     }
-    public String getOwner_nickname() {
+    public String ownerNickname() {
         return owner_nickname;
     }
-    public void setOwner_nickname(String owner_nickname) {
+    public void setOwnerNickname(String owner_nickname) {
         this.owner_nickname = owner_nickname;
     }
     public long getEndTime() {
@@ -64,56 +73,55 @@ public class AuctionDAO extends DAO {
     public void setEndTime(long endTime) {
         this.endTime = endTime;
     }
-    public float getMinPrice() {
-        return minPrice;
+    public String getMinPrice() {
+        return Float.toHexString(minPrice);
     }
-    public void setMinPrice(float minPrice) {
-        this.minPrice = minPrice;
+    public void setMinPrice(String minPrice) {
+        this.minPrice = Float.valueOf(minPrice);
     }
-    public String getAucStatus() {
-        return aucStatus;
+    public boolean isClosed() {
+        return isClosed;
     }
-    public void setAucStatus(String aucStatus) {
-        this.aucStatus = aucStatus;
+    public void setClosed(boolean isOpen) {
+        this.isClosed = isOpen;
     }
-    /*public List<Bid> getBids() {
-        return bids;
-    }
-    public void setBids(List<Bid> bids) {
-        this.bids = bids;
-    }
-    public List<Question> getQuestions() {
-        return questions;
-    }
-    public void setQuestions(List<Question> bids) {
-        this.questions = questions;
-    }*/
 
     public Auction toAuction(){
-        return new Auction(title, desc, photoId, owner_nickname, endTime, minPrice, aucStatus);
+        return new Auction(auctionID, title, description, thumbnailID, owner_nickname, endTime, minPrice, isClosed);
     }
 
-    public AuctionDAO patch(Auction auc)
+    /**
+     * Patches and returns this auction with new details
+     *
+     * @param auc the patching auction
+     * @return the patched auction, or null if unable to patch
+     */
+    public Optional<AuctionDAO> patch(AuctionDAO auc)
     {
+        if (this.isClosed)
+            return Optional.empty();
+
         if (Objects.nonNull(auc))
         {
-            if (Objects.nonNull(auc.getTitle()))
-                this.setTitle(auc.getTitle());
-            if (Objects.nonNull(auc.getDesc()))
-                this.setDesc(Hash.of(auc.getDesc()));
-            if (Objects.nonNull(auc.getPhotoId()))
-                this.setPhotoId(auc.getPhotoId());
-            if (Objects.nonNull(auc.getOwner_nickname()))
-                this.setOwner_nickname(auc.getOwner_nickname());
-            if (auc.getEndTime() >= 0)
-                this.setEndTime(auc.getEndTime());
-            if (auc.getMinPrice() >= 0)
-                this.setMinPrice(auc.getMinPrice());
-            if (Objects.nonNull(auc.getAucStatus()))
-                this.setAucStatus(auc.getAucStatus());
+            if (Objects.nonNull(auc.title)) {
+                this.title = auc.title;
+            }
+            if (Objects.nonNull(auc.description)) {
+                this.description = auc.description;
+            }
+            if (Objects.nonNull(auc.thumbnailID)) {
+                this.thumbnailID = auc.thumbnailID;
+            }
+            if (auc.endTime >= this.endTime) {
+                this.endTime = auc.endTime;
+            }
+            if (auc.minPrice >= 0) {
+                this.minPrice = auc.minPrice;
+            }
+            this.setClosed(auc.isClosed());
         }
 
-        return this;
+        return Optional.of(this);
     }
 
 

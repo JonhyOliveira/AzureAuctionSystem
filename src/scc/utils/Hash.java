@@ -32,7 +32,7 @@ public class Hash {
 	}
 	
 	public static String of(String data) {
-		return String.format(HASH_FMT, new BigInteger(1,digest(data.getBytes())));
+		return of(data.getBytes());
 	}
 	
 	public static String of(byte[] data) {
@@ -43,7 +43,7 @@ public class Hash {
 		md.reset();
 		for( Object o : values )
 			md.update( o.toString().getBytes() );
-		return String.format("%016X", new BigInteger(1, md.digest()));
+		return String.format(HASH_FMT, new BigInteger(1, md.digest()));
 	}
 	
 }
