@@ -59,7 +59,7 @@ class UserResourceTest {
 
         resource.create(new UserDAO(u).toUser());
         User uGot = resource.update(u.nickname(), id, u2);
-        User uExpected = new User("joao_2" + id, "Joao Pedor", "", "2:" + id2);
+        User uExpected = u.patch(u2);
 
         assertEquals(uExpected.censored(), uGot.censored());
     }

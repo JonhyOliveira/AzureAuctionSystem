@@ -5,7 +5,7 @@
   <groupId>pt.unl.fct.di.scc</groupId>  
   <artifactId>scc2223-lab1</artifactId>  
   <version>1.0</version>  
-  <packaging>war</packaging>  
+  <packaging>war</packaging>
   <properties> 
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>  
     <authors>58001-52949-57797</authors> 
@@ -29,7 +29,7 @@
     <dependency> 
       <groupId>com.fasterxml.jackson.core</groupId>  
       <artifactId>jackson-databind</artifactId>  
-      <version>2.13.4</version> 
+      <version>2.13.4</version>
     </dependency>  
     <dependency> 
       <groupId>com.fasterxml.jackson.jaxrs</groupId>  
@@ -107,8 +107,18 @@
       <version>RELEASE</version>
       <scope>test</scope>
     </dependency>
-  </dependencies>  
-  <build> 
+  </dependencies>
+  <build>
+    <testSourceDirectory>test</testSourceDirectory>
+    <resources>
+      <resource>
+        <directory>src/resources</directory>
+        <filtering>true</filtering>
+        <includes>
+          <include>**/*.properties</include>
+        </includes>
+      </resource>
+    </resources>
     <sourceDirectory>src</sourceDirectory>  
     <plugins> 
       <plugin> 

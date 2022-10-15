@@ -65,7 +65,7 @@ public class User implements Cloneable {
 	}
 	public User patch(User user)
 	{
-		User patched = new User();
+		User patched = this.clone();
 
 		if (Objects.nonNull(user))
 		{

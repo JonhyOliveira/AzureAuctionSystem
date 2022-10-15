@@ -55,7 +55,7 @@ public class UserResource {
         dataProxy.deleteUser(nickname);
     }
 
-    @PUT
+    @PATCH
     @Path("/{nickname}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
@@ -74,7 +74,7 @@ public class UserResource {
         if (! o.get().pwd().equals(Hash.of(password)))
             throw new NotAuthorizedException("Password Incorrect.");
 
-        return dataProxy.updateUserInfo(nickname, newUser)
+        return dataProxy.updateUserInfo(nickname, o.get().patch(newUser))
                 .map(User::censored)
                 .orElse(null);
     }
