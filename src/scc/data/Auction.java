@@ -1,30 +1,20 @@
-package scc.database;
+package scc.data;
 
-import scc.utils.Hash;
-import java.util.Objects;
-
-public class AuctionDAO {
-
-    private String _rid;
-    private String _ts;
+public class Auction {
     private String title;
     private String desc;
     private String photoId;
     private String owner_nickname;
+    private String aucStatus;
     private long endTime;
     private float minPrice;
-    private String aucStatus;
-    /*private List<AuctionResource.Bid> bids;
-    private List<AuctionResource.Question> questions;*/
+   //private List<Bid> bids;
+    //private List<Question> questios;
 
+    public Auction() {}
 
-    public AuctionDAO(){ }
-
-    public AuctionDAO (Auction auc){
-        this(auc.getTitle(), auc.getDesc(), auc.getPhotoId(), auc.getOwner_nickname(), auc.getEndTime(), auc.getMinPrice(), auc.getAucStatus());
-    }
-
-    public AuctionDAO(String title, String desc, String photoId, String owner_nickname, long endTime, float minPrice, String aucStatus){
+    public Auction(String title, String desc, String photoId, String owner_nickname, long endTime, float minPrice,
+                   String aucStatus/*, List<Bid> bids, List<Question> questions*/) {
         super();
         this.title = title;
         this.desc = desc;
@@ -33,6 +23,8 @@ public class AuctionDAO {
         this.endTime = endTime;
         this.minPrice = minPrice;
         this.aucStatus = aucStatus;
+       /* this.bids = bids;
+        this.questions = questions;*/
     }
 
     public String getTitle() {
@@ -90,33 +82,9 @@ public class AuctionDAO {
         this.questions = questions;
     }*/
 
-    public Auction toAuction(){
-        return new Auction(title, desc, photoId, owner_nickname, endTime, minPrice, aucStatus);
+    @Override
+    public String toString() {
+        return "Auction [title=" + title + ", desc=" + desc + ", photoId=" + photoId + ", owner=" + owner_nickname + ", endTime=" + endTime + ", minPrice=" + minPrice + ", aucStatus=" + aucStatus + " ]";
     }
-
-    public AuctionDAO update(Auction auc)
-    {
-        if (Objects.nonNull(auc))
-        {
-            if (Objects.nonNull(auc.getTitle()))
-                this.setTitle(auc.getTitle());
-            if (Objects.nonNull(auc.getDesc()))
-                this.setDesc(Hash.of(auc.getDesc()));
-            if (Objects.nonNull(auc.getPhotoId()))
-                this.setPhotoId(auc.getPhotoId());
-            if (Objects.nonNull(auc.getOwner_nickname()))
-                this.setOwner_nickname(auc.getOwner_nickname());
-            if (auc.getEndTime() >= 0)
-                this.setEndTime(auc.getEndTime());
-            if (auc.getMinPrice() >= 0)
-                this.setMinPrice(auc.getMinPrice());
-            if (Objects.nonNull(auc.getAucStatus()))
-                this.setAucStatus(auc.getAucStatus());
-        }
-
-        return this;
-    }
-
-
 
 }

@@ -1,4 +1,4 @@
-package scc.cache;
+package scc.data.layers;
 
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;

@@ -3,13 +3,11 @@ package scc.srv;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import scc.database.Auction;
-import scc.database.AuctionDAO;
-import scc.database.CosmosDBLayer;
-import scc.database.User;
+import scc.data.Auction;
+import scc.data.models.AuctionDAO;
+import scc.data.layers.CosmosDBLayer;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 @Path("/auction")

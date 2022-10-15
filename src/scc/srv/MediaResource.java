@@ -4,9 +4,7 @@ import com.azure.core.util.BinaryData;
 import com.azure.storage.blob.BlobClient;
 import com.azure.storage.blob.BlobContainerClient;
 import com.azure.storage.blob.BlobContainerClientBuilder;
-import com.azure.storage.blob.models.BlobItem;
 import jakarta.ws.rs.*;
-import scc.database.CosmosDBLayer;
 import scc.utils.Hash;
 
 import java.io.IOException;

@@ -1,5 +1,6 @@
-package scc.database;
+package scc.data.models;
 
+import scc.data.User;
 import scc.utils.Hash;
 
 import java.util.Objects;
@@ -7,9 +8,7 @@ import java.util.Objects;
 /**
  * Represents a User, as stored in the database
  */
-public class UserDAO {
-	private String _rid;
-	private String _ts;
+public class UserDAO extends DAO {
 	private String id;
 	private String name;
 	private String pwd;
@@ -27,37 +26,37 @@ public class UserDAO {
 		this.pwd = pwd;
 		this.photoId = photoId;
 	}
-	public String get_rid() {
+	public String _rid() {
 		return _rid;
 	}
 	public void set_rid(String _rid) {
 		this._rid = _rid;
 	}
-	public String get_ts() {
+	public String _ts() {
 		return _ts;
 	}
 	public void set_ts(String _ts) {
 		this._ts = _ts;
 	}
-	public String getId() {
+	public String id() {
 		return id;
 	}
 	public void setId(String id) {
 		this.id = id;
 	}
-	public String getName() {
+	public String name() {
 		return name;
 	}
 	public void setName(String name) {
 		this.name = name;
 	}
-	public String getPwd() {
+	public String pwd() {
 		return pwd;
 	}
 	public void setPwd(String pwd) {
 		this.pwd = pwd;
 	}
-	public String getPhotoId() {
+	public String photoId() {
 		return photoId;
 	}
 	public void setPhotoId(String photoId) {
@@ -67,7 +66,7 @@ public class UserDAO {
 		return new User(id, name, pwd, photoId);
 	}
 
-	public UserDAO update(User user)
+	public UserDAO patch(User user)
 	{
 		if (Objects.nonNull(user))
 		{

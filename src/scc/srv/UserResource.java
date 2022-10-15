@@ -1,15 +1,13 @@
 package scc.srv;
 
-import com.azure.cosmos.models.CosmosItemResponse;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import scc.database.CosmosDBLayer;
-import scc.database.User;
-import scc.database.UserDAO;
+import scc.data.layers.CosmosDBLayer;
+import scc.data.User;
+import scc.data.models.UserDAO;
 import scc.utils.Hash;
 
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -51,7 +49,7 @@ public class UserResource {
         if (o.isEmpty())
             throw new NotFoundException("User not found");
 
-        if (! o.get().getPwd().equals(Hash.of(password)))
+        if (! o.get().pwd().equals(Hash.of(password)))
             throw new NotAuthorizedException("Password Incorrect");
 
         dbLayer.delUserByNick(nickname);
@@ -73,10 +71,10 @@ public class UserResource {
         if (o.isEmpty())
             throw new NotFoundException("User not found");
 
-        if (! o.get().getPwd().equals(Hash.of(password)))
+        if (! o.get().pwd().equals(Hash.of(password)))
             throw new NotAuthorizedException("Password Incorrect");
 
-        return dbLayer.updateUser(nickname, o.get().update(newUser)).getItem().toUser().censored();
+        return dbLayer.updateUser(nickname, o.get().patch(newUser)).getItem().toUser().censored();
     }
 
     @GET

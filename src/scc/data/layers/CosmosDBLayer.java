@@ -1,8 +1,10 @@
-package scc.database;
+package scc.data.layers;
 
 import com.azure.cosmos.*;
 import com.azure.cosmos.models.*;
 import com.azure.cosmos.util.CosmosPagedIterable;
+import scc.data.models.AuctionDAO;
+import scc.data.models.UserDAO;
 
 import java.io.IOException;
 import java.io.InputStream;
