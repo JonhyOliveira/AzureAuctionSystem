@@ -5,6 +5,7 @@ import scc.data.layers.CosmosDBLayer;
 import scc.data.layers.RedisCacheLayer;
 import scc.data.models.AuctionDAO;
 import scc.data.models.BidDAO;
+import scc.data.models.QuestionDAO;
 import scc.data.models.UserDAO;
 
 import java.util.List;
@@ -123,5 +124,12 @@ public class DataProxy {
     {
         return Optional.ofNullable(dbLayer.putBid(new BidDAO(auctionId, bid)).getItem())
                 .map(BidDAO::toBid);
+    }
+
+    public List<Question> getAuctionQuestions(String auctionID){
+        return dbLayer.getQuestionsByAuctionID(auctionID)
+                .stream()
+                .map(QuestionDAO::toQuestion)
+                .collect(Collectors.toList());
     }
 }
