@@ -3,10 +3,7 @@ package scc.srv;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import scc.data.Auction;
-import scc.data.Bid;
-import scc.data.DataProxy;
-import scc.data.User;
+import scc.data.*;
 import scc.data.models.AuctionDAO;
 import scc.utils.Hash;
 
@@ -78,9 +75,11 @@ public class AuctionResource {
 
     @GET
     @Path("/{auction_id}/question")
-    public List<Question> listQuestions(@PathParam("auction_id") String id)
+    public List<Question> listQuestions(@PathParam("auction_id") String auctionId)
     {
-        throw new NotSupportedException();
+        validateAuction(auctionId, null);
+
+        return dataProxy.getAuctionQuestions(auctionId);
     }
 
     @POST
@@ -109,7 +108,7 @@ public class AuctionResource {
         throw new NotSupportedException();
     }
 
-    record Question(String author_nickname, String text, String answer) {}
+    //record Question(String author_nickname, String text, String answer) {}
 
     /**
      * Checks if
