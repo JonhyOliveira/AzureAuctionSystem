@@ -5,6 +5,7 @@ import com.azure.cosmos.models.*;
 import com.azure.cosmos.util.CosmosPagedIterable;
 import scc.data.models.AuctionDAO;
 import scc.data.models.BidDAO;
+import scc.data.models.QuestionDAO;
 import scc.data.models.UserDAO;
 
 import java.io.IOException;
@@ -152,6 +153,11 @@ public class CosmosDBLayer {
 	public CosmosItemResponse<BidDAO> putBid(BidDAO bid) {
 		init();
 		return bids.createItem(bid);
+	}
+
+	public CosmosPagedIterable<QuestionDAO> getQuestionsByAuctionID(String auctionID){
+		init();
+		return questions.queryItems("SELECT * FROM questions WHERE questions.auctionID=\"" + auctionID + "\"", new CosmosQueryRequestOptions(), QuestionDAO.class);
 	}
 
 	public void close() {
