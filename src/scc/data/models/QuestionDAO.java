@@ -1,5 +1,8 @@
 package scc.data.models;
 
+import scc.data.Auction;
+import scc.data.Question;
+
 public class QuestionDAO extends DAO{
 
     private String id; //DONT KNOW IF A QUESTION ID WILL BE NECESSARY
@@ -11,6 +14,10 @@ public class QuestionDAO extends DAO{
         this.auctionID = auctionID;
         this.questioner = questioner;
         this.question = question;
+    }
+
+    public Question toQuestion(){
+        return new Question(auctionID, questioner, question);
     }
 
     public String getId(){
