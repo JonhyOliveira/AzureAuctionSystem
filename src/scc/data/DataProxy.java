@@ -140,7 +140,6 @@ public class DataProxy {
     }
 
     public Optional<Question> updateQuestion(String auctionId, String questionID, Question question) {
-        // TODO
         question.setQuestionID(questionID);
 
         return Optional.ofNullable(dbLayer.updateQuestion(new QuestionDAO(auctionId, question)).getItem())
