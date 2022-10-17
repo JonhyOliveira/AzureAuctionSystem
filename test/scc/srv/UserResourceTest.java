@@ -31,18 +31,14 @@ class UserResourceTest {
 
         assertEquals(u.censored(), uCreated.censored());
 
-        assertThrows(ForbiddenException.class, () -> {
-            resource.create(u);
-        });
+        assertThrows(ForbiddenException.class, () -> resource.create(u));
     }
 
     @org.junit.jupiter.api.Test
     void delete() {
         User u = new User("joao_1" + id, "Joao Pedro", id, "1:" + id);
 
-        Executable deleteUser = () -> {
-            resource.delete(u.nickname(), u.pwd());
-        };
+        Executable deleteUser = () -> resource.delete(u.nickname(), u.pwd());
 
         assertThrows(NotFoundException.class, deleteUser);
 

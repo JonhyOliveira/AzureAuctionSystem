@@ -4,7 +4,6 @@ import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import scc.data.*;
-import scc.data.models.AuctionDAO;
 import scc.utils.Hash;
 
 import java.util.List;
@@ -13,8 +12,6 @@ import java.util.Optional;
 
 @Path("/auction")
 public class AuctionResource {
-
-    private static final String TOKEN_QUERY_PARAM = "auth_token";
 
     private static final DataProxy dataProxy = DataProxy.getInstance();
 
@@ -26,10 +23,10 @@ public class AuctionResource {
     {
         validateAuctionFields(auction, true);
 
+        login(auction.ownerNickname(), owner_pwd);
+
         if(dataProxy.getAuction(auction.auctionID()).isPresent())
             throw new BadRequestException("Auction already exists");
-
-        AuctionDAO newAuction = new AuctionDAO(auction);
 
         return dataProxy.createAuction(auction).orElse(null);
 
@@ -44,10 +41,12 @@ public class AuctionResource {
 
         Auction prevAuctionDetails = validateAuction(auctionId, owner_pwd);
 
-        auction.setAuctionID(auctionId);
-        auction.setOwnerNickname(prevAuctionDetails.ownerNickname());
+        Auction newDetails = prevAuctionDetails.patch(auction).orElse(null);
 
-        return dataProxy.updateAuctionInfo(auctionId, auction).orElse(null);
+        if (newDetails == null)
+            throw new NotAuthorizedException("Could not update auction.");
+
+        return dataProxy.updateAuctionInfo(auctionId, newDetails).orElse(null);
     }
 
     @GET
@@ -85,11 +84,29 @@ public class AuctionResource {
     @POST
     @Path("/{auction_id}/question")
     @Consumes(MediaType.APPLICATION_JSON)
-    public void submitQuestionOrReply(Question question, @PathParam("auction_id") String id,
-                                      @QueryParam(TOKEN_QUERY_PARAM) String authToken,
-                                      @QueryParam("answer") Boolean isAnswer)
+    public Question submitQuestion(Question question, @PathParam("auction_id") String auctionId,
+                               @HeaderParam("Authorization") String pwd)
     {
-        throw new NotSupportedException();
+        // TODO validate auction, and if the pwd provided corresponds
+        //  to the auction owner, see method validateAuction
+
+        return dataProxy.createQuestion(auctionId, question).orElse(null);
+    }
+
+    @PUT
+    @Path("/{auction_id}/question")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Question submitReply(Question question, @PathParam("auction_id") String auctionId,
+                            @HeaderParam("Authorization") String pwd)
+    {
+        // TODO validate auction, and if the pwd provided corresponds
+        //  to the auction owner, see method validateAuction
+
+        Question prevQuestion = null;
+
+        Question newQuestion = question; // prevQuestion.patch(question);
+
+        return dataProxy.updateQuestion(auctionId, question.getQuestionID(), newQuestion).orElse(null);
     }
 
     @GET
@@ -108,15 +125,7 @@ public class AuctionResource {
         throw new NotSupportedException();
     }
 
-    //record Question(String author_nickname, String text, String answer) {}
-
-    /**
-     * Checks if
-     * @param bid
-     * @param bidder_pwd
-     * @return
-     */
-    User login(String nickname, String pwd) {
+    static User login(String nickname, String pwd) {
         Optional<User> o = dataProxy.getUser(nickname);
 
         if (o.isEmpty())

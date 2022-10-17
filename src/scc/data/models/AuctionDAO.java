@@ -2,8 +2,6 @@ package scc.data.models;
 
 import scc.data.Auction;
 
-import java.util.Objects;
-import java.util.Optional;
 
 public final class AuctionDAO extends DAO {
 
@@ -16,6 +14,7 @@ public final class AuctionDAO extends DAO {
     private Float minPrice;
     private boolean isClosed;
 
+    @SuppressWarnings("unused")
     public AuctionDAO(){ }
 
     public AuctionDAO (Auction auc){
@@ -39,49 +38,64 @@ public final class AuctionDAO extends DAO {
         return auctionID;
     }
 
+    @SuppressWarnings("unused")
     public void setAuctionID(String auction_id) {
         this.auctionID = auction_id;
     }
 
+    @SuppressWarnings("unused")
     public String getTitle() {
         return title;
     }
+    @SuppressWarnings("unused")
     public void setTitle(String title) {
         this.title = title;
     }
+    @SuppressWarnings("unused")
     public String getDescription() {
         return description;
     }
+    @SuppressWarnings("unused")
     public void setDescription(String description) {
         this.description = description;
     }
+    @SuppressWarnings("unused")
     public String getThumbnailID() {
         return thumbnailID;
     }
+    @SuppressWarnings("unused")
     public void setThumbnailID(String thumbnailID) {
         this.thumbnailID = thumbnailID;
     }
+    @SuppressWarnings("unused")
     public String ownerNickname() {
         return owner_nickname;
     }
+    @SuppressWarnings("unused")
     public void setOwnerNickname(String owner_nickname) {
         this.owner_nickname = owner_nickname;
     }
+    @SuppressWarnings("unused")
     public long getEndTime() {
         return endTime;
     }
+    @SuppressWarnings("unused")
     public void setEndTime(long endTime) {
         this.endTime = endTime;
     }
+    @SuppressWarnings("unused")
     public String getMinPrice() {
         return Float.toHexString(minPrice);
     }
+    @SuppressWarnings("unused")
     public void setMinPrice(String minPrice) {
         this.minPrice = Float.valueOf(minPrice);
     }
+    @SuppressWarnings("unused")
     public boolean isClosed() {
         return isClosed;
     }
+    @SuppressWarnings("unused")
     public void setClosed(boolean isOpen) {
         this.isClosed = isOpen;
     }
@@ -89,41 +103,5 @@ public final class AuctionDAO extends DAO {
     public Auction toAuction(){
         return new Auction(auctionID, title, description, thumbnailID, owner_nickname, endTime, minPrice, isClosed);
     }
-
-    /**
-     * Patches and returns this auction with new details
-     *
-     * @param auc the patching auction
-     * @return the patched auction, or null if unable to patch
-     */
-    public Optional<AuctionDAO> patch(AuctionDAO auc)
-    {
-        if (this.isClosed)
-            return Optional.empty();
-
-        if (Objects.nonNull(auc))
-        {
-            if (Objects.nonNull(auc.title)) {
-                this.title = auc.title;
-            }
-            if (Objects.nonNull(auc.description)) {
-                this.description = auc.description;
-            }
-            if (Objects.nonNull(auc.thumbnailID)) {
-                this.thumbnailID = auc.thumbnailID;
-            }
-            if (auc.endTime >= this.endTime) {
-                this.endTime = auc.endTime;
-            }
-            if (auc.minPrice >= 0) {
-                this.minPrice = auc.minPrice;
-            }
-            this.setClosed(auc.isClosed());
-        }
-
-        return Optional.of(this);
-    }
-
-
 
 }

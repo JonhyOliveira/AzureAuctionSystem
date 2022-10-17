@@ -1,48 +1,74 @@
 package scc.data;
 
-import scc.data.models.QuestionDAO;
+import java.util.Objects;
 
 public class Question {
-    private String auctionID;
-    private String questioner;
-    private String question;
 
+    private String questionID;
+    private String questioner;
+    private String text;
+    private String answer;
+
+    @SuppressWarnings("unused")
     public Question(){}
 
-    public Question(String auctionID, String questioner, String question){
+    public Question(String questionID, String questioner, String text){
         super();
-        this.auctionID = auctionID;
+        this.questionID = questionID;
         this.questioner = questioner;
-        this.question = question;
+        this.text = text;
     }
 
-    public String auctionId(){
-        return auctionID;
+    public Question patch(Question otherQuestion)
+    {
+        Question patched = this.copy();
+
+        if (Objects.isNull(patched.answer) && Objects.nonNull(otherQuestion.answer))
+            patched.answer = otherQuestion.answer;
+
+        return patched;
     }
 
-    public String getAuctionID(){
-        return auctionID;
+    public String getQuestionID() {
+        return questionID;
     }
 
-    public void setAuctionID(String auctionID){
-        this.auctionID = auctionID;
+    @SuppressWarnings("unused")
+    public void setQuestionID(String questionID) {
+        this.questionID = questionID;
     }
 
+    @SuppressWarnings("unused")
     public String getQuestioner(){
         return questioner;
     }
 
+    @SuppressWarnings("unused")
     public void setQuestioner(String questioner){
         this.questioner = questioner;
     }
 
-    public String getQuestion(){
-        return question;
+    @SuppressWarnings("unused")
+    public String getText(){
+        return text;
     }
 
-    public void setQuestion(String question){
-        this.question = question;
+    @SuppressWarnings("unused")
+    public void setText(String text){
+        this.text = text;
     }
 
+    @SuppressWarnings("unused")
+    public String getAnswer() {
+        return answer;
+    }
 
+    @SuppressWarnings("unused")
+    public void setAnswer(String answer) {
+        this.answer = answer;
+    }
+
+    protected Question copy() {
+        return new Question(this.questionID, this.questioner, this.answer);
+    }
 }

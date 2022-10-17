@@ -22,35 +22,43 @@ public final class BidDAO extends DAO {
         this.amount = amount;
     }
 
+    @SuppressWarnings("unused")
     public String getId()
     {
         return this.id;
     }
 
+    @SuppressWarnings("unused")
     public void setId(String id) {
         this.id = id;
     }
 
+    @SuppressWarnings("unused")
     public String getAuctionID() {
         return auctionID;
     }
 
+    @SuppressWarnings("unused")
     public void setAuctionID(String auctionID) {
         this.auctionID = auctionID;
     }
 
+    @SuppressWarnings("unused")
     public String getBidderNickname() {
         return bidder;
     }
 
+    @SuppressWarnings("unused")
     public void setBidderNickname(String bidder) {
         this.bidder = bidder;
     }
 
+    @SuppressWarnings("unused")
     public Double getAmount() {
         return amount;
     }
 
+    @SuppressWarnings("unused")
     public void setAmount(Double amount) {
         this.amount = amount;
     }

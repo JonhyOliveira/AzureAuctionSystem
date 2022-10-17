@@ -7,8 +7,8 @@ import jakarta.ws.rs.core.Application;
 
 public class MainApplication extends Application
 {
-	private Set<Object> singletons = new HashSet<Object>();
-	private Set<Class<?>> resources = new HashSet<Class<?>>();
+	private final Set<Object> singletons = new HashSet<>();
+	private final Set<Class<?>> resources = new HashSet<>();
 
 	public MainApplication() {
 		resources.add( ControlResource.class);
@@ -22,6 +22,7 @@ public class MainApplication extends Application
 		return resources;
 	}
 
+	@SuppressWarnings({"deprecation"})
 	@Override
 	public Set<Object> getSingletons() {
 		return singletons;

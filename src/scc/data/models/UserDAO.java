@@ -12,6 +12,7 @@ public final class UserDAO extends DAO {
 	private String pwd;
 	private String photoId;
 
+	@SuppressWarnings("unused")
 	public UserDAO() {
 	}
 	public UserDAO( User u) {
@@ -28,32 +29,41 @@ public final class UserDAO extends DAO {
 	public String getId() {
 		return id;
 	}
-	public void setId(String id) {
+	@SuppressWarnings("unused")
+    public void setId(String id) {
 		this.id = id;
 	}
-	public String getName() {
+	@SuppressWarnings("unused")
+    public String getName() {
 		return name;
 	}
-	public void setName(String name) {
+	@SuppressWarnings("unused")
+    public void setName(String name) {
 		this.name = name;
 	}
-	public String getPwd() {
+	@SuppressWarnings("unused")
+    public String getPwd() {
 		return pwd;
 	}
-	public void setPwd(String pwd) {
+	@SuppressWarnings("unused")
+    public void setPwd(String pwd) {
 		this.pwd = pwd;
 	}
-	public String getPhotoId() {
+	@SuppressWarnings("unused")
+    public String getPhotoId() {
 		return photoId;
 	}
-	public void setPhotoId(String photoId) {
+	@SuppressWarnings("unused")
+    public void setPhotoId(String photoId) {
 		this.photoId = photoId;
 	}
-	public String get_rid() {
+	@SuppressWarnings("unused")
+    public String get_rid() {
 		return _rid;
 	}
 
-	public String get_ts() {
+	@SuppressWarnings("unused")
+    public String get_ts() {
 		return _ts;
 	}
 

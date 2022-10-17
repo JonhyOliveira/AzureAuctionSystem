@@ -16,6 +16,7 @@ public class ControlResource
 	 * This method just prints a string. It may be useful to check if the current
 	 * version is running on Azure.
 	 */
+	@SuppressWarnings("SameReturnValue")
 	@Path("/version")
 	@GET
 	@Produces(MediaType.TEXT_PLAIN)

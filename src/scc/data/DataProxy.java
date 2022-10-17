@@ -1,5 +1,6 @@
 package scc.data;
 
+import jakarta.ws.rs.ServiceUnavailableException;
 import redis.clients.jedis.JedisPool;
 import scc.data.layers.CosmosDBLayer;
 import scc.data.layers.RedisCacheLayer;
@@ -131,5 +132,18 @@ public class DataProxy {
                 .stream()
                 .map(QuestionDAO::toQuestion)
                 .collect(Collectors.toList());
+    }
+
+    public Optional<Question> createQuestion(String auctionId, Question question) {
+        return Optional.ofNullable(dbLayer.putQuestion(new QuestionDAO(auctionId, question)).getItem())
+                .map(QuestionDAO::toQuestion);
+    }
+
+    public Optional<Question> updateQuestion(String auctionId, String questionID, Question question) {
+        // TODO
+        question.setQuestionID(questionID);
+
+        return Optional.ofNullable(dbLayer.updateQuestion(new QuestionDAO(auctionId, question)).getItem())
+                .map(QuestionDAO::toQuestion);
     }
 }

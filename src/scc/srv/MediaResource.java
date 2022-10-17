@@ -20,7 +20,7 @@ import jakarta.ws.rs.core.MediaType;
 @Path("/media")
 public class MediaResource {
 
-	BlobContainerClient containerClient;
+	final BlobContainerClient containerClient;
 
 	{
 		try {

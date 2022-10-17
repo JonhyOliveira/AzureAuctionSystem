@@ -55,7 +55,7 @@ public class CosmosDBLayer {
 		
 	}
 	
-	private CosmosClient client;
+	private final CosmosClient client;
 	private CosmosDatabase db;
 	private CosmosContainer users;
 	private CosmosContainer auctions;
@@ -93,6 +93,7 @@ public class CosmosDBLayer {
 		return users.deleteItem(nickname, key, new CosmosItemRequestOptions());
 	}
 	
+	@SuppressWarnings("unused")
 	public CosmosItemResponse<Object> delUser(UserDAO user) {
 		init();
 		return users.deleteItem(user, new CosmosItemRequestOptions());
@@ -108,6 +109,7 @@ public class CosmosDBLayer {
 		return users.queryItems("SELECT * FROM users WHERE users.id=\"" + nickname + "\"", new CosmosQueryRequestOptions(), UserDAO.class);
 	}
 
+	@SuppressWarnings("unused")
 	public CosmosPagedIterable<UserDAO> getUsers() {
 		init();
 		return users.queryItems("SELECT * FROM users ", new CosmosQueryRequestOptions(), UserDAO.class);
@@ -160,8 +162,23 @@ public class CosmosDBLayer {
 		return questions.queryItems("SELECT * FROM questions WHERE questions.auctionID=\"" + auctionID + "\"", new CosmosQueryRequestOptions(), QuestionDAO.class);
 	}
 
+
+
+	@SuppressWarnings("unused")
 	public void close() {
 		client.close();
 	}
 
+	public CosmosItemResponse<QuestionDAO> putQuestion(QuestionDAO question)
+	{
+		init();
+		return questions.createItem(question);
+	}
+
+	public CosmosItemResponse<QuestionDAO> updateQuestion(QuestionDAO question)
+	{
+		init();
+		PartitionKey key = new PartitionKey(question.getId());
+		return users.replaceItem(question, question.getId(), key, new CosmosItemRequestOptions());
+	}
 }

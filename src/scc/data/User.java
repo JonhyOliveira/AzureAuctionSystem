@@ -7,12 +7,13 @@ import java.util.Objects;
 /**
  * Represents a User, as returned to the clients
  */
-public class User implements Cloneable {
+public class User {
 	private String nickname;
 	private String name;
 	private String pwd;
 	private String photoId;
 
+	@SuppressWarnings("unused")
 	public User() {}
 
 	public User(String nickname, String name, String pwd, String photoId) {
@@ -31,6 +32,7 @@ public class User implements Cloneable {
 	public String name() {
 		return name;
 	}
+	@SuppressWarnings("unused")
 	public void setName(String name) {
 		this.name = name;
 	}
@@ -43,13 +45,14 @@ public class User implements Cloneable {
 	public String photoId() {
 		return photoId;
 	}
+	@SuppressWarnings("unused")
 	public void setPhotoId(String photoId) {
 		this.photoId = photoId;
 	}
 
 	public User censored()
 	{
-		User censored = this.clone();
+		User censored = this.copy();
 
 		censored.pwd = "?";
 
@@ -57,7 +60,7 @@ public class User implements Cloneable {
 	}
 
 	public User hashPwd() {
-		User hashed = this.clone();
+		User hashed = this.copy();
 
 		hashed.pwd = Hash.of(this.pwd);
 
@@ -65,7 +68,7 @@ public class User implements Cloneable {
 	}
 	public User patch(User user)
 	{
-		User patched = this.clone();
+		User patched = this.copy();
 
 		if (Objects.nonNull(user))
 		{
@@ -80,8 +83,7 @@ public class User implements Cloneable {
 		return patched;
 	}
 
-	@Override
-	protected User clone() {
+	protected User copy() {
 		return new User(this.nickname, this.name, this.pwd, this.photoId);
 	}
 
