@@ -89,7 +89,8 @@ public class AuctionResource {
     {
         // TODO validate auction, and if the pwd provided corresponds
         //  to the auction owner, see method validateAuction
-
+        validateAuction(auctionId, pwd);
+        
         return dataProxy.createQuestion(auctionId, question).orElse(null);
     }
 
@@ -101,7 +102,7 @@ public class AuctionResource {
     {
         // TODO validate auction, and if the pwd provided corresponds
         //  to the auction owner, see method validateAuction
-
+        //validate 
         Question prevQuestion = null;
 
         Question newQuestion = question; // prevQuestion.patch(question);
