@@ -83,7 +83,7 @@ public class User {
 		return patched;
 	}
 
-	protected User copy() {
+	public User copy() {
 		return new User(this.nickname, this.name, this.pwd, this.photoId);
 	}
 

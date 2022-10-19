@@ -130,7 +130,7 @@ public class Auction {
         return Optional.of(patching);
     }
 
-    protected Auction copy() {
+    public Auction copy() {
         return new Auction(this.auctionID, this.title, this.description, this.thumbnailId, this.ownerNickname,
                 this.endTime, this.minPrice, this.isClosed);
     }
