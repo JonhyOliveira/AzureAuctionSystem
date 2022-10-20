@@ -86,8 +86,8 @@ public class CosmosDBLayer {
 	public CosmosItemResponse<UserDAO> updateUser(UserDAO newUser)
 	{
 		init();
-		PartitionKey key = new PartitionKey(newUser.getId());
-		return users.replaceItem(newUser, newUser.getId(), key, new CosmosItemRequestOptions());
+		PartitionKey key = new PartitionKey(newUser.getNickname());
+		return users.replaceItem(newUser, newUser.getNickname(), key, new CosmosItemRequestOptions());
 	}
 
 	public CosmosItemResponse<Object> delUserByNick(String nickname) {
