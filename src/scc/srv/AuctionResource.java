@@ -86,12 +86,23 @@ public class AuctionResource {
     @Consumes(MediaType.APPLICATION_JSON)
     public Question submitQuestion(Question question, @PathParam("auction_id") String auctionId,
                                @HeaderParam("Authorization") String pwd)
+<<<<<<< Updated upstream
     {
         // TODO validate auction, and if the pwd provided corresponds
         //  to the auction owner, see method validateAuction
         validateAuction(auctionId, pwd);
         
         return dataProxy.createQuestion(auctionId, question).orElse(null);
+=======
+    {   
+        //validate the auction (não sei se aqui se usaria o metodo login)
+        validateAuction(auctionId, null);
+        login(question.getQuestioner(), pwd);
+        Question nQuestion = question.copy();
+        nQuestion.setAnswer(null);
+
+        return dataProxy.createQuestion(auctionId, nQuestion).orElse(null);
+>>>>>>> Stashed changes
     }
 
     @PUT
@@ -100,6 +111,7 @@ public class AuctionResource {
     public Question submitReply(Question question, @PathParam("auction_id") String auctionId,
                             @HeaderParam("Authorization") String pwd)
     {
+<<<<<<< Updated upstream
         // TODO validate auction, and if the pwd provided corresponds
         //  to the auction owner, see method validateAuction
         //validate 
@@ -108,13 +120,25 @@ public class AuctionResource {
         Question newQuestion = question; // prevQuestion.patch(question);
 
         return dataProxy.updateQuestion(auctionId, question.getQuestionID(), newQuestion).orElse(null);
+=======
+        validateAuction(auctionId, pwd);
+        
+        Question realQuestion = dataProxy.getQuestion(question.getQuestionID()).orElse(null);
+        
+        if (realQuestion == null)
+            throw new NotFoundException("Question not found");
+
+        return dataProxy.updateQuestion(auctionId, question.getQuestionID(), realQuestion).orElse(null);
+>>>>>>> Stashed changes
     }
 
     @GET
     @Path("/user/{nickname}")
     @Produces(MediaType.APPLICATION_JSON)
     public List<Auction> showUserAuctions(@PathParam("nickname") String nickname)
-    {
+    {   
+        //validate the user
+        //Return the auctions with the nickname if exists
         throw new NotSupportedException();
     }
 
@@ -123,6 +147,7 @@ public class AuctionResource {
     @Produces(MediaType.APPLICATION_JSON)
     public List<Auction> showAuctionsAboutToClose()
     {
+        
         throw new NotSupportedException();
     }
 

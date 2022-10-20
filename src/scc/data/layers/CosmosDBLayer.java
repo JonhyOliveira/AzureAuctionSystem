@@ -3,6 +3,8 @@ package scc.data.layers;
 import com.azure.cosmos.*;
 import com.azure.cosmos.models.*;
 import com.azure.cosmos.util.CosmosPagedIterable;
+
+import scc.data.User;
 import scc.data.models.AuctionDAO;
 import scc.data.models.BidDAO;
 import scc.data.models.QuestionDAO;
@@ -10,6 +12,7 @@ import scc.data.models.UserDAO;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Optional;
 import java.util.Properties;
 
 public class CosmosDBLayer {
@@ -180,5 +183,10 @@ public class CosmosDBLayer {
 		init();
 		PartitionKey key = new PartitionKey(question.getId());
 		return users.replaceItem(question, question.getId(), key, new CosmosItemRequestOptions());
+	}
+
+	public CosmosPagedIterable<QuestionDAO> getQuestionByID(String questionId) {
+		init();
+		return questions.queryItems("SELECT * FROM questions WHERE questions.id=\"" + questionId + "\"", new CosmosQueryRequestOptions(), QuestionDAO.class);
 	}
 }

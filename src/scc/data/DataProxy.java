@@ -139,10 +139,18 @@ public class DataProxy {
                 .map(QuestionDAO::toQuestion);
     }
 
+    public Optional<Question> getQuestion(String questionId) {
+        return dbLayer.getQuestionByID(questionId)
+                .stream()
+                .findFirst()
+                .map(QuestionDAO::toQuestion);
+    }
+
     public Optional<Question> updateQuestion(String auctionId, String questionID, Question question) {
         question.setQuestionID(questionID);
 
         return Optional.ofNullable(dbLayer.updateQuestion(new QuestionDAO(auctionId, question)).getItem())
                 .map(QuestionDAO::toQuestion);
     }
+    
 }

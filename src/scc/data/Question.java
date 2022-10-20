@@ -12,11 +12,12 @@ public class Question {
     @SuppressWarnings("unused")
     public Question(){}
 
-    public Question(String questionID, String questioner, String text){
+    public Question(String questionID, String questioner, String text, String answer) {
         super();
         this.questionID = questionID;
         this.questioner = questioner;
         this.text = text;
+        this.answer = answer;
     }
 
     public Question patch(Question otherQuestion)
@@ -68,7 +69,7 @@ public class Question {
         this.answer = answer;
     }
 
-    protected Question copy() {
-        return new Question(this.questionID, this.questioner, this.answer);
+    public Question copy() {
+        return new Question(this.questionID, this.questioner, this.answer, this.answer);
     }
 }
