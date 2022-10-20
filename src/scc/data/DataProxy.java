@@ -1,5 +1,7 @@
 package scc.data;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.ws.rs.ServiceUnavailableException;
 import redis.clients.jedis.JedisPool;
 import scc.data.layers.CosmosDBLayer;
@@ -10,6 +12,7 @@ import scc.data.models.QuestionDAO;
 import scc.data.models.UserDAO;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -17,6 +20,8 @@ public class DataProxy {
 
     private static final CosmosDBLayer dbLayer = CosmosDBLayer.getInstance();
     private static final JedisPool jedisPool = RedisCacheLayer.getCachePool();
+    private static final ObjectMapper mapper = new ObjectMapper();
+    private static final long DEFAULT_EXPIRATION = 3600;  //  TIME FOR AN OBJECT TO EXPIRE FROM CACHE
 
     private static DataProxy instance;
 
@@ -33,7 +38,15 @@ public class DataProxy {
      */
     public Optional<User> createUser(User user)
     {
-        return Optional.ofNullable(dbLayer.putUser(new UserDAO(user)).getItem())
+        UserDAO u = dbLayer.putUser(new UserDAO(user)).getItem();
+
+        try{
+            jedisPool.getResource().setex("user:"+u.getNickname(), DEFAULT_EXPIRATION ,mapper.writeValueAsString(u));
+        } catch (JsonProcessingException ignored){
+            //TODO DAR HANDLING DA EXCEPTION
+        }
+
+        return Optional.ofNullable(u)
                 .map(UserDAO::toUser);
     }
 
@@ -46,7 +59,15 @@ public class DataProxy {
     public Optional<User> updateUserInfo(String nickname, User newUser)
     {
         newUser.setNickname(nickname);
-        return Optional.ofNullable(dbLayer.updateUser(new UserDAO(newUser.hashPwd())).getItem())
+        UserDAO u = dbLayer.updateUser(new UserDAO(newUser.hashPwd())).getItem();
+
+        try{
+            jedisPool.getResource().setex("user:"+u.getNickname(), DEFAULT_EXPIRATION ,mapper.writeValueAsString(u));
+        } catch (JsonProcessingException ignored){
+            //TODO DAR HANDLING DA EXCEPTION
+        }
+
+        return Optional.ofNullable(u)
                 .map(UserDAO::toUser);
     }
 
@@ -55,6 +76,18 @@ public class DataProxy {
      */
     public Optional<User> getUser(String nickname)
     {
+        UserDAO userObject = null;
+
+        try{
+            String user = jedisPool.getResource().get("user:" + nickname);
+            userObject = mapper.readValue(user, UserDAO.class);
+        } catch (JsonProcessingException ignored){
+            //TODO DAR HANDLING DA EXCEPTION
+        }
+
+        if(Objects.nonNull(userObject))    //Verify if exists in cache
+            return Optional.of(userObject).map(UserDAO::toUser);
+
         return dbLayer.getUserByNick(nickname)
                 .stream()
                 .findFirst()
@@ -67,6 +100,8 @@ public class DataProxy {
      */
     public void deleteUser(String nickname)
     {
+        jedisPool.getResource().del("user:"+nickname);
+
         dbLayer.delUserByNick(nickname);
     }
 
