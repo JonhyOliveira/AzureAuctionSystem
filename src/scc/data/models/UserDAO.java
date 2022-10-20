@@ -7,7 +7,7 @@ import scc.data.User;
  */
 public final class UserDAO extends DAO {
 
-	private String id;
+	private String nickname;
 	private String name;
 	private String pwd;
 	private String photoId;
@@ -18,20 +18,20 @@ public final class UserDAO extends DAO {
 	public UserDAO( User u) {
 		this(u.getNickname(), u.getName(), u.getPwd(), u.getPhotoId());
 	}
-	public UserDAO(String id	, String name, String pwd, String photoId) {
+	public UserDAO(String nickname, String name, String pwd, String photoId) {
 		super();
-		this.id = id;
+		this.nickname = nickname;
 		this.name = name;
 		this.pwd = pwd;
 		this.photoId = photoId;
 	}
 
-	public String getId() {
-		return id;
+	public String getNickname() {
+		return nickname;
 	}
 	@SuppressWarnings("unused")
-    public void setId(String id) {
-		this.id = id;
+    public void setNickname(String id) {
+		this.nickname = nickname;
 	}
 	@SuppressWarnings("unused")
     public String getName() {
@@ -75,12 +75,12 @@ public final class UserDAO extends DAO {
 		this._ts = _ts;
 	}
 	public User toUser() {
-		return new User(id, name, pwd, photoId);
+		return new User(nickname, name, pwd, photoId);
 	}
 
 	@Override
 	public String toString() {
-		return "UserDAO [_rid=" + _rid + ", _ts=" + _ts + ", id=" + id + ", name=" + name + ", pwd=" + pwd
+		return "UserDAO [_rid=" + _rid + ", _ts=" + _ts + ", id=" + nickname + ", name=" + name + ", pwd=" + pwd
 				+ ", photoId=" + photoId + " ]";
 	}
 
