@@ -86,14 +86,6 @@ public class AuctionResource {
     @Consumes(MediaType.APPLICATION_JSON)
     public Question submitQuestion(Question question, @PathParam("auction_id") String auctionId,
                                @HeaderParam("Authorization") String pwd)
-<<<<<<< Updated upstream
-    {
-        // TODO validate auction, and if the pwd provided corresponds
-        //  to the auction owner, see method validateAuction
-        validateAuction(auctionId, pwd);
-        
-        return dataProxy.createQuestion(auctionId, question).orElse(null);
-=======
     {   
         //validate the auction (não sei se aqui se usaria o metodo login)
         validateAuction(auctionId, null);
@@ -102,7 +94,6 @@ public class AuctionResource {
         nQuestion.setAnswer(null);
 
         return dataProxy.createQuestion(auctionId, nQuestion).orElse(null);
->>>>>>> Stashed changes
     }
 
     @PUT
@@ -111,16 +102,6 @@ public class AuctionResource {
     public Question submitReply(Question question, @PathParam("auction_id") String auctionId,
                             @HeaderParam("Authorization") String pwd)
     {
-<<<<<<< Updated upstream
-        // TODO validate auction, and if the pwd provided corresponds
-        //  to the auction owner, see method validateAuction
-        //validate 
-        Question prevQuestion = null;
-
-        Question newQuestion = question; // prevQuestion.patch(question);
-
-        return dataProxy.updateQuestion(auctionId, question.getQuestionID(), newQuestion).orElse(null);
-=======
         validateAuction(auctionId, pwd);
         
         Question realQuestion = dataProxy.getQuestion(question.getQuestionID()).orElse(null);
@@ -129,7 +110,6 @@ public class AuctionResource {
             throw new NotFoundException("Question not found");
 
         return dataProxy.updateQuestion(auctionId, question.getQuestionID(), realQuestion).orElse(null);
->>>>>>> Stashed changes
     }
 
     @GET
