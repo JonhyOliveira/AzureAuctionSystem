@@ -16,7 +16,7 @@ public final class UserDAO extends DAO {
 	public UserDAO() {
 	}
 	public UserDAO( User u) {
-		this(u.nickname(), u.name(), u.pwd(), u.photoId());
+		this(u.getNickname(), u.getName(), u.getPwd(), u.getPhotoId());
 	}
 	public UserDAO(String id	, String name, String pwd, String photoId) {
 		super();

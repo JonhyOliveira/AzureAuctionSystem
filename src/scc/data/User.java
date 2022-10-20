@@ -23,26 +23,26 @@ public class User {
 		this.pwd = pwd;
 		this.photoId = photoId;
 	}
-	public String nickname() {
+	public String getNickname() {
 		return nickname;
 	}
 	public void setNickname(String nickname) {
 		this.nickname = nickname;
 	}
-	public String name() {
+	public String getName() {
 		return name;
 	}
 	@SuppressWarnings("unused")
 	public void setName(String name) {
 		this.name = name;
 	}
-	public String pwd() {
+	public String getPwd() {
 		return pwd;
 	}
 	public void setPwd(String pwd) {
 		this.pwd = pwd;
 	}
-	public String photoId() {
+	public String getPhotoId() {
 		return photoId;
 	}
 	@SuppressWarnings("unused")
@@ -50,6 +50,9 @@ public class User {
 		this.photoId = photoId;
 	}
 
+	/**
+	 * @return a new object witch is a copy of this user with its password censored
+	 */
 	public User censored()
 	{
 		User censored = this.copy();
@@ -59,6 +62,9 @@ public class User {
 		return censored;
 	}
 
+	/**
+	 * @return a new object witch is a copy of this user with its password hashed
+	 */
 	public User hashPwd() {
 		User hashed = this.copy();
 
@@ -66,6 +72,8 @@ public class User {
 
 		return hashed;
 	}
+
+
 	public User patch(User user)
 	{
 		User patched = this.copy();
@@ -83,6 +91,9 @@ public class User {
 		return patched;
 	}
 
+	/**
+	 * @return a new object witch is a copy of this user
+	 */
 	public User copy() {
 		return new User(this.nickname, this.name, this.pwd, this.photoId);
 	}

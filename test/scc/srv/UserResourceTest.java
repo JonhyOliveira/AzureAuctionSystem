@@ -38,7 +38,7 @@ class UserResourceTest {
     void delete() {
         User u = new User("joao_1" + id, "Joao Pedro", id, "1:" + id);
 
-        Executable deleteUser = () -> resource.delete(u.nickname(), u.pwd());
+        Executable deleteUser = () -> resource.delete(u.getNickname(), u.getPwd());
 
         assertThrows(NotFoundException.class, deleteUser);
 
@@ -54,7 +54,7 @@ class UserResourceTest {
         User u2 = new User("joao_2" + id2, "Joao Pedor", id2, "2:" + id2);
 
         resource.create(new UserDAO(u).toUser());
-        User uGot = resource.update(u.nickname(), id, u2);
+        User uGot = resource.update(u.getNickname(), id, u2);
         User uExpected = u.patch(u2);
 
         assertEquals(uExpected.censored(), uGot.censored());

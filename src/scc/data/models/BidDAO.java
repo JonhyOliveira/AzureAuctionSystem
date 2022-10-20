@@ -13,7 +13,7 @@ public final class BidDAO extends DAO {
 
     public BidDAO(String auctionID, Bid bid)
     {
-        this(auctionID, bid.bidderNickname(), bid.amount());
+        this(auctionID, bid.getBidder(), bid.getAmount());
     }
 
     public BidDAO(String auctionID, String bidder, Double amount) {

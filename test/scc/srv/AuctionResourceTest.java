@@ -3,13 +3,10 @@ package scc.srv;
 import jakarta.ws.rs.NotAuthorizedException;
 import jakarta.ws.rs.NotFoundException;
 import org.apache.commons.lang3.NotImplementedException;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import scc.data.Auction;
 import scc.data.User;
 
-import java.time.temporal.TemporalUnit;
 import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -39,19 +36,19 @@ class AuctionResourceTest {
         userResource.create(auction_owner.copy());
 
         Auction auction = new Auction(null, "Ford Focus 2016", "In great condition",
-                "0:"+id, auction_owner.nickname(), new Date().toInstant().plusSeconds(160L).toEpochMilli(),
+                "0:"+id, auction_owner.getNickname(), new Date().toInstant().plusSeconds(160L).toEpochMilli(),
                 100, false);
 
-        assertThrows(NotAuthorizedException.class, () -> resource.create(auction.copy(), auction_owner.pwd() + "x"));
+        assertThrows(NotAuthorizedException.class, () -> resource.create(auction.copy(), auction_owner.getPwd() + "x"));
 
         assertThrows(NotFoundException.class, () ->
         {
             Auction details = auction.copy();
             details.setOwnerNickname("p");
-            resource.create(details, auction_owner.pwd());
+            resource.create(details, auction_owner.getPwd());
         });
 
-        Auction created = resource.create(auction.copy(), auction_owner.pwd());
+        Auction created = resource.create(auction.copy(), auction_owner.getPwd());
 
         assertNotNull(created.auctionID());
     }
@@ -63,12 +60,12 @@ class AuctionResourceTest {
         userResource.create(auction_owner.copy());
 
         Auction auction = resource.create(new Auction(null, "Ford Focus 2016", "In great condition",
-                "0:"+id, auction_owner.nickname(), new Date().toInstant().plusSeconds(160L).toEpochMilli(),
-                100, false).copy(), auction_owner.pwd());
+                "0:"+id, auction_owner.getNickname(), new Date().toInstant().plusSeconds(160L).toEpochMilli(),
+                100, false).copy(), auction_owner.getPwd());
 
         assertThrows(NotAuthorizedException.class, () -> {
            Auction auc = auction.copy();
-           resource.update(auc.copy(), auc.auctionID(), auction_owner.pwd() + "x");
+           resource.update(auc.copy(), auc.auctionID(), auction_owner.getPwd() + "x");
         });
     }
 

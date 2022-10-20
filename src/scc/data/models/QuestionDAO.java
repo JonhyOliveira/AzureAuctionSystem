@@ -26,7 +26,7 @@ public class QuestionDAO extends DAO{
     }
 
     public Question toQuestion(){
-        return new Question(id, questioner, question);
+        return new Question(id, questioner, question, answer);
     }
 
     @SuppressWarnings("UnusedDeclaration")

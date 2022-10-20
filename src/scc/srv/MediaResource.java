@@ -20,7 +20,7 @@ import jakarta.ws.rs.core.MediaType;
 @Path("/media")
 public class MediaResource {
 
-	final BlobContainerClient containerClient;
+	private final BlobContainerClient containerClient;
 
 	{
 		try {
@@ -42,7 +42,8 @@ public class MediaResource {
 	public MediaResource() {}
 
 	/**
-	 * Post a new image.The id of the image is its hash.
+	 * Post a new file
+	 * @return the id of the posted file
 	 */
 	@POST
 	@Path("/")
@@ -51,15 +52,15 @@ public class MediaResource {
 	public String upload(byte[] contents) {
 		String key = Hash.of(contents);
 		BlobClient blob = containerClient.getBlobClient(key);
-		if (blob.exists())
-			throw new ForbiddenException("Can't overwrite file '%s'.".formatted(key));
-		blob.upload(BinaryData.fromBytes(contents));
+		if (!blob.exists())
+			blob.upload(BinaryData.fromBytes(contents));
 		return key;
 	}
 
 	/**
-	 * Return the contents of an image. Throw an appropriate error message if
-	 * id does not exist.
+	 * Returns the contents of a file
+	 * @param id the file id
+	 * @throws NotFoundException if there is no file with the given id
 	 */
 	@GET
 	@Path("/{id}")
@@ -74,7 +75,8 @@ public class MediaResource {
 	private static final String FILE_LIST_FMT = String.format("file id: %%-%ds - %%d bytes long", Hash.HASH_LENGTH);
 
 	/**
-	 * Lists the ids of images stored.
+	 * Lists the ids of files stored.
+	 * @return list of stored files ids
 	 */
 	@GET
 	@Path("/")

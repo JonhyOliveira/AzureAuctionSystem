@@ -22,7 +22,7 @@ public class MainApplication extends Application
 		return resources;
 	}
 
-	@SuppressWarnings({"deprecation"})
+	@SuppressWarnings("deprecation")
 	@Override
 	public Set<Object> getSingletons() {
 		return singletons;

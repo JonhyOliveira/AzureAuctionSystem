@@ -17,18 +17,24 @@ public class UserResource {
 
     public UserResource() {}
 
+    /**
+     * Creates a new user
+     * @param user the user information
+     * @return the created user
+     * @throws ForbiddenException if the
+     */
     @POST
     @Path("/")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public User create(User user)
+    public User create(User user) throws ForbiddenException
     {
         validateUserFields(user, true);
 
-        if (dataProxy.getUser(user.nickname()).isPresent())
+        if (dataProxy.getUser(user.getNickname()).isPresent())
             throw new ForbiddenException("User already exists");
 
-        user.setPwd(Hash.of(user.pwd()));
+        user.setPwd(Hash.of(user.getPwd()));
 
         return dataProxy.createUser(user)
                 .map(User::censored)
@@ -36,6 +42,11 @@ public class UserResource {
 
     }
 
+    /**
+     * Deletes a user
+     * @param nickname the user nickname
+     * @param password the user password
+     */
     @DELETE
     @Path("/{nickname}")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -49,12 +60,19 @@ public class UserResource {
         if (o.isEmpty())
             throw new NotFoundException("User not found");
 
-        if (! o.get().pwd().equals(Hash.of(password)))
+        if (! o.get().getPwd().equals(Hash.of(password)))
             throw new NotAuthorizedException("Password Incorrect");
 
         dataProxy.deleteUser(nickname);
     }
 
+    /**
+     * Patches the details of a user
+     * @param nickname the user nickname
+     * @param password the user password
+     * @param newUser the user details to patch with
+     * @return the updated user
+     */
     @PATCH
     @Path("/{nickname}")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -66,23 +84,22 @@ public class UserResource {
 
         validateUserFields(newUser, false);
 
-        Optional<User> o = dataProxy.getUser(nickname);
+        User prevUserDetails = login(nickname, password);
 
-        if (o.isEmpty())
-            throw new NotFoundException("User not found");
-
-        if (! o.get().pwd().equals(Hash.of(password)))
-            throw new NotAuthorizedException("Password Incorrect.");
-
-        return dataProxy.updateUserInfo(nickname, o.get().patch(newUser))
+        return dataProxy.updateUserInfo(nickname, prevUserDetails.patch(newUser))
                 .map(User::censored)
                 .orElse(null);
     }
 
+    /**
+     * @param nickname the user nickname
+     * @return the details of the user with the given nickname
+     * @throws NotFoundException if the user is not found
+     */
     @GET
     @Path("/{nickname}")
     @Produces(MediaType.APPLICATION_JSON)
-    public User getUser(@PathParam("nickname") String nickname)
+    public User getUser(@PathParam("nickname") String nickname) throws NotFoundException
     {
         Optional<User> userOptional = dataProxy.getUser(nickname);
 
@@ -93,8 +110,10 @@ public class UserResource {
     }
 
     /**
-     * Validates user fields
-     * @throws WebApplicationException if a field contains an invalid
+     * Validates user details
+     * @param user the user details
+     * @param requireNonNull whether there can be null fields
+     * @throws WebApplicationException if a field contains an invalid value
      */
     void validateUserFields(User user, boolean requireNonNull) throws WebApplicationException
     {
@@ -103,16 +122,35 @@ public class UserResource {
         if (Objects.isNull(user))
             error_message = "User can not be null";
         else {
-            if (Objects.requireNonNullElse(user.pwd(), requireNonNull ? "" : "a").isBlank())
+            if (Objects.requireNonNullElse(user.getPwd(), requireNonNull ? "" : "a").isBlank())
                 error_message = "Password can not be blank.";
-            if (Objects.requireNonNullElse(user.name(), requireNonNull ? "" : "a").isBlank())
+            if (Objects.requireNonNullElse(user.getName(), requireNonNull ? "" : "a").isBlank())
                 error_message = "Name can not be blank.";
-            if (Objects.requireNonNullElse(user.nickname(), requireNonNull ? "" : "a").isBlank())
+            if (Objects.requireNonNullElse(user.getNickname(), requireNonNull ? "" : "a").isBlank())
                 error_message = "Nickname can not be blank.";
         }
 
         if (Objects.nonNull(error_message))
-            throw new WebApplicationException(Response.status(Response.Status.BAD_REQUEST.getStatusCode(), error_message).build());
+            throw new BadRequestException(error_message);
+    }
+
+    /**
+     * Logs in an user
+     * @param nickname the user nickname
+     * @param password the user password
+     * @return the user details
+     */
+    User login(String nickname, String password)
+    {
+        Optional<User> o = dataProxy.getUser(nickname);
+
+        if (o.isEmpty())
+            throw new NotFoundException("User not found");
+
+        if (! o.get().getPwd().equals(Hash.of(password)))
+            throw new NotAuthorizedException("Password Incorrect.");
+
+        return o.get();
     }
 
 }

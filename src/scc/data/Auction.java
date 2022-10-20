@@ -39,53 +39,53 @@ public class Auction {
         this.auctionID = auction_id;
     }
 
-    public String title() {
+    public String getTitle() {
         return title;
     }
     @SuppressWarnings("unused")
     public void setTitle(String title) {
         this.title = title;
     }
-    public String description() {
+    public String getDescription() {
         return description;
     }
     @SuppressWarnings("unused")
     public void setDescription(String desc) {
         this.description = desc;
     }
-    public String photoId() {
+    public String getPhotoId() {
         return thumbnailId;
     }
     @SuppressWarnings("unused")
     public void setThumbnailId(String thumbnailId) {
         this.thumbnailId = thumbnailId;
     }
-    public String ownerNickname() {
+    public String getOwnerNickname() {
         return ownerNickname;
     }
     @SuppressWarnings("unused")
     public void setOwnerNickname(String ownerNickname) {
         this.ownerNickname = ownerNickname;
     }
-    public long endTime() {
+    public long getEndTime() {
         return endTime;
     }
     @SuppressWarnings("unused")
     public void setEndTime(long endTime) {
         this.endTime = endTime;
     }
-    public float minPrice() {
+    public float getMinPrice() {
         return minPrice;
     }
     @SuppressWarnings("unused")
     public void setMinPrice(float minPrice) {
         this.minPrice = minPrice;
     }
-    public boolean isClosed() {
+    public boolean getIsClosed() {
         return isClosed;
     }
     @SuppressWarnings("unused")
-    public void setClosed(boolean state) {
+    public void setIsClosed(boolean state) {
         this.isClosed = state;
     }
 

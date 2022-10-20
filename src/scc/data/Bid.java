@@ -1,22 +1,58 @@
 package scc.data;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import reactor.core.publisher.Mono;
+
 import java.util.Objects;
+import java.util.UUID;
 
 public final class Bid {
-    private final String bidder;
-    private final Double amount;
+    private String bidder;
+    private Double amount;
+
+    public Bid() {}
 
     public Bid(String bidder, Double amount) {
         this.bidder = bidder;
         this.amount = amount;
     }
 
-    public String bidderNickname() {
+    /**
+     * @return a new object witch is a copy of this bid
+     */
+    public Bid copy()
+    {
+        return new Bid(this.bidder, this.amount);
+    }
+
+    /**
+     * @return the bidder nickname
+     */
+    @JsonProperty("bidder_nickname")
+    public String getBidder() {
         return bidder;
     }
 
-    public Double amount() {
+    /**
+     * @return the amount in this bid
+     */
+    @JsonProperty(value = "bid_amount")
+    public Double getAmount() {
         return amount;
+    }
+
+    /**
+     * sets the bidder nickname
+     */
+    public void setBidder(String bidder) {
+        this.bidder = bidder;
+    }
+
+    /**
+     * sets the amount on this bid
+     */
+    public void setAmount(Double amount) {
+        this.amount = amount;
     }
 
     @Override

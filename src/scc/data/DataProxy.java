@@ -61,6 +61,10 @@ public class DataProxy {
                 .map(UserDAO::toUser);
     }
 
+    /**
+     * Deletes a user
+     * @param nickname the user nickname
+     */
     public void deleteUser(String nickname)
     {
         dbLayer.delUserByNick(nickname);
@@ -102,11 +106,20 @@ public class DataProxy {
                 .map(AuctionDAO::toAuction);
     }
 
+    /**
+     * Deletes an auction
+     * @param auctionID the id of the auction
+     */
     public void deleteAuction(String auctionID)
     {
         dbLayer.delAuctionByID(auctionID);
     }
 
+    /**
+     * Gets the bids of an auction
+     * @param auctionID the id of the auction
+     * @return a list of bids
+     */
     public List<Bid> getAuctionBids(String auctionID) {
         return dbLayer.getBidsByAuctionID(auctionID)
                 .stream()
@@ -114,6 +127,11 @@ public class DataProxy {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Returns the higest bid in an auction
+     * @param auctionID the id of the auction
+     * @return the highest bid
+     */
     public Optional<Bid> getHighestBid(String auctionID) {
         return dbLayer.getTopBidsByAuctionID(auctionID, 1L)
                 .stream()
@@ -121,12 +139,23 @@ public class DataProxy {
                 .findFirst();
     }
 
+    /**
+     * Executes a bid under an auction
+     * @param auctionId the id of auction to put the bid under
+     * @param bid the bid details
+     * @return the created bid
+     */
     public Optional<Bid> executeBid(String auctionId, Bid bid)
     {
         return Optional.ofNullable(dbLayer.putBid(new BidDAO(auctionId, bid)).getItem())
                 .map(BidDAO::toBid);
     }
 
+    /**
+     * Show the list of questions under an auction
+     * @param auctionID the id of the auction
+     * @return the list of question under the auction
+     */
     public List<Question> getAuctionQuestions(String auctionID){
         return dbLayer.getQuestionsByAuctionID(auctionID)
                 .stream()
@@ -134,11 +163,21 @@ public class DataProxy {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Creates a question under an auction
+     * @param auctionId the id of the auction
+     * @param question the question details
+     * @return the details of the created question
+     */
     public Optional<Question> createQuestion(String auctionId, Question question) {
         return Optional.ofNullable(dbLayer.putQuestion(new QuestionDAO(auctionId, question)).getItem())
                 .map(QuestionDAO::toQuestion);
     }
 
+    /**
+     * @param questionId the id of the question
+     * @return the question with the given id
+     */
     public Optional<Question> getQuestion(String questionId) {
         return dbLayer.getQuestionByID(questionId)
                 .stream()
@@ -146,6 +185,13 @@ public class DataProxy {
                 .map(QuestionDAO::toQuestion);
     }
 
+    /**
+     * Updates a question under an auction
+     * @param auctionId the id of the auction the question is under
+     * @param questionID the id of the question
+     * @param question the new question details
+     * @return the updated question
+     */
     public Optional<Question> updateQuestion(String auctionId, String questionID, Question question) {
         question.setQuestionID(questionID);
 
