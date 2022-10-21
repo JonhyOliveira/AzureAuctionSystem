@@ -233,5 +233,28 @@ public class DataProxy {
         return Optional.ofNullable(dbLayer.updateQuestion(new QuestionDAO(auctionId, question)).getItem())
                 .map(QuestionDAO::toQuestion);
     }
+
+    /**
+     * Gets auctions of a user
+     * @param nickname nickname of the owner of the auctions
+     * @return list of user's auctions
+     */
+    public List<Auction> getAuctionsByUser(String nickname){
+        return dbLayer.getAuctionsByUser(nickname)
+                .stream()
+                .map(AuctionDAO::toAuction)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Gets auctions about to be closed
+     * @return list of auctions which are less or equal to 5 minutes away of getting closed
+     */
+    public List<Auction> getClosingAuctions(){
+        return dbLayer.getClosingAuctions()
+                .stream()
+                .map(AuctionDAO::toAuction)
+                .collect(Collectors.toList());
+    }
     
 }

@@ -4,6 +4,7 @@ import com.azure.cosmos.*;
 import com.azure.cosmos.models.*;
 import com.azure.cosmos.util.CosmosPagedIterable;
 
+import scc.data.Auction;
 import scc.data.User;
 import scc.data.models.AuctionDAO;
 import scc.data.models.BidDAO;
@@ -14,6 +15,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Optional;
 import java.util.Properties;
+import java.util.concurrent.CompletionService;
 
 public class CosmosDBLayer {
 
@@ -165,7 +167,15 @@ public class CosmosDBLayer {
 		return questions.queryItems("SELECT * FROM questions WHERE questions.auctionID=\"" + auctionID + "\"", new CosmosQueryRequestOptions(), QuestionDAO.class);
 	}
 
+	public CosmosPagedIterable<AuctionDAO> getAuctionsByUser(String nickname){
+		init();
+		return auctions.queryItems("SELECT * FROM auctions WHERE auctions.owner_nickname=\"" + nickname + "\"", new CosmosQueryRequestOptions(), AuctionDAO.class);
+	}
 
+	public CosmosPagedIterable<AuctionDAO> getClosingAuctions(){
+		init();
+		return auctions.queryItems("SELECT * FROM auctions WHERE ((auctions.endTime - MINUTE(now())) <= 5)\"", new CosmosQueryRequestOptions(), AuctionDAO.class);
+	}
 
 	@SuppressWarnings("unused")
 	public void close() {

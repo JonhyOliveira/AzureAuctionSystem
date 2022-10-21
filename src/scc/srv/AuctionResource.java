@@ -25,7 +25,9 @@ public class AuctionResource {
      * @throws BadRequestException if the auction already exists
      */
     @POST
+    @Path("/")
     @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     public Auction create(Auction auction, @HeaderParam("Authorization") String owner_pwd)
             throws BadRequestException, WebApplicationException
     {
@@ -177,9 +179,13 @@ public class AuctionResource {
     @Produces(MediaType.APPLICATION_JSON)
     public List<Auction> showUserAuctions(@PathParam("nickname") String nickname)
     {   
-        //validate the user
-        //Return the auctions with the nickname if exists
-        throw new NotSupportedException();
+        //Request to validate if user exists
+        Optional<User> u = dataProxy.getUser(nickname);
+
+        if(Objects.nonNull(u))
+            return dataProxy.getAuctionsByUser(nickname);
+
+        throw new NotFoundException("User not found");
     }
 
     /**
@@ -191,8 +197,7 @@ public class AuctionResource {
     @Produces(MediaType.APPLICATION_JSON)
     public List<Auction> showAuctionsAboutToClose()
     {
-        
-        throw new NotSupportedException();
+        return dataProxy.getClosingAuctions();
     }
 
     /**
