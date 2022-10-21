@@ -177,7 +177,7 @@ public class CosmosDBLayer {
 
 	public CosmosPagedIterable<AuctionDAO> getClosingAuctions(){
 		init();
-		return auctions.queryItems("SELECT * FROM auctions WHERE auctions.endTime <= now()", new CosmosQueryRequestOptions(), AuctionDAO.class);
+		return auctions.queryItems("SELECT * FROM auctions WHERE auctions.endTime <= GetCurrentTimestamp()", new CosmosQueryRequestOptions(), AuctionDAO.class);
 	}
 	
 	@SuppressWarnings("unused")
