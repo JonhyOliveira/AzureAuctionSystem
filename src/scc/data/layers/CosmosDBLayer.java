@@ -4,8 +4,6 @@ import com.azure.cosmos.*;
 import com.azure.cosmos.models.*;
 import com.azure.cosmos.util.CosmosPagedIterable;
 
-import scc.data.Auction;
-import scc.data.User;
 import scc.data.models.AuctionDAO;
 import scc.data.models.BidDAO;
 import scc.data.models.QuestionDAO;
@@ -13,9 +11,7 @@ import scc.data.models.UserDAO;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Optional;
 import java.util.Properties;
-import java.util.concurrent.CompletionService;
 
 public class CosmosDBLayer {
 
@@ -88,8 +84,8 @@ public class CosmosDBLayer {
 	public CosmosItemResponse<UserDAO> updateUser(UserDAO newUser)
 	{
 		init();
-		PartitionKey key = new PartitionKey(newUser.getNickname());
-		return users.replaceItem(newUser, newUser.getNickname(), key, new CosmosItemRequestOptions());
+		PartitionKey key = new PartitionKey(newUser.getId());
+		return users.replaceItem(newUser, newUser.getId(), key, new CosmosItemRequestOptions());
 	}
 
 	public CosmosItemResponse<Object> delUserByNick(String nickname) {
@@ -132,14 +128,16 @@ public class CosmosDBLayer {
 	public CosmosItemResponse<AuctionDAO> updateAuction(AuctionDAO auction)
 	{
 		init();
-		PartitionKey key = new PartitionKey(auction.auctionID());
-		return users.replaceItem(auction, auction.auctionID(), key, new CosmosItemRequestOptions());
+		System.out.println(auction.getId());
+		System.out.println(auction.getOwnerNickname());
+		PartitionKey key = new PartitionKey(auction.getOwnerNickname());
+		return auctions.replaceItem(auction, auction.getId(), key, new CosmosItemRequestOptions());
 	}
 
-	public CosmosItemResponse<Object> delAuctionByID(String auctionID)
+	public CosmosItemResponse<Object> delAuctionByID(String auctionID, String owner_nickname)
 	{
 		init();
-		PartitionKey key = new PartitionKey(auctionID);
+		PartitionKey key = new PartitionKey(owner_nickname);
 		return auctions.deleteItem(auctionID, key, new CosmosItemRequestOptions());
 	}
 

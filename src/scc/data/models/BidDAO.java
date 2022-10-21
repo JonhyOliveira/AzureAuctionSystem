@@ -1,5 +1,6 @@
 package scc.data.models;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import scc.data.Bid;
 
 import java.util.Objects;
@@ -34,6 +35,7 @@ public final class BidDAO extends DAO {
     }
 
     @SuppressWarnings("unused")
+    @JsonProperty("auction_id")
     public String getAuctionID() {
         return auctionID;
     }
@@ -44,6 +46,7 @@ public final class BidDAO extends DAO {
     }
 
     @SuppressWarnings("unused")
+    @JsonProperty("bidder_nickname")
     public String getBidderNickname() {
         return bidder;
     }

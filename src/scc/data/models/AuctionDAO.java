@@ -1,5 +1,6 @@
 package scc.data.models;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import scc.data.Auction;
 
 
@@ -33,13 +34,13 @@ public final class AuctionDAO extends DAO {
         this.isClosed = aucStatus;
     }
 
-    public String auctionID()
+    public String getId()
     {
         return auctionID;
     }
 
     @SuppressWarnings("unused")
-    public void setAuctionID(String auction_id) {
+    public void setId(String auction_id) {
         this.auctionID = auction_id;
     }
 
@@ -60,6 +61,7 @@ public final class AuctionDAO extends DAO {
         this.description = description;
     }
     @SuppressWarnings("unused")
+    @JsonProperty("thumbnail_id")
     public String getThumbnailID() {
         return thumbnailID;
     }
@@ -68,7 +70,8 @@ public final class AuctionDAO extends DAO {
         this.thumbnailID = thumbnailID;
     }
     @SuppressWarnings("unused")
-    public String ownerNickname() {
+    @JsonProperty("owner_nickname")
+    public String getOwnerNickname() {
         return owner_nickname;
     }
     @SuppressWarnings("unused")
@@ -76,6 +79,7 @@ public final class AuctionDAO extends DAO {
         this.owner_nickname = owner_nickname;
     }
     @SuppressWarnings("unused")
+    @JsonProperty("end_time")
     public long getEndTime() {
         return endTime;
     }
@@ -84,6 +88,7 @@ public final class AuctionDAO extends DAO {
         this.endTime = endTime;
     }
     @SuppressWarnings("unused")
+    @JsonProperty("min_price")
     public String getMinPrice() {
         return Float.toHexString(minPrice);
     }
@@ -92,6 +97,7 @@ public final class AuctionDAO extends DAO {
         this.minPrice = Float.valueOf(minPrice);
     }
     @SuppressWarnings("unused")
+    @JsonProperty("closed")
     public boolean isClosed() {
         return isClosed;
     }

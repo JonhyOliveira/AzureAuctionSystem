@@ -1,5 +1,6 @@
 package scc.srv;
 
+import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.NotAuthorizedException;
 import jakarta.ws.rs.NotFoundException;
 import org.apache.commons.lang3.NotImplementedException;
@@ -41,13 +42,14 @@ class AuctionResourceTest {
 
         assertThrows(NotAuthorizedException.class, () -> resource.create(auction.copy(), auction_owner.getPwd() + "x"));
 
-        assertThrows(NotFoundException.class, () ->
+        assertThrows(BadRequestException.class, () ->
         {
             Auction details = auction.copy();
             details.setOwnerNickname("p");
             resource.create(details, auction_owner.getPwd());
         });
 
+        System.out.println(auction);
         Auction created = resource.create(auction.copy(), auction_owner.getPwd());
 
         assertNotNull(created.auctionID());
@@ -63,9 +65,35 @@ class AuctionResourceTest {
                 "0:"+id, auction_owner.getNickname(), new Date().toInstant().plusSeconds(160L).toEpochMilli(),
                 100, false).copy(), auction_owner.getPwd());
 
-        assertThrows(NotAuthorizedException.class, () -> {
+        System.out.println(auction);
+
+        assertThrows(NotAuthorizedException.class, () -> { // wrong owner pwd
            Auction auc = auction.copy();
            resource.update(auc.copy(), auc.auctionID(), auction_owner.getPwd() + "x");
+        });
+
+
+        // close the auction
+        assertDoesNotThrow(() -> {
+            Auction auc = auction.copy();
+
+            auc.setTitle("Ola ola");
+            auc.setDescription("Testando");
+            auc.setEndTime(System.currentTimeMillis() + 100000);
+            auc.setIsClosed(true); // close auction
+
+            Auction aucGot = resource.update(auc.copy(), auc.auctionID(), auction_owner.getPwd());
+            Auction aucExpected = auction.copy().patch(auc).orElse(null);
+
+            assertEquals(aucExpected, aucGot);
+        });
+
+        // auction should be closed to changes
+        assertThrows(NotAuthorizedException.class, () -> {
+            Auction auc = auction.copy();
+            auc.setThumbnailId("ola");
+
+            resource.update(auc.copy(), auc.auctionID(), auction_owner.getPwd() + "x");
         });
     }
 
@@ -96,7 +124,7 @@ class AuctionResourceTest {
 
     @Test
     void showUserAuctions() {
-        throw new NotImplementedException();
+        User u1 = UserResourceTest.random();
     }
 
     @Test

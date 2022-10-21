@@ -9,6 +9,7 @@ import scc.utils.Hash;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 
 @Path("/auction")
 public class AuctionResource {
@@ -37,6 +38,8 @@ public class AuctionResource {
 
         if(dataProxy.getAuction(auction.auctionID()).isPresent())
             throw new BadRequestException("Auction already exists");
+
+        auction.setAuctionID(UUID.randomUUID().toString()); // generate random auction id
 
         return dataProxy.createAuction(auction).orElse(null);
 
@@ -239,7 +242,7 @@ public class AuctionResource {
 
         if (auctionOwner == null)
         {
-            dataProxy.deleteAuction(auctionID);
+            dataProxy.deleteAuction(auctionID, auctionDetails.getOwnerNickname());
             throw new NotFoundException("User associated with the auction does not exist.");
         }
 
@@ -276,6 +279,6 @@ public class AuctionResource {
         }
 
         if (Objects.nonNull(error_message))
-            throw new WebApplicationException(Response.status(Response.Status.BAD_REQUEST.getStatusCode(), error_message).build());
+            throw new BadRequestException(error_message);
     }
 }

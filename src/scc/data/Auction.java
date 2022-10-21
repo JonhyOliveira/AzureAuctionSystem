@@ -91,7 +91,8 @@ public class Auction {
 
     @Override
     public String toString() {
-        return "Auction [title=" + title + ", desc=" + description + ", photoId=" + thumbnailId + ", owner=" + ownerNickname + ", endTime=" + endTime + ", minPrice=" + minPrice + ", isOpen=" + isClosed + " ]";
+        return "Auction [id=" + auctionID + ", title=" + title + ", desc=" + description + ", photoId=" + thumbnailId +
+                ", owner=" + ownerNickname + ", endTime=" + endTime + ", minPrice=" + minPrice + ", isClosed=" + isClosed + " ]";
     }
 
     /**
@@ -133,5 +134,18 @@ public class Auction {
     public Auction copy() {
         return new Auction(this.auctionID, this.title, this.description, this.thumbnailId, this.ownerNickname,
                 this.endTime, this.minPrice, this.isClosed);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Auction auction = (Auction) o;
+        return isClosed == auction.isClosed && Objects.equals(auctionID, auction.auctionID) && Objects.equals(title, auction.title) && Objects.equals(description, auction.description) && Objects.equals(thumbnailId, auction.thumbnailId) && Objects.equals(ownerNickname, auction.ownerNickname) && Objects.equals(endTime, auction.endTime) && Objects.equals(minPrice, auction.minPrice);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(auctionID, title, description, thumbnailId, ownerNickname, isClosed, endTime, minPrice);
     }
 }

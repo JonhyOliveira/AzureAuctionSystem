@@ -1,5 +1,6 @@
 package scc.data.models;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import scc.data.Question;
 
 public class QuestionDAO extends DAO{
@@ -40,6 +41,7 @@ public class QuestionDAO extends DAO{
     }
 
     @SuppressWarnings("UnusedDeclaration")
+    @JsonProperty("auction_id")
     public String getAuctionID(){
         return auctionID;
     }

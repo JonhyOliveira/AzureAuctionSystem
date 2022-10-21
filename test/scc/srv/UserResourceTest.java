@@ -6,12 +6,13 @@ import org.junit.jupiter.api.function.Executable;
 import scc.data.User;
 import scc.data.models.UserDAO;
 
+import java.util.UUID;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class UserResourceTest {
 
     static UserResource resource;
-    String id;
 
     @org.junit.jupiter.api.BeforeAll
     static void setUpping()
@@ -21,12 +22,11 @@ class UserResourceTest {
 
     @org.junit.jupiter.api.BeforeEach
     void setUp() {
-        id = Long.toString(System.currentTimeMillis());
     }
 
     @org.junit.jupiter.api.Test
     void create() {
-        User u = new User("joao_0" + id, "Joao Oliveira", id, "0:" + id);
+        User u = random();
         User uCreated = resource.create(u);
 
         assertEquals(u.censored(), uCreated.censored());
@@ -36,25 +36,24 @@ class UserResourceTest {
 
     @org.junit.jupiter.api.Test
     void delete() {
-        User u = new User("joao_1" + id, "Joao Pedro", id, "1:" + id);
+        User u = random();
 
         Executable deleteUser = () -> resource.delete(u.getNickname(), u.getPwd());
 
         assertThrows(NotFoundException.class, deleteUser);
 
-        resource.create(new UserDAO(u).toUser());
+        resource.create(u.copy());
 
         assertDoesNotThrow(deleteUser);
     }
 
     @org.junit.jupiter.api.Test
     void update() {
-        User u = new User("joao_2" + id, "Joao Pedro", id, "2:" + id);
-        String id2 = Long.toString(System.currentTimeMillis());
-        User u2 = new User("joao_2" + id2, "Joao Pedor", id2, "2:" + id2);
+        User u = random();
+        User u2 = random();
 
-        resource.create(new UserDAO(u).toUser());
-        User uGot = resource.update(u.getNickname(), id, u2);
+        resource.create(u.copy());
+        User uGot = resource.update(u.getNickname(), u.getPwd(), u2);
         User uExpected = u.patch(u2);
 
         assertEquals(uExpected.censored(), uGot.censored());
@@ -62,10 +61,18 @@ class UserResourceTest {
 
     @org.junit.jupiter.api.Test
     void getUser() {
-        User u = new User("joao_3" + id, "Joao Carlos", id, "3:" + id);
+        User u = random();
 
         User created = resource.create(u);
 
         assertEquals(u.censored(), created);
+    }
+
+    public static User random()
+    {
+        long id = System.currentTimeMillis();
+
+        return new User("joao_" + id, "João Carlos",
+                UUID.randomUUID().toString() + id, "3:" + id);
     }
 }

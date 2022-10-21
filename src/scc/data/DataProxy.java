@@ -2,7 +2,6 @@ package scc.data;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.ws.rs.ServiceUnavailableException;
 import redis.clients.jedis.JedisPool;
 import scc.data.layers.CosmosDBLayer;
 import scc.data.layers.RedisCacheLayer;
@@ -41,7 +40,7 @@ public class DataProxy {
         UserDAO u = dbLayer.putUser(new UserDAO(user)).getItem();
 
         try{
-            jedisPool.getResource().setex("user:"+u.getNickname(), DEFAULT_EXPIRATION ,mapper.writeValueAsString(u));
+            jedisPool.getResource().setex("user:"+u.getId(), DEFAULT_EXPIRATION ,mapper.writeValueAsString(u));
         } catch (JsonProcessingException ignored){
             //TODO DAR HANDLING DA EXCEPTION
         }
@@ -62,7 +61,7 @@ public class DataProxy {
         UserDAO u = dbLayer.updateUser(new UserDAO(newUser.hashPwd())).getItem();
 
         try{
-            jedisPool.getResource().setex("user:"+u.getNickname(), DEFAULT_EXPIRATION ,mapper.writeValueAsString(u));
+            jedisPool.getResource().setex("user:"+u.getId(), DEFAULT_EXPIRATION ,mapper.writeValueAsString(u));
         } catch (JsonProcessingException ignored){
             //TODO DAR HANDLING DA EXCEPTION
         }
@@ -80,7 +79,8 @@ public class DataProxy {
 
         try{
             String user = jedisPool.getResource().get("user:" + nickname);
-            userObject = mapper.readValue(user, UserDAO.class);
+            if (user != null)
+                userObject = mapper.readValue(user, UserDAO.class);
         } catch (JsonProcessingException ignored){
             //TODO DAR HANDLING DA EXCEPTION
         }
@@ -144,10 +144,11 @@ public class DataProxy {
     /**
      * Deletes an auction
      * @param auctionID the id of the auction
+     * @param owner_nickname the owner of the auction
      */
-    public void deleteAuction(String auctionID)
+    public void deleteAuction(String auctionID, String owner_nickname)
     {
-        dbLayer.delAuctionByID(auctionID);
+        dbLayer.delAuctionByID(auctionID, owner_nickname);
     }
 
     /**
