@@ -9,10 +9,7 @@ import scc.data.Bid;
 import scc.data.Question;
 import scc.data.User;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -154,7 +151,43 @@ class AuctionResourceTest {
 
     @Test
     void showAuctionsAboutToClose() {
-        throw new NotImplementedException();
+        User u1 = UserResourceTest.createRandomUser();
+
+        Auction auction = new Auction(null, "Ford Focus 2016", "In great condition",
+                "0:"+id, u1.getNickname(), new Date().toInstant().toEpochMilli(), //Current time so it expires
+                100, false);
+
+        resource.create(auction, u1.getPwd());
+
+        Auction[] arr = new Auction[1];
+        arr[0] = auction;
+
+        assertEquals(resource.showAuctionsAboutToClose().toArray(), arr);
+
+        /*User u1 = UserResourceTest.createRandomUser(), u2 = UserResourceTest.createRandomUser();
+
+        List<Auction> u1Aucs = new ArrayList<>(Stream.of(1, 2, 3, 4, 5, 6).map(integer -> createRandomAuction(u1)).toList());
+        List<Auction> u2Aucs = new ArrayList<>(Stream.of(1, 2, 3).map(integer -> createRandomAuction(u2)).toList());
+
+        Auction auction1 = new Auction(null, "Ford Focus 2016", "In great condition",
+                "0:"+id, u1.getNickname(), new Date().toInstant().toEpochMilli(), //Current time so it expires
+                100, false);
+
+        Auction auction2 = new Auction(null, "Ford Focus 2016", "In great condition",
+                "0:"+id, u2.getNickname(), new Date().toInstant().toEpochMilli(),   //Current time so it expires
+                100, false);
+
+        u1Aucs.add(2, auction1);
+        u2Aucs.add(1, auction2);
+
+        List<Auction> closingAuctions = new ArrayList<>();
+        closingAuctions.add(auction1);
+        closingAuctions.add(auction2);
+
+        assertArrayEquals(closingAuctions.toArray(), resource.showAuctionsAboutToClose().toArray(), "oh no!");
+        //assertArrayEquals(u2Aucs.toArray(), resource.showUserAuctions(u2.getNickname()).toArray(), "oh no!");
+
+        //throw new NotImplementedException();*/
     }
 
     public static Question createRandomQuestion(Auction auction, User auction_owner)
