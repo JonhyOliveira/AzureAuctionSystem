@@ -84,8 +84,8 @@ public class CosmosDBLayer {
 	public CosmosItemResponse<UserDAO> updateUser(UserDAO newUser)
 	{
 		init();
-		PartitionKey key = new PartitionKey(newUser.getId());
-		return users.replaceItem(newUser, newUser.getId(), key, new CosmosItemRequestOptions());
+		PartitionKey key = new PartitionKey(newUser.getNickname());
+		return users.replaceItem(newUser, newUser.getNickname(), key, new CosmosItemRequestOptions());
 	}
 
 	public CosmosItemResponse<Object> delUserByNick(String nickname) {
@@ -128,10 +128,8 @@ public class CosmosDBLayer {
 	public CosmosItemResponse<AuctionDAO> updateAuction(AuctionDAO auction)
 	{
 		init();
-		System.out.println(auction.getId());
-		System.out.println(auction.getOwnerNickname());
 		PartitionKey key = new PartitionKey(auction.getOwnerNickname());
-		return auctions.replaceItem(auction, auction.getId(), key, new CosmosItemRequestOptions());
+		return auctions.replaceItem(auction, auction.getAuctionID(), key, new CosmosItemRequestOptions());
 	}
 
 	public CosmosItemResponse<Object> delAuctionByID(String auctionID, String owner_nickname)
@@ -162,7 +160,7 @@ public class CosmosDBLayer {
 
 	public CosmosPagedIterable<QuestionDAO> getQuestionsByAuctionID(String auctionID){
 		init();
-		return questions.queryItems("SELECT * FROM questions WHERE questions.auctionID=\"" + auctionID + "\"", new CosmosQueryRequestOptions(), QuestionDAO.class);
+		return questions.queryItems("SELECT * FROM questions WHERE questions.auction_id=\"" + auctionID + "\"", new CosmosQueryRequestOptions(), QuestionDAO.class);
 	}
 
 	public CosmosPagedIterable<AuctionDAO> getAuctionsByUser(String nickname){
@@ -196,8 +194,8 @@ public class CosmosDBLayer {
 	public CosmosItemResponse<QuestionDAO> updateQuestion(QuestionDAO question)
 	{
 		init();
-		PartitionKey key = new PartitionKey(question.getId());
-		return users.replaceItem(question, question.getId(), key, new CosmosItemRequestOptions());
+		PartitionKey key = new PartitionKey(question.getAuctionID());
+		return questions.replaceItem(question, question.getId(), key, new CosmosItemRequestOptions());
 	}
 
 	public CosmosPagedIterable<QuestionDAO> getQuestionByID(String questionId) {

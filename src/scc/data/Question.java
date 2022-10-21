@@ -103,6 +103,29 @@ public class Question {
      * @return a new object that is a copy of this question
      */
     public Question copy() {
-        return new Question(this.questionID, this.questioner, this.answer, this.answer);
+        return new Question(this.questionID, this.questioner, this.text, this.answer);
+    }
+
+    @Override
+    public String toString() {
+        return "Question{" +
+                "questionID='" + questionID + '\'' +
+                ", questioner='" + questioner + '\'' +
+                ", text='" + text + '\'' +
+                ", answer='" + answer + '\'' +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Question question = (Question) o;
+        return Objects.equals(questionID, question.questionID) && Objects.equals(questioner, question.questioner) && Objects.equals(text, question.text) && Objects.equals(answer, question.answer);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(questionID, questioner, text, answer);
     }
 }

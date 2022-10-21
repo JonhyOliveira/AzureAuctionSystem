@@ -2,8 +2,6 @@ package scc.data;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.ws.rs.ServiceUnavailableException;
-import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import scc.data.layers.CosmosDBLayer;
 import scc.data.layers.RedisCacheLayer;
@@ -42,7 +40,7 @@ public class DataProxy {
         UserDAO u = dbLayer.putUser(new UserDAO(user)).getItem();
 
         try{
-            jedisPool.getResource().setex("user:"+u.getId(), DEFAULT_EXPIRATION ,mapper.writeValueAsString(u));
+            jedisPool.getResource().setex("user:"+u.getNickname(), DEFAULT_EXPIRATION ,mapper.writeValueAsString(u));
         } catch (JsonProcessingException ignored){
             //TODO DAR HANDLING DA EXCEPTION
         }
@@ -63,7 +61,7 @@ public class DataProxy {
         UserDAO u = dbLayer.updateUser(new UserDAO(newUser.hashPwd())).getItem();
 
         try{
-            jedisPool.getResource().setex("user:"+u.getId(), DEFAULT_EXPIRATION ,mapper.writeValueAsString(u));
+            jedisPool.getResource().setex("user:"+u.getNickname(), DEFAULT_EXPIRATION ,mapper.writeValueAsString(u));
         } catch (JsonProcessingException ignored){
             //TODO DAR HANDLING DA EXCEPTION
         }
@@ -182,9 +180,9 @@ public class DataProxy {
      * @param bid the bid details
      * @return the created bid
      */
-    public Optional<Bid> executeBid(String auctionId, Bid bid)
+    public Optional<Bid> executeBid(String bidId, String auctionId, Bid bid)
     {
-        return Optional.ofNullable(dbLayer.putBid(new BidDAO(auctionId, bid)).getItem())
+        return Optional.ofNullable(dbLayer.putBid(new BidDAO(bidId, auctionId, bid)).getItem())
                 .map(BidDAO::toBid);
     }
 

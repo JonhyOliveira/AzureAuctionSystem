@@ -2,7 +2,6 @@ package scc.srv;
 
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
-import jakarta.ws.rs.core.Response;
 import scc.data.*;
 import scc.utils.Hash;
 
@@ -36,7 +35,7 @@ public class AuctionResource {
 
         login(auction.getOwnerNickname(), owner_pwd);
 
-        if(dataProxy.getAuction(auction.auctionID()).isPresent())
+        if(dataProxy.getAuction(auction.getAuctionID()).isPresent())
             throw new BadRequestException("Auction already exists");
 
         auction.setAuctionID(UUID.randomUUID().toString()); // generate random auction id
@@ -106,7 +105,7 @@ public class AuctionResource {
 
         login(bid.getBidder(), bidder_pwd);
 
-        dataProxy.executeBid(auctionId, bid);
+        dataProxy.executeBid(UUID.randomUUID().toString(), auctionId, bid);
     }
 
     /**
@@ -141,10 +140,11 @@ public class AuctionResource {
         //validate the auction (não sei se aqui se usaria o metodo login)
         validateAuction(auctionId, null);
         login(question.getQuestioner(), pwd);
-        Question nQuestion = question.copy();
-        nQuestion.setAnswer(null);
 
-        return dataProxy.createQuestion(auctionId, nQuestion).orElse(null);
+        question.setAnswer(null);
+        question.setQuestionID(UUID.randomUUID().toString());
+
+        return dataProxy.createQuestion(auctionId, question).orElse(null);
     }
 
     /**
@@ -169,7 +169,7 @@ public class AuctionResource {
         if (realQuestion == null)
             throw new NotFoundException("Question not found");
 
-        return dataProxy.updateQuestion(auctionId, question.getQuestionID(), realQuestion).orElse(null);
+        return dataProxy.updateQuestion(auctionId, question.getQuestionID(), realQuestion.patch(question)).orElse(null);
     }
 
     /**

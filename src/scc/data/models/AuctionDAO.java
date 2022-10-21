@@ -19,7 +19,7 @@ public final class AuctionDAO extends DAO {
     public AuctionDAO(){ }
 
     public AuctionDAO (Auction auc){
-        this(auc.auctionID(), auc.getTitle(), auc.getDescription(), auc.getPhotoId(), auc.getOwnerNickname(), auc.getEndTime(), auc.getMinPrice(), auc.getIsClosed());
+        this(auc.getAuctionID(), auc.getTitle(), auc.getDescription(), auc.getPhotoId(), auc.getOwnerNickname(), auc.getEndTime(), auc.getMinPrice(), auc.getIsClosed());
     }
 
     public AuctionDAO(String auctionID, String title, String description, String thumbnailID, String owner_nickname, long endTime, float minPrice, boolean aucStatus){
@@ -34,7 +34,8 @@ public final class AuctionDAO extends DAO {
         this.isClosed = aucStatus;
     }
 
-    public String getId()
+    @JsonProperty("id")
+    public String getAuctionID()
     {
         return auctionID;
     }

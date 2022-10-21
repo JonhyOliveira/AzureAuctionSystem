@@ -27,7 +27,8 @@ public final class UserDAO extends DAO {
 		this.photoId = photoId;
 	}
 
-	public String getId() {
+	@JsonProperty("id")
+	public String getNickname() {
 		return nickname;
 	}
 	@SuppressWarnings("unused")

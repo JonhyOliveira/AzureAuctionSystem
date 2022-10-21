@@ -4,7 +4,6 @@ import jakarta.ws.rs.ForbiddenException;
 import jakarta.ws.rs.NotFoundException;
 import org.junit.jupiter.api.function.Executable;
 import scc.data.User;
-import scc.data.models.UserDAO;
 
 import java.util.UUID;
 
@@ -27,11 +26,11 @@ class UserResourceTest {
     @org.junit.jupiter.api.Test
     void create() {
         User u = random();
-        User uCreated = resource.create(u);
+        User uCreated = resource.create(u.copy());
 
         assertEquals(u.censored(), uCreated.censored());
 
-        assertThrows(ForbiddenException.class, () -> resource.create(u));
+        assertThrows(ForbiddenException.class, () -> resource.create(u.copy()));
     }
 
     @org.junit.jupiter.api.Test
@@ -53,7 +52,7 @@ class UserResourceTest {
         User u2 = random();
 
         resource.create(u.copy());
-        User uGot = resource.update(u.getNickname(), u.getPwd(), u2);
+        User uGot = resource.update(u.getNickname(), u.getPwd(), u2.copy());
         User uExpected = u.patch(u2);
 
         assertEquals(uExpected.censored(), uGot.censored());
@@ -63,9 +62,17 @@ class UserResourceTest {
     void getUser() {
         User u = random();
 
-        User created = resource.create(u);
+        User got = resource.getUser(u.getNickname());
 
-        assertEquals(u.censored(), created);
+        assertEquals(u.censored(), got);
+    }
+
+    public static User createRandomUser()
+    {
+        User u = random();
+        resource.create(u.copy());
+
+        return u;
     }
 
     public static User random()

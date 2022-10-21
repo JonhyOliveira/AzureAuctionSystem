@@ -30,7 +30,7 @@ public class Auction {
         this.isClosed = isClosed;
     }
 
-    public String auctionID()
+    public String getAuctionID()
     {
         return auctionID;
     }

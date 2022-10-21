@@ -11,6 +11,8 @@ public class QuestionDAO extends DAO{
     private String question;
     private String answer;
 
+    public QuestionDAO() {}
+
     public QuestionDAO(String auctionID, Question question)
     {
         this.id = question.getQuestionID();
