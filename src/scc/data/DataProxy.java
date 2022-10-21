@@ -3,6 +3,7 @@ package scc.data;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.ws.rs.ServiceUnavailableException;
+import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import scc.data.layers.CosmosDBLayer;
 import scc.data.layers.RedisCacheLayer;
@@ -25,6 +26,7 @@ public class DataProxy {
 
     private static DataProxy instance;
 
+    
     public static DataProxy getInstance() {
         if (instance == null)
             instance = new DataProxy();
@@ -256,5 +258,6 @@ public class DataProxy {
                 .map(AuctionDAO::toAuction)
                 .collect(Collectors.toList());
     }
+
     
 }
