@@ -2,6 +2,8 @@ package scc.data;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.ws.rs.ServiceUnavailableException;
+import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import scc.data.layers.CosmosDBLayer;
 import scc.data.layers.RedisCacheLayer;
@@ -144,7 +146,6 @@ public class DataProxy {
     /**
      * Deletes an auction
      * @param auctionID the id of the auction
-     * @param owner_nickname the owner of the auction
      */
     public void deleteAuction(String auctionID, String owner_nickname)
     {
@@ -257,5 +258,6 @@ public class DataProxy {
                 .map(AuctionDAO::toAuction)
                 .collect(Collectors.toList());
     }
-    
+
+
 }

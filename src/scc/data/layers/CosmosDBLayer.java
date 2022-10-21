@@ -170,11 +170,18 @@ public class CosmosDBLayer {
 		return auctions.queryItems("SELECT * FROM auctions WHERE auctions.owner_nickname=\"" + nickname + "\"", new CosmosQueryRequestOptions(), AuctionDAO.class);
 	}
 
+	/*
 	public CosmosPagedIterable<AuctionDAO> getClosingAuctions(){
 		init();
 		return auctions.queryItems("SELECT * FROM auctions WHERE ((auctions.endTime - MINUTE(now())) <= 5)\"", new CosmosQueryRequestOptions(), AuctionDAO.class);
 	}
+	*/
 
+	public CosmosPagedIterable<AuctionDAO> getClosingAuctions(){
+		init();
+		return auctions.queryItems("SELECT * FROM auctions WHERE auctions.endTime <= now()", new CosmosQueryRequestOptions(), AuctionDAO.class);
+	}
+	
 	@SuppressWarnings("unused")
 	public void close() {
 		client.close();
