@@ -1,5 +1,6 @@
 package scc.data.layers;
 
+import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 
@@ -9,7 +10,8 @@ import java.util.Properties;
 
 public class RedisCacheLayer {
 
-	private static final String REDIS_HOSTNAME, REDIS_KEY;
+	private static final String REDIS_HOSTNAME; //é preciso dar nome a isto ------ Joao
+	private static final String REDIS_KEY; //é preciso dar nome a isto ------ Joao
 	private static final Integer REDIS_PORT;
 
 	static // read from properties file
@@ -48,6 +50,5 @@ public class RedisCacheLayer {
 		poolConfig.setBlockWhenExhausted(true);
 		instance = new JedisPool(poolConfig, REDIS_HOSTNAME, REDIS_PORT, 1000, REDIS_KEY, true);
 		return instance;
-
 	}
 }
