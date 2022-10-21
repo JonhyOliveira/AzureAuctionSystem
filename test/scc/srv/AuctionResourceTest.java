@@ -154,7 +154,7 @@ class AuctionResourceTest {
         User u1 = UserResourceTest.createRandomUser();
 
         Auction auction = new Auction(null, "Ford Focus 2016", "In great condition",
-                "0:"+id, u1.getNickname(), new Date().toInstant().toEpochMilli(), //Current time so it expires
+                "0:"+id, u1.getNickname(), System.currentTimeMillis() + 1000, //Current time so it expires
                 100, false);
 
         resource.create(auction, u1.getPwd());
@@ -162,7 +162,9 @@ class AuctionResourceTest {
         Auction[] arr = new Auction[1];
         arr[0] = auction;
 
-        assertEquals(resource.showAuctionsAboutToClose().toArray(), arr);
+        System.out.println(auction);
+        System.out.println(resource.showAuctionsAboutToClose());
+        assertEquals(arr, resource.showAuctionsAboutToClose().toArray());
 
         /*User u1 = UserResourceTest.createRandomUser(), u2 = UserResourceTest.createRandomUser();
 
