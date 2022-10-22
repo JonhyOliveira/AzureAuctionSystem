@@ -1,8 +1,10 @@
 package scc.data;
 
+import com.azure.storage.blob.BlobClient;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import redis.clients.jedis.JedisPool;
+import scc.data.layers.BlobStorageLayer;
 import scc.data.layers.CosmosDBLayer;
 import scc.data.layers.RedisCacheLayer;
 import scc.data.models.AuctionDAO;
@@ -19,6 +21,7 @@ public class DataProxy {
 
     private static final CosmosDBLayer dbLayer = CosmosDBLayer.getInstance();
     private static final JedisPool jedisPool = RedisCacheLayer.getCachePool();
+    private static final BlobStorageLayer blobStorage = BlobStorageLayer.getInstance();
     private static final ObjectMapper mapper = new ObjectMapper();
     private static final long DEFAULT_EXPIRATION = 3600;  //  TIME FOR AN OBJECT TO EXPIRE FROM CACHE
 
@@ -257,5 +260,18 @@ public class DataProxy {
                 .collect(Collectors.toList());
     }
 
+    public byte[] downloadFile(String fileID)
+    {
+        return blobStorage.downloadBlob(fileID);
+    }
 
+    public boolean doesFileExist(String fileID)
+    {
+        return blobStorage.blobExists(fileID);
+    }
+
+
+    public void uploadFile(String fileID, byte[] contents) {
+        blobStorage.createBlob(fileID, contents);
+    }
 }
