@@ -11,7 +11,11 @@ import scc.data.models.UserDAO;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Optional;
 import java.util.Properties;
+import java.util.stream.Stream;
 
 public class CosmosDBLayer {
 
@@ -105,67 +109,77 @@ public class CosmosDBLayer {
 		return users.createItem(user);
 	}
 	
-	public CosmosPagedIterable<UserDAO> getUserByNick( String nickname) {
+	public Optional<UserDAO> getUserByNick(String nickname) {
 		init();
-		return users.queryItems("SELECT * FROM users WHERE users.id=\"" + nickname + "\"", new CosmosQueryRequestOptions(), UserDAO.class);
+		SqlQuerySpec query = new SqlQuerySpec("SELECT * FROM users WHERE users.id=@nickname",
+				List.of(new SqlParameter("@nickname", nickname)));
+
+		return users.queryItems(query, new CosmosQueryRequestOptions(), UserDAO.class)
+				.stream().findAny();
 	}
 
 	@SuppressWarnings("unused")
-	public CosmosPagedIterable<UserDAO> getUsers() {
+	public Iterator<UserDAO> getUsers() {
 		init();
-		return users.queryItems("SELECT * FROM users ", new CosmosQueryRequestOptions(), UserDAO.class);
+		return users.queryItems("SELECT * FROM users ", new CosmosQueryRequestOptions(), UserDAO.class)
+				.stream().iterator();
 	}
 
-	public CosmosPagedIterable<AuctionDAO> getAuctionByID(String auctionID){
+	public Optional<AuctionDAO> getAuctionByID(String auctionID){
 		init();
-		return auctions.queryItems("SELECT * FROM auctions WHERE auctions.id=\"" + auctionID + "\"", new CosmosQueryRequestOptions(), AuctionDAO.class);
+		return auctions.queryItems("SELECT * FROM auctions WHERE auctions.id=\"" + auctionID + "\"",
+						new CosmosQueryRequestOptions(), AuctionDAO.class).stream().findAny();
 	}
-	public CosmosItemResponse<AuctionDAO> putAuction(AuctionDAO auction){
+	public Optional<AuctionDAO> putAuction(AuctionDAO auction){
 		init();
-		return auctions.createItem(auction);
+		return Optional.ofNullable(auctions.createItem(auction).getItem());
 	}
 
-	public CosmosItemResponse<AuctionDAO> updateAuction(AuctionDAO auction)
+	public Optional<AuctionDAO> updateAuction(AuctionDAO auction)
 	{
 		init();
 		PartitionKey key = new PartitionKey(auction.getOwnerNickname());
-		return auctions.replaceItem(auction, auction.getAuctionID(), key, new CosmosItemRequestOptions());
+		return Optional.ofNullable(auctions.replaceItem(auction, auction.getAuctionID(), key, new CosmosItemRequestOptions())
+				.getItem());
 	}
 
-	public CosmosItemResponse<Object> delAuctionByID(String auctionID, String owner_nickname)
+	public boolean delAuctionByID(String auctionID, String owner_nickname)
 	{
 		init();
 		PartitionKey key = new PartitionKey(owner_nickname);
-		return auctions.deleteItem(auctionID, key, new CosmosItemRequestOptions());
+		int result = auctions.deleteItem(auctionID, key, new CosmosItemRequestOptions()).getStatusCode();
+		return result >= 200 && result < 300;
 	}
 
-	public CosmosPagedIterable<BidDAO> getBidsByAuctionID(String auctionID)
+	public Stream<BidDAO> getBidsByAuctionID(String auctionID)
 	{
 		init();
 		return bids.queryItems("SELECT * FROM bids WHERE bids.auction_id=\"" + auctionID + "\"",
-				new CosmosQueryRequestOptions(), BidDAO.class);
+				new CosmosQueryRequestOptions(), BidDAO.class).stream();
 	}
 
-	public CosmosPagedIterable<BidDAO> getTopBidsByAuctionID(String auctionID, Long n)
+	public Stream<BidDAO> getTopBidsByAuctionID(String auctionID, Long n)
 	{
 		init();
 		return bids.queryItems("SELECT TOP " + n + " * FROM bids WHERE bids.auction_id=\"" + auctionID + "\" ORDER BY amount",
-				new CosmosQueryRequestOptions(), BidDAO.class);
+				new CosmosQueryRequestOptions(), BidDAO.class).stream();
 	}
 
-	public CosmosItemResponse<BidDAO> putBid(BidDAO bid) {
+	public Optional<BidDAO> putBid(BidDAO bid) {
 		init();
-		return bids.createItem(bid);
+		return Optional.ofNullable(bids.createItem(bid).getItem());
 	}
 
-	public CosmosPagedIterable<QuestionDAO> getQuestionsByAuctionID(String auctionID){
+	public Stream<QuestionDAO> getQuestionsByAuctionID(String auctionID){
 		init();
-		return questions.queryItems("SELECT * FROM questions WHERE questions.auction_id=\"" + auctionID + "\"", new CosmosQueryRequestOptions(), QuestionDAO.class);
+		return questions.queryItems("SELECT * FROM questions WHERE questions.auction_id=\"" + auctionID + "\"",
+						new CosmosQueryRequestOptions(), QuestionDAO.class).stream();
 	}
 
-	public CosmosPagedIterable<AuctionDAO> getAuctionsByUser(String nickname){
+	public Stream<AuctionDAO> getAuctionsByUser(String nickname){
 		init();
-		return auctions.queryItems("SELECT * FROM auctions WHERE auctions.owner_nickname=\"" + nickname + "\"", new CosmosQueryRequestOptions(), AuctionDAO.class);
+		return auctions.queryItems("SELECT * FROM auctions WHERE auctions.owner_nickname=\"" + nickname + "\"",
+				new CosmosQueryRequestOptions(), AuctionDAO.class).stream();
 	}
 
 	/*
@@ -175,9 +189,10 @@ public class CosmosDBLayer {
 	}
 	*/
 
-	public CosmosPagedIterable<AuctionDAO> getClosingAuctions(){
+	public Stream<AuctionDAO> getClosingAuctions(){
 		init();
-		return auctions.queryItems("SELECT * FROM auctions WHERE auctions.end_time <= GetCurrentTimestamp()", new CosmosQueryRequestOptions(), AuctionDAO.class);
+		return auctions.queryItems("SELECT * FROM auctions WHERE auctions.end_time <= GetCurrentTimestamp() AND NOT auctions.closed",
+				new CosmosQueryRequestOptions(), AuctionDAO.class).stream();
 	}
 	
 	@SuppressWarnings("unused")
@@ -185,21 +200,22 @@ public class CosmosDBLayer {
 		client.close();
 	}
 
-	public CosmosItemResponse<QuestionDAO> putQuestion(QuestionDAO question)
+	public Optional<QuestionDAO> putQuestion(QuestionDAO question)
 	{
 		init();
-		return questions.createItem(question);
+		return Optional.ofNullable(questions.createItem(question).getItem());
 	}
 
-	public CosmosItemResponse<QuestionDAO> updateQuestion(QuestionDAO question)
+	public Optional<QuestionDAO> updateQuestion(QuestionDAO question)
 	{
 		init();
 		PartitionKey key = new PartitionKey(question.getAuctionID());
-		return questions.replaceItem(question, question.getId(), key, new CosmosItemRequestOptions());
+		return Optional.ofNullable(questions.replaceItem(question, question.getId(), key, new CosmosItemRequestOptions()).getItem());
 	}
 
-	public CosmosPagedIterable<QuestionDAO> getQuestionByID(String questionId) {
+	public Optional<QuestionDAO> getQuestionByID(String questionId) {
 		init();
-		return questions.queryItems("SELECT * FROM questions WHERE questions.id=\"" + questionId + "\"", new CosmosQueryRequestOptions(), QuestionDAO.class);
+		return questions.queryItems("SELECT * FROM questions WHERE questions.id=\"" + questionId + "\"",
+				new CosmosQueryRequestOptions(), QuestionDAO.class).stream().findFirst();
 	}
 }

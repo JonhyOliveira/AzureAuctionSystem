@@ -4,7 +4,10 @@
   <modelVersion>4.0.0</modelVersion>  
   <groupId>pt.unl.fct.di.scc</groupId>  
   <artifactId>scc2022-backend</artifactId>
-  <version>1.0</version>  
+  <version>1.0</version>
+
+  <name>SCC Project Backend App</name>
+
   <packaging>war</packaging>
   <properties> 
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>  

@@ -1,8 +1,6 @@
 package scc.data;
 
-import com.azure.storage.blob.BlobClient;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import redis.clients.jedis.JedisPool;
 import scc.data.layers.BlobStorageLayer;
 import scc.data.layers.CosmosDBLayer;
@@ -20,10 +18,8 @@ import java.util.stream.Collectors;
 public class DataProxy {
 
     private static final CosmosDBLayer dbLayer = CosmosDBLayer.getInstance();
-    private static final JedisPool jedisPool = RedisCacheLayer.getCachePool();
+    private static final RedisCacheLayer redisLayer = RedisCacheLayer.getInstance();
     private static final BlobStorageLayer blobStorage = BlobStorageLayer.getInstance();
-    private static final ObjectMapper mapper = new ObjectMapper();
-    private static final long DEFAULT_EXPIRATION = 3600;  //  TIME FOR AN OBJECT TO EXPIRE FROM CACHE
 
     private static DataProxy instance;
 
@@ -42,11 +38,7 @@ public class DataProxy {
     {
         UserDAO u = dbLayer.putUser(new UserDAO(user)).getItem();
 
-        try{
-            jedisPool.getResource().setex("user:"+u.getNickname(), DEFAULT_EXPIRATION ,mapper.writeValueAsString(u));
-        } catch (JsonProcessingException ignored){
-            //TODO DAR HANDLING DA EXCEPTION
-        }
+        redisLayer.updateUser(u);
 
         return Optional.ofNullable(u)
                 .map(UserDAO::toUser);
@@ -63,11 +55,7 @@ public class DataProxy {
         newUser.setNickname(nickname);
         UserDAO u = dbLayer.updateUser(new UserDAO(newUser.hashPwd())).getItem();
 
-        try{
-            jedisPool.getResource().setex("user:"+u.getNickname(), DEFAULT_EXPIRATION ,mapper.writeValueAsString(u));
-        } catch (JsonProcessingException ignored){
-            //TODO DAR HANDLING DA EXCEPTION
-        }
+        redisLayer.updateUser(u);
 
         return Optional.ofNullable(u)
                 .map(UserDAO::toUser);
@@ -78,18 +66,12 @@ public class DataProxy {
      */
     public Optional<User> getUser(String nickname)
     {
-        UserDAO userObject = null;
+        Optional<UserDAO> userObject = null;
 
-        try{
-            String user = jedisPool.getResource().get("user:" + nickname);
-            if (user != null)
-                userObject = mapper.readValue(user, UserDAO.class);
-        } catch (JsonProcessingException ignored){
-            //TODO DAR HANDLING DA EXCEPTION
-        }
+        userObject = redisLayer.getUser(nickname);
 
-        if(Objects.nonNull(userObject))    //Verify if exists in cache
-            return Optional.of(userObject).map(UserDAO::toUser);
+        if (userObject.isPresent())
+            return userObject.map(UserDAO::toUser);
 
         return dbLayer.getUserByNick(nickname)
                 .stream()
@@ -103,8 +85,7 @@ public class DataProxy {
      */
     public void deleteUser(String nickname)
     {
-        jedisPool.getResource().del("user:"+nickname);
-
+        redisLayer.invalidateUser(nickname);
         dbLayer.delUserByNick(nickname);
     }
 
@@ -114,7 +95,7 @@ public class DataProxy {
      */
     public Optional<Auction> createAuction(Auction auction)
     {
-        return Optional.ofNullable(dbLayer.putAuction(new AuctionDAO(auction)).getItem())
+        return dbLayer.putAuction(new AuctionDAO(auction))
                 .map(AuctionDAO::toAuction);
     }
 
@@ -124,8 +105,6 @@ public class DataProxy {
     public Optional<Auction> getAuction(String auctionID)
     {
         return dbLayer.getAuctionByID(auctionID)
-                .stream()
-                .findFirst()
                 .map(AuctionDAO::toAuction);
     }
 
@@ -140,7 +119,7 @@ public class DataProxy {
     {
         auction.setAuctionID(auctionID);
 
-        return Optional.ofNullable(dbLayer.updateAuction(new AuctionDAO(auction)).getItem())
+        return dbLayer.updateAuction(new AuctionDAO(auction))
                 .map(AuctionDAO::toAuction);
     }
 
@@ -160,7 +139,6 @@ public class DataProxy {
      */
     public List<Bid> getAuctionBids(String auctionID) {
         return dbLayer.getBidsByAuctionID(auctionID)
-                .stream()
                 .map(BidDAO::toBid)
                 .collect(Collectors.toList());
     }
@@ -172,7 +150,6 @@ public class DataProxy {
      */
     public Optional<Bid> getHighestBid(String auctionID) {
         return dbLayer.getTopBidsByAuctionID(auctionID, 1L)
-                .stream()
                 .map(BidDAO::toBid)
                 .findFirst();
     }
@@ -185,7 +162,7 @@ public class DataProxy {
      */
     public Optional<Bid> executeBid(String bidId, String auctionId, Bid bid)
     {
-        return Optional.ofNullable(dbLayer.putBid(new BidDAO(bidId, auctionId, bid)).getItem())
+        return dbLayer.putBid(new BidDAO(bidId, auctionId, bid))
                 .map(BidDAO::toBid);
     }
 
@@ -196,7 +173,6 @@ public class DataProxy {
      */
     public List<Question> getAuctionQuestions(String auctionID){
         return dbLayer.getQuestionsByAuctionID(auctionID)
-                .stream()
                 .map(QuestionDAO::toQuestion)
                 .collect(Collectors.toList());
     }
@@ -208,7 +184,7 @@ public class DataProxy {
      * @return the details of the created question
      */
     public Optional<Question> createQuestion(String auctionId, Question question) {
-        return Optional.ofNullable(dbLayer.putQuestion(new QuestionDAO(auctionId, question)).getItem())
+        return dbLayer.putQuestion(new QuestionDAO(auctionId, question))
                 .map(QuestionDAO::toQuestion);
     }
 
@@ -218,8 +194,6 @@ public class DataProxy {
      */
     public Optional<Question> getQuestion(String questionId) {
         return dbLayer.getQuestionByID(questionId)
-                .stream()
-                .findFirst()
                 .map(QuestionDAO::toQuestion);
     }
 
@@ -233,7 +207,7 @@ public class DataProxy {
     public Optional<Question> updateQuestion(String auctionId, String questionID, Question question) {
         question.setQuestionID(questionID);
 
-        return Optional.ofNullable(dbLayer.updateQuestion(new QuestionDAO(auctionId, question)).getItem())
+        return dbLayer.updateQuestion(new QuestionDAO(auctionId, question))
                 .map(QuestionDAO::toQuestion);
     }
 
@@ -244,7 +218,6 @@ public class DataProxy {
      */
     public List<Auction> getAuctionsByUser(String nickname){
         return dbLayer.getAuctionsByUser(nickname)
-                .stream()
                 .map(AuctionDAO::toAuction)
                 .collect(Collectors.toList());
     }
@@ -255,23 +228,40 @@ public class DataProxy {
      */
     public List<Auction> getClosingAuctions(){
         return dbLayer.getClosingAuctions()
-                .stream()
                 .map(AuctionDAO::toAuction)
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Downlaods a file from the shared storage
+     * @param fileID the id of the file
+     * @return the byte contents of the blob
+     */
     public byte[] downloadFile(String fileID)
     {
         return blobStorage.downloadBlob(fileID);
     }
 
+    /**
+     * Checks if a file exists in the shared storage
+     * @param fileID the id of the file
+     * @return true if it exists, false otherwise
+     */
     public boolean doesFileExist(String fileID)
     {
         return blobStorage.blobExists(fileID);
     }
 
-
+    /**
+     * Uploads a file to the shared storage
+     * @param fileID the id to store the file under
+     * @param contents the contents of the file
+     */
     public void uploadFile(String fileID, byte[] contents) {
         blobStorage.createBlob(fileID, contents);
+    }
+
+    public List<String> listFiles() {
+        return blobStorage.listFiles().collect(Collectors.toList());
     }
 }

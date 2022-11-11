@@ -5,6 +5,7 @@ import scc.data.DataProxy;
 import scc.data.layers.BlobStorageLayer;
 import scc.utils.Hash;
 
+import java.util.List;
 import java.util.stream.Collectors;
 
 import jakarta.ws.rs.core.MediaType;
@@ -16,7 +17,7 @@ import jakarta.ws.rs.core.MediaType;
 public class MediaResource {
 
 	static BlobStorageLayer blobStorage = BlobStorageLayer.getInstance();
-	private static DataProxy dataProxy = DataProxy.getInstance();
+	private static final DataProxy dataProxy = DataProxy.getInstance();
 
 	public MediaResource() {}
 
@@ -62,14 +63,8 @@ public class MediaResource {
 	 */
 	@GET
 	@Path("/")
-	@Produces(MediaType.TEXT_PLAIN)
-	public String list() {
-		String res = blobStorage.containerClient.listBlobs().stream()
-				.map(blobItem -> String.format(FILE_LIST_FMT, blobItem.getName(), blobItem.getProperties().getContentLength()))
-				.collect(Collectors.joining("\n"));
-		if (res.isBlank())
-			return "No content found.";
-		else
-			return res;
+	@Produces(MediaType.APPLICATION_JSON)
+	public String[] list() {
+		return dataProxy.listFiles().toArray(new String[0]);
 	}
 }
