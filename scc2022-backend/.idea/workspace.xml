@@ -1,0 +1,516 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="AutomaticModuleUnloader">
+    <loaded-modules>
+      <module name="scc2022-backend" />
+    </loaded-modules>
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="cb46e0cf-f97e-4c09-bd3f-41787fd10a3c" name="Changes" comment="Extended JWT usage" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Interface" />
+        <option value="HTTP Public Environment File" />
+        <option value="JUnit5 Test Class" />
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="7dd31ac3565fb674a083c535fe28e738de70c38c" />
+      </map>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="HttpClientSelectedEnvironments">
+    <file url="jar://$APPLICATION_HOME_DIR$/plugins/restClient/lib/restClient.jar!/com/intellij/ws/rest/client/requests/collection/post-requests.http" environment="test" />
+    <file url="jar://$APPLICATION_HOME_DIR$/plugins/restClient/lib/restClient.jar!/com/intellij/ws/rest/client/requests/collection/requests-with-tests.http" environment="test" />
+    <file url="jar://$APPLICATION_HOME_DIR$/plugins/restClient/lib/restClient.jar!/com/intellij/ws/rest/client/requests/collection/requests-with-authorization.http" environment="test" />
+    <file url="file:///tmp/whats-new.http.http" environment="test" />
+    <file url="file://$APPLICATION_CONFIG_DIR$/scratches/generated-requests.http" environment="me" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="MavenImportPreferences">
+    <option name="generalSettings">
+      <MavenGeneralSettings>
+        <option name="useMavenConfig" value="true" />
+      </MavenGeneralSettings>
+    </option>
+  </component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="ProjectErrors" />
+  </component>
+  <component name="ProjectId" id="2FUpI5Ht1AT7vxbxBrtnewyyi9N" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_MARK_IGNORED_FILES_AS_EXCLUDED&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary&quot;: &quot;JUnit5&quot;,
+    &quot;com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit5&quot;: &quot;&quot;,
+    &quot;jdk.selected.JAVA_MODULE&quot;: &quot;11&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/home/joaooliv/Documents/UNI/2022_23/SCC/scc2022-project/scc2022-backend/functions&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
+    &quot;run.code.analysis.last.selected.profile&quot;: &quot;pProject Default&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;project.propVCSSupport.DirectoryMappings&quot;,
+    &quot;two.files.diff.last.used.file&quot;: &quot;/home/joaooliv/IdeaProjects/scc2022-backend/src/scc/srv/MediaResource.java&quot;
+  }
+}</component>
+  <component name="ReactorSettings">
+    <option name="notificationShown" value="true" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/functions" />
+      <recent name="$PROJECT_DIR$" />
+      <recent name="$PROJECT_DIR$/target/scc2223-lab1-1.0/WEB-INF/classes" />
+      <recent name="$PROJECT_DIR$/src/scc/database" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$" />
+      <recent name="$PROJECT_DIR$/azure-functions/src" />
+      <recent name="$PROJECT_DIR$/src/resources" />
+      <recent name="$PROJECT_DIR$/resources" />
+    </key>
+    <key name="CreateTestDialog.Recents.Supers">
+      <recent name="" />
+    </key>
+    <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
+      <recent name="" />
+    </key>
+    <key name="CreateTestDialog.RecentsKey">
+      <recent name="scc.data.models" />
+      <recent name="scc.srv" />
+      <recent name="scc.data.layers" />
+    </key>
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="scc.cache" />
+      <recent name="scc.utils" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Maven.scc2223-lab1 [compile,package...]">
+    <configuration default="true" type="AZURE_FUNCTION_SUPPORT" factoryName="Run Functions">
+      <option name="appName" />
+      <option name="appServicePlanName" />
+      <option name="appServicePlanResourceGroup" />
+      <option name="appSettingsKey" value="d3c068dd-fd44-4e7f-ba46-86b56c7c84bc" />
+      <option name="artifact" />
+      <option name="autoPort" value="true" />
+      <option name="debugOptions" />
+      <option name="deployment" />
+      <option name="deploymentStagingDirectoryPath" />
+      <option name="funcPath" />
+      <option name="funcPort" value="0" />
+      <option name="hostJsonPath" />
+      <option name="insightsName" />
+      <option name="instrumentationKey" />
+      <option name="javaVersion" />
+      <option name="localSettingsJsonPath" />
+      <option name="moduleName" />
+      <option name="os" />
+      <option name="pricingTier" />
+      <option name="providerMap">
+        <map />
+      </option>
+      <option name="region" />
+      <option name="resourceGroup" />
+      <option name="stagingFolder" />
+      <option name="subscription" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="scc2022_backend-endpoints | #1" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" nameIsGenerated="true" path="$APPLICATION_CONFIG_DIR$/scratches/scc2022_backend-endpoints.http" requestIdentifier="#1" runType="Run single request">
+      <method v="2" />
+    </configuration>
+    <configuration name="AuctionResourceTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="scc2022-backend" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="scc.srv.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="scc.srv" />
+      <option name="MAIN_CLASS_NAME" value="scc.srv.AuctionResourceTest" />
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="AuctionResourceTest.listBids" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="scc2022-backend" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="scc.srv.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="scc.srv" />
+      <option name="MAIN_CLASS_NAME" value="scc.srv.AuctionResourceTest" />
+      <option name="METHOD_NAME" value="listBids" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="AuctionResourceTest.listQuestions" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="scc2022-backend" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="scc.srv.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="scc.srv" />
+      <option name="MAIN_CLASS_NAME" value="scc.srv.AuctionResourceTest" />
+      <option name="METHOD_NAME" value="listQuestions" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="AuctionResourceTest.showAuctionsAboutToClose" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="scc2022-backend" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="scc.srv.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="scc.srv" />
+      <option name="MAIN_CLASS_NAME" value="scc.srv.AuctionResourceTest" />
+      <option name="METHOD_NAME" value="showAuctionsAboutToClose" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="scc2223-lab1 [compile,package...]" type="MavenRunConfiguration" factoryName="Maven" nameIsGenerated="true">
+      <MavenSettings>
+        <option name="myGeneralSettings" />
+        <option name="myRunnerSettings" />
+        <option name="myRunnerParameters">
+          <MavenRunnerParameters>
+            <option name="profiles">
+              <set />
+            </option>
+            <option name="goals">
+              <list>
+                <option value="compile" />
+                <option value="package" />
+                <option value="azure-webapp:deploy" />
+              </list>
+            </option>
+            <option name="pomFileName" />
+            <option name="profilesMap">
+              <map />
+            </option>
+            <option name="resolveToWorkspace" value="false" />
+            <option name="workingDirPath" value="$PROJECT_DIR$" />
+          </MavenRunnerParameters>
+        </option>
+      </MavenSettings>
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="HTTP Request.scc2022_backend-endpoints | #1" />
+        <item itemvalue="JUnit.AuctionResourceTest.showAuctionsAboutToClose" />
+        <item itemvalue="JUnit.AuctionResourceTest" />
+        <item itemvalue="JUnit.AuctionResourceTest.listQuestions" />
+        <item itemvalue="JUnit.AuctionResourceTest.listBids" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="cb46e0cf-f97e-4c09-bd3f-41787fd10a3c" name="Changes" comment="" />
+      <created>1664556433828</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1664556433828</updated>
+      <workItem from="1664556434958" duration="3557000" />
+      <workItem from="1665133118418" duration="5104000" />
+      <workItem from="1665327892716" duration="782000" />
+      <workItem from="1665334187004" duration="8128000" />
+      <workItem from="1665480950951" duration="30641000" />
+      <workItem from="1665737568840" duration="38000" />
+      <workItem from="1665739431675" duration="116000" />
+      <workItem from="1665740614372" duration="1069000" />
+      <workItem from="1665778527281" duration="797000" />
+      <workItem from="1665838693182" duration="19985000" />
+      <workItem from="1665937797449" duration="35919000" />
+      <workItem from="1666342002145" duration="1284000" />
+      <workItem from="1666343604602" duration="551000" />
+      <workItem from="1666345328098" duration="1824000" />
+      <workItem from="1666370817106" duration="13602000" />
+      <workItem from="1667133472877" duration="625000" />
+      <workItem from="1667558847379" duration="7145000" />
+      <workItem from="1667576396510" duration="3946000" />
+      <workItem from="1668107293561" duration="3617000" />
+      <workItem from="1668110940096" duration="63000" />
+      <workItem from="1668111588599" duration="2235000" />
+      <workItem from="1668160317956" duration="744000" />
+      <workItem from="1668161245135" duration="6000" />
+      <workItem from="1668161264029" duration="65000" />
+    </task>
+    <task id="LOCAL-00001" summary=":lipstick: style - fixed display and added error messages">
+      <created>1664556639279</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1664556639279</updated>
+    </task>
+    <task id="LOCAL-00002" summary=":lipstick: style - fixed display and added error messages">
+      <created>1664557181140</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1664557181140</updated>
+    </task>
+    <task id="LOCAL-00003" summary=":construction: increased version and added users DBLayer">
+      <created>1665328092967</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1665328092967</updated>
+    </task>
+    <task id="LOCAL-00004" summary=":construction: added preleminary version of resources">
+      <created>1665411132101</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1665411132101</updated>
+    </task>
+    <task id="LOCAL-00005" summary="updated authors">
+      <created>1665569742164</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1665569742164</updated>
+    </task>
+    <task id="LOCAL-00006" summary="updated a lot of shit and got basic version of the user resource down">
+      <created>1665617187435</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1665617187435</updated>
+    </task>
+    <task id="LOCAL-00007" summary="updated a lot of stuff and got basic version of the user resource down">
+      <created>1665617289971</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1665617289971</updated>
+    </task>
+    <task id="LOCAL-00008" summary="added redis caching layer">
+      <created>1665741480609</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1665741480609</updated>
+    </task>
+    <task id="LOCAL-00009" summary="added bid stuff and refractor">
+      <created>1665840419065</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1665840419065</updated>
+    </task>
+    <task id="LOCAL-00010" summary="bids almost done. migrated to DataProxy">
+      <created>1665865464436</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1665865464436</updated>
+    </task>
+    <task id="LOCAL-00011" summary="added /user resource tests">
+      <created>1665865616496</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1665865616496</updated>
+    </task>
+    <task id="LOCAL-00012" summary="moved resources. user updates now patches.">
+      <created>1665867952360</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1665867952360</updated>
+    </task>
+    <task id="LOCAL-00013" summary="added answers to questions barebones implementation">
+      <created>1666035857242</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1666035857242</updated>
+    </task>
+    <task id="LOCAL-00014" summary="removed TODO in DataProxy">
+      <created>1666036068990</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1666036068990</updated>
+    </task>
+    <task id="LOCAL-00015" summary="added tests for AuctionResource">
+      <created>1666199132204</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1666199132204</updated>
+    </task>
+    <task id="LOCAL-00016" summary="documentation">
+      <created>1666282545933</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1666282545933</updated>
+    </task>
+    <task id="LOCAL-00017" summary="UserResourceTest OK">
+      <created>1666374913313</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1666374913313</updated>
+    </task>
+    <task id="LOCAL-00018" summary="AuctionResource 95%, falta implementar alguns testes">
+      <created>1666379434054</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1666379434054</updated>
+    </task>
+    <task id="LOCAL-00019" summary="Fix showAuctionsAboutToClose">
+      <created>1666386745362</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1666386745362</updated>
+    </task>
+    <task id="LOCAL-00020" summary="Migrated BlobStorage to DataProxy">
+      <created>1666404878606</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1666404878606</updated>
+    </task>
+    <task id="LOCAL-00021" summary="Added preleminary JWT">
+      <created>1667559896252</created>
+      <option name="number" value="00021" />
+      <option name="presentableId" value="LOCAL-00021" />
+      <option name="project" value="LOCAL" />
+      <updated>1667559896252</updated>
+    </task>
+    <task id="LOCAL-00022" summary="Extended JWT usage">
+      <created>1667564517716</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1667564517716</updated>
+    </task>
+    <option name="localTasksCounter" value="23" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.History.Properties">
+    <option name="COLUMN_ID_ORDER">
+      <list>
+        <option value="Default.Root" />
+        <option value="Default.Author" />
+        <option value="Default.Date" />
+        <option value="Default.Subject" />
+        <option value="Space.CommitStatus" />
+      </list>
+    </option>
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="91ba584b-af26-4cf5-9fbf-8153320e3620">
+          <value>
+            <State>
+              <option name="SHOW_ONLY_AFFECTED_CHANGES" value="true" />
+              <option name="FILTERS">
+                <map>
+                  <entry key="branch">
+                    <value>
+                      <list>
+                        <option value="HEAD" />
+                      </list>
+                    </value>
+                  </entry>
+                  <entry key="structure">
+                    <value>
+                      <list>
+                        <option value="dir:/home/joaooliv/Documents/UNI/2022_23/SCC/scc2022-project/scc2022-backend/.idea" />
+                      </list>
+                    </value>
+                  </entry>
+                </map>
+              </option>
+            </State>
+          </value>
+        </entry>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <ignored-roots>
+      <path value="$PROJECT_DIR$/.." />
+    </ignored-roots>
+    <MESSAGE value=":lipstick: style - fixed display and added error messages" />
+    <MESSAGE value=":construction: increased version and added users DBLayer" />
+    <MESSAGE value=":construction: added preleminary version of resources" />
+    <MESSAGE value="updated authors" />
+    <MESSAGE value="updated a lot of shit and got basic version of the user resource down" />
+    <MESSAGE value="updated a lot of stuff and got basic version of the user resource down" />
+    <MESSAGE value="added redis caching layer" />
+    <MESSAGE value="added bid stuff and refractor" />
+    <MESSAGE value="bids almost done. migrated to DataProxy" />
+    <MESSAGE value="added /user resource tests" />
+    <MESSAGE value="moved resources. user updates now patches." />
+    <MESSAGE value="added answers to questions" />
+    <MESSAGE value="added answers to questions barebones implementation" />
+    <MESSAGE value="removed TODO in DataProxy" />
+    <MESSAGE value="added tests for AuctionResource" />
+    <MESSAGE value="documentation" />
+    <MESSAGE value="UserResourceTest OK" />
+    <MESSAGE value="AuctionResource 95%, falta implementar alguns testes" />
+    <MESSAGE value="Fix showAuctionsAboutToClose" />
+    <MESSAGE value="Migrated BlobStorage to DataProxy" />
+    <MESSAGE value="Added preleminary JWT" />
+    <MESSAGE value="Extended JWT usage" />
+    <option name="LAST_COMMIT_MESSAGE" value="Extended JWT usage" />
+  </component>
+</project>
