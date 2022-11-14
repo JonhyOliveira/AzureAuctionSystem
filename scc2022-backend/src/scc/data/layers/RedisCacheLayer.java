@@ -80,25 +80,23 @@ public class RedisCacheLayer {
 			jedis = getCachePool().getResource();
 		}
 	}
-
-	public void storeCookie(NewCookie cookie, SessionTemp session) {
+	public void putOnCache(String key, Object obj){
 		init();
-		try {
-			jedis.set("cookie:"+cookie, mapper.writeValueAsString(session));
-		} catch (JsonProcessingException e) {
+		try{
+			jedis.set(key, mapper.writeValueAsString(obj));
+		}catch (JsonProcessingException e) {
 			throw new RuntimeException(e);
 		}
 	}
 
-
-	public void updateUser(UserDAO u) {
+	/*public void updateUser(UserDAO u) {
 		init();
 		try {
 			jedis.setex("user:"+u.getNickname(), DEFAULT_EXPIRATION, mapper.writeValueAsString(u));
 		} catch (JsonProcessingException e) {
 			throw new RuntimeException(e);
 		}
-	}
+	}*/
 
 	public Optional<UserDAO> getUser(String nickname) {
 		init();

@@ -41,7 +41,7 @@ public class DataProxy {
     {
         UserDAO u = dbLayer.putUser(new UserDAO(user)).getItem();
 
-        redisLayer.updateUser(u);
+        redisLayer.putOnCache("user:"+u.getNickname(),u);
 
         return Optional.ofNullable(u)
                 .map(UserDAO::toUser);
@@ -53,8 +53,10 @@ public class DataProxy {
 
     public void storeCookie(NewCookie cookie, String nickname)
     {
-        SessionTemp session = new SessionTemp(cookie.getValue(), nickname);
-        redisLayer.storeCookie(cookie, session);
+        String cookieID = cookie.getValue();
+
+        SessionTemp session = new SessionTemp(cookieID, nickname);
+        redisLayer.putOnCache("cookie:"+cookieID, session);
     }
 
     /**
@@ -68,7 +70,7 @@ public class DataProxy {
         newUser.setNickname(nickname);
         UserDAO u = dbLayer.updateUser(new UserDAO(newUser.hashPwd())).getItem();
 
-        redisLayer.updateUser(u);
+        redisLayer.putOnCache("user:"+u.getNickname(),u);
 
         return Optional.ofNullable(u)
                 .map(UserDAO::toUser);
