@@ -1,14 +1,19 @@
 package scc.srv;
 
 import jakarta.ws.rs.*;
-import jakarta.ws.rs.core.MediaType;
-import jakarta.ws.rs.core.Response;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.NewCookie;
+import javax.ws.rs.core.Response;
+
+
 import scc.data.DataProxy;
+import scc.data.Login;
 import scc.data.User;
 import scc.utils.Hash;
 
 import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 
 @Path("/user")
 public class UserResource {
@@ -30,6 +35,9 @@ public class UserResource {
     public User create(User user) throws ForbiddenException
     {
         validateUserFields(user, true);
+
+        if(!dataProxy.doesFileExist(user.getPhotoId()))
+            throw new NotFoundException("User's picture is missing.");
 
         if (dataProxy.getUser(user.getNickname()).isPresent())
             throw new ForbiddenException("User already exists");
@@ -154,7 +162,8 @@ public class UserResource {
         return o.get();
     }
 
-    @POST
+    // ! NOT WORKING, IS DEPENDENCY MISSING??
+    /*@POST
     @Path("/auth")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response auth(Login loginInfo){
@@ -176,5 +185,5 @@ public class UserResource {
             return Response.ok().cookie(cookie).build();
         } else
             throw new NotAuthorizedException("Incorrect Login");
-    }
+    }*/
 }
