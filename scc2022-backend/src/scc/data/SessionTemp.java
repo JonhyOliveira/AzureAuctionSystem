@@ -1,10 +1,12 @@
-public class Session {
+package scc.data;
+
+public class SessionTemp {
     private String nickname;
     private String cookieId;
 
-    public Session() {}
+    public SessionTemp() {}
 
-    public Session( String cookieId, String nickname) {
+    public SessionTemp(String cookieId, String nickname) {
         this.nickname = nickname;
         this.cookieId = cookieId;
     }

@@ -10,7 +10,9 @@ import scc.data.models.BidDAO;
 import scc.data.models.QuestionDAO;
 import scc.data.models.UserDAO;
 import scc.data.*;
+import scc.session.Session;
 
+import javax.ws.rs.core.NewCookie;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -45,9 +47,13 @@ public class DataProxy {
                 .map(UserDAO::toUser);
     }
 
+    public boolean verifyLogin(String nickname, String userPW){
+        return dbLayer.verifyLogin(nickname, userPW);
+    }
+
     public void storeCookie(NewCookie cookie, String nickname)
     {
-        Session session = new Session(cookie.getValue(), nickname);
+        SessionTemp session = new SessionTemp(cookie.getValue(), nickname);
         redisLayer.storeCookie(cookie, session);
     }
 
@@ -73,7 +79,7 @@ public class DataProxy {
      */
     public Optional<User> getUser(String nickname)
     {
-        Optional<UserDAO> userObject = null;
+        Optional<UserDAO> userObject;
 
         userObject = redisLayer.getUser(nickname);
 

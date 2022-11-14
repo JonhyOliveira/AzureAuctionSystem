@@ -5,8 +5,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
+import scc.data.SessionTemp;
 import scc.data.models.UserDAO;
 
+import javax.ws.rs.core.NewCookie;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Optional;
@@ -79,9 +81,13 @@ public class RedisCacheLayer {
 		}
 	}
 
-	public void storeCookie(String cookie, Session session) {
+	public void storeCookie(NewCookie cookie, SessionTemp session) {
 		init();
-		jedis.set("cookie:"+cookie, mapper.writeValueAsString(session));
+		try {
+			jedis.set("cookie:"+cookie, mapper.writeValueAsString(session));
+		} catch (JsonProcessingException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 
