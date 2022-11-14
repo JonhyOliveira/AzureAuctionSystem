@@ -8,6 +8,7 @@ import scc.data.models.AuctionDAO;
 import scc.data.models.BidDAO;
 import scc.data.models.QuestionDAO;
 import scc.data.models.UserDAO;
+import scc.utils.Hash;
 
 import java.io.IOException;
 import java.io.InputStream;
