@@ -1,3 +1,5 @@
+package scc.data;
+
 public class Login {
     private String nickname;
     private String password;
@@ -12,11 +14,11 @@ public class Login {
         this.nickname = nickname;
     }
 
-    public String getPassword(){
+    public String getPwd(){
         return password;
     }
 
-    public void setPassword(String password){
+    public void setPwd(String password){
         this.password = password;
     }
 }
