@@ -134,6 +134,7 @@ public class UserResource {
             throw new BadRequestException(error_message);
     }
 
+    // ! TORNAR-SE-Á OBSOLETO AO PASSARMOS A UTILIZAR A FUNÇÃO DE BAIXO (AUTH)
     /**
      * Logs in an user
      * @param nickname the user nickname
@@ -153,4 +154,27 @@ public class UserResource {
         return o.get();
     }
 
+    @POST
+    @Path("/auth")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response auth(Login loginInfo){
+
+        if(dataProxy.verifyLogin(loginInfo.getNickname(), loginInfo.getPwd())){
+            String uid = UUID.randomUUID().toString();
+
+            NewCookie cookie = new NewCookie.Builder("scc:session")
+                    .value(uid)
+                    .path("/")
+                    .comment("sessionid")
+                    .maxAge(3600)
+                    .secure(false)
+                    .httpOnly(true)
+                    .build();
+
+            dataProxy.storeCookie(cookie, loginInfo.getNickname());
+
+            return Response.ok().cookie(cookie).build();
+        } else
+            throw new NotAuthorizedException("Incorrect Login");
+    }
 }

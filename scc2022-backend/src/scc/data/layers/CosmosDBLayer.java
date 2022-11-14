@@ -85,6 +85,16 @@ public class CosmosDBLayer {
 		questions = db.getContainer("questions");
 	}
 
+	// ! FUNCTION TO VERIFY LOGIN CREDENTIALS, dont know if its the best way to do it
+	public boolean verifyLogin(String nickname, String pwd) {
+		init();
+		PartitionKey key = new PartitionKey(nickname);
+		UserDAO user = users.readItem(nickname, key, UserDAO.class).getItem();
+
+		return (user != null && user.getPwd().equals(Hash.of(pwd)));
+
+	}
+
 	public CosmosItemResponse<UserDAO> updateUser(UserDAO newUser)
 	{
 		init();

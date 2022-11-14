@@ -79,6 +79,11 @@ public class RedisCacheLayer {
 		}
 	}
 
+	public void storeCookie(String cookie, Session session) {
+		init();
+		jedis.set("cookie:"+cookie, mapper.writeValueAsString(session));
+	}
+
 
 	public void updateUser(UserDAO u) {
 		init();

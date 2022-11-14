@@ -34,7 +34,7 @@ public class MediaResource {
 
 		if (!dataProxy.doesFileExist(fileID))
 			dataProxy.uploadFile(fileID, contents);
-
+		
 		return fileID;
 	}
 

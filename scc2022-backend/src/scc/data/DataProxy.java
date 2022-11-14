@@ -9,6 +9,7 @@ import scc.data.models.AuctionDAO;
 import scc.data.models.BidDAO;
 import scc.data.models.QuestionDAO;
 import scc.data.models.UserDAO;
+import scc.data.*;
 
 import java.util.List;
 import java.util.Objects;
@@ -42,6 +43,12 @@ public class DataProxy {
 
         return Optional.ofNullable(u)
                 .map(UserDAO::toUser);
+    }
+
+    public void storeCookie(NewCookie cookie, String nickname)
+    {
+        Session session = new Session(cookie.getValue(), nickname);
+        redisLayer.storeCookie(cookie, session);
     }
 
     /**
