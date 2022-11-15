@@ -5,12 +5,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
+import redis.clients.jedis.params.SetParams;
 import scc.data.SessionTemp;
 import scc.data.models.UserDAO;
 
 import javax.ws.rs.core.NewCookie;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Properties;
 
@@ -80,10 +82,15 @@ public class RedisCacheLayer {
 			jedis = getCachePool().getResource();
 		}
 	}
-	public void putOnCache(String key, Object obj){
+
+	public void putOnCache(String key, Object obj) {
+		putOnCache(key, obj, DEFAULT_EXPIRATION);
+	}
+
+	public void putOnCache(String key, Object obj, long expirationSeconds){
 		init();
 		try{
-			jedis.set(key, mapper.writeValueAsString(obj));
+			jedis.set(key, mapper.writeValueAsString(obj), SetParams.setParams().ex(expirationSeconds));
 		}catch (JsonProcessingException e) {
 			throw new RuntimeException(e);
 		}

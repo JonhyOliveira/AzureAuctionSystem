@@ -1,6 +1,7 @@
 package scc.data;
 
 public class SessionTemp {
+    public static final int VALIDITY_SECONDS = 3600;
     private String nickname;
     private String cookieId;
 

@@ -3,6 +3,7 @@ package scc.srv;
 import jakarta.ws.rs.ForbiddenException;
 import jakarta.ws.rs.NotFoundException;
 import org.junit.jupiter.api.function.Executable;
+import scc.data.Login;
 import scc.data.User;
 
 import java.util.UUID;
@@ -36,8 +37,11 @@ class UserResourceTest {
     @org.junit.jupiter.api.Test
     void delete() {
         User u = random();
+        Login l = new Login();
+        l.setNickname(u.getNickname());
+        l.setPwd(u.getPwd());
 
-        Executable deleteUser = () -> resource.delete(u.getNickname(), u.getPwd());
+        Executable deleteUser = () -> resource.delete(resource.auth(l).getCookies().get("scc:session"), u.getNickname());
 
         assertThrows(NotFoundException.class, deleteUser);
 

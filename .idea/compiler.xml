@@ -8,7 +8,6 @@
         <outputRelativeToContentRoot value="true" />
         <module name="scc-project" />
         <module name="scc2022-backend" />
-        <module name="scc2022-functions" />
       </profile>
     </annotationProcessing>
   </component>

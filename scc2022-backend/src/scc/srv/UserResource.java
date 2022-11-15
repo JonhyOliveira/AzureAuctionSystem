@@ -2,10 +2,10 @@ package scc.srv;
 
 import jakarta.ws.rs.*;
 
-import javax.ws.rs.core.Cookie;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.NewCookie;
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.core.Cookie;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.NewCookie;
+import jakarta.ws.rs.core.Response;
 
 
 import scc.data.DataProxy;
@@ -105,11 +105,10 @@ public class UserResource {
         SessionTemp s = dataProxy.getSession(cookie);
 
         if(Objects.isNull(s) || Objects.isNull(s.getNickname()) || s.getNickname().length()==0)
-            throw  new NotAuthorizedException("No valid session initializded.");
+            throw new NotAuthorizedException("No valid session initializded.");
 
-        //! TODO É NECESSÁRIO FAZER ESTA VERIFICAÇÃO???
-        /*if(!s.getCookieId().equals(cookie.getValue())
-            throw new ????*/
+        if(!s.getCookieId().equals(cookie.getValue()))
+            throw new InternalServerErrorException("Unexpected session value");
 
         return s;
     }
@@ -202,8 +201,7 @@ public class UserResource {
         return o.get();
     }
 
-    // ! NOT WORKING, IS DEPENDENCY MISSING??
-    /*@POST
+    @POST
     @Path("/auth")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response auth(Login loginInfo){
@@ -215,7 +213,7 @@ public class UserResource {
                     .value(uid)
                     .path("/")
                     .comment("sessionid")
-                    .maxAge(3600)
+                    .maxAge(SessionTemp.VALIDITY_SECONDS)
                     .secure(false)
                     .httpOnly(true)
                     .build();
@@ -225,5 +223,5 @@ public class UserResource {
             return Response.ok().cookie(cookie).build();
         } else
             throw new NotAuthorizedException("Incorrect Login");
-    }*/
+    }
 }

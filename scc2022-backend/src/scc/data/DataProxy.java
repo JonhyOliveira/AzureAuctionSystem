@@ -12,8 +12,8 @@ import scc.data.models.UserDAO;
 import scc.data.*;
 import scc.session.Session;
 
-import javax.ws.rs.core.Cookie;
-import javax.ws.rs.core.NewCookie;
+import jakarta.ws.rs.core.Cookie;
+import jakarta.ws.rs.core.NewCookie;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -57,7 +57,7 @@ public class DataProxy {
         String cookieID = cookie.getValue();
 
         SessionTemp session = new SessionTemp(cookieID, nickname);
-        redisLayer.putOnCache("cookie:"+cookieID, session);
+        redisLayer.putOnCache("cookie:"+cookieID, session, SessionTemp.VALIDITY_SECONDS);
     }
     public SessionTemp getSession(Cookie cookie){
         return redisLayer.getFromCache("cookie:"+ cookie.getValue(), SessionTemp.class);
