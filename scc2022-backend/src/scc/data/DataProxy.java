@@ -247,9 +247,21 @@ public class DataProxy {
      * @return list of auctions which are less or equal to 5 minutes away of getting closed
      */
     public List<Auction> getClosingAuctions(){
-        return dbLayer.getClosingAuctions()
-                .map(AuctionDAO::toAuction)
-                .collect(Collectors.toList());
+
+        String closing = redisLayer.getFromCache("auctions::closing", String.class);
+
+        if (closing != null)
+            return Arrays.stream(closing.split(","))
+                    .map(dbLayer::getAuctionByID)
+                    .map(auctionDAO -> auctionDAO.orElse(null))
+                    .filter(Objects::nonNull)
+                    .map(AuctionDAO::toAuction).collect(Collectors.toList());
+
+        Stream<AuctionDAO> closingAuctions = dbLayer.getClosingAuctions();
+
+        redisLayer.putOnCache("auctions::closing", closingAuctions.map(AuctionDAO::getAuctionID)
+                .collect(Collectors.joining(",")), 60);
+        return closingAuctions.map(AuctionDAO::toAuction).collect(Collectors.toList());
     }
 
     /**
