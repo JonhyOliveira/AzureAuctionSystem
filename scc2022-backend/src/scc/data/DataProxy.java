@@ -81,17 +81,20 @@ public class DataProxy {
      */
     public Optional<User> getUser(String nickname)
     {
-        Optional<UserDAO> userObject;
+        UserDAO userDAO = redisLayer.getFromCache("user:"+nickname,UserDAO.class);
 
-        userObject = redisLayer.getUser(nickname);
+        if (!Objects.isNull(userDAO))
+            return Optional.of(userDAO.toUser());
 
-        if (userObject.isPresent())
-            return userObject.map(UserDAO::toUser);
-
-        return dbLayer.getUserByNick(nickname)
+        Optional<User> userDB = dbLayer.getUserByNick(nickname)
                 .stream()
                 .findFirst()
                 .map(UserDAO::toUser);
+
+        if(userDB.isPresent())
+            redisLayer.putOnCache("user:"+userDB.get().getNickname(), userDB);
+
+        return userDB;
     }
 
     /**
@@ -100,7 +103,7 @@ public class DataProxy {
      */
     public void deleteUser(String nickname)
     {
-        redisLayer.invalidateUser(nickname);
+        redisLayer.deleteFromCache("user:"+nickname);
         dbLayer.delUserByNick(nickname);
     }
 
