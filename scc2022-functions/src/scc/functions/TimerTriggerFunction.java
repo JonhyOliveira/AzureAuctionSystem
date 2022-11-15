@@ -7,6 +7,7 @@ import com.microsoft.azure.functions.*;
 /**
  * Azure Functions with Timer trigger.
  * Schedule is: second minute hour ...
+ * Apagar auctions
  */
 public class TimerTriggerFunction {
 
