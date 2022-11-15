@@ -44,6 +44,17 @@ public class AuctionResource {
 
     }
 
+    @GET
+    @Path("/")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<Auction> search(@QueryParam("query") String queryString)
+    {
+        if (Objects.isNull(queryString))
+            throw new BadRequestException("Query string should not be empty");
+
+        return dataProxy.searchAuctions(queryString);
+    }
+
     /**
      /**
      * Updates the details an auction

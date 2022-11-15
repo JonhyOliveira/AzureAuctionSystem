@@ -37,7 +37,6 @@ public class UserResource {
         user.setPwd(Hash.of(user.getPwd()));
 
         return dataProxy.createUser(user)
-                .map(User::censored)
                 .orElse(null);
 
     }

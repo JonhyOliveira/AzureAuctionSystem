@@ -11,7 +11,7 @@ class AuctionDAOTest {
     @Test
     void testJson() throws JsonProcessingException {
         AuctionDAO auc = new AuctionDAO("id", "tit", "descri", "epic thumbnail",
-                "me", System.currentTimeMillis() + 1000, 100, false);
+                "me", System.currentTimeMillis() + 1000, 100F, false);
 
         ObjectMapper mapper = new ObjectMapper();
 

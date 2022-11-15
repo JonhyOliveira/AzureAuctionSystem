@@ -37,7 +37,7 @@ class AuctionResourceTest {
 
         Auction auction = new Auction(null, "Ford Focus 2016", "In great condition",
                 "0:"+id, auction_owner.getNickname(), new Date().toInstant().plusSeconds(160L).toEpochMilli(),
-                100, false);
+                100F, false);
 
         assertThrows(NotAuthorizedException.class, () -> resource.create(auction.copy(), auction_owner.getPwd() + "x"));
 
@@ -60,7 +60,7 @@ class AuctionResourceTest {
 
         Auction auction = resource.create(new Auction(null, "Ford Focus 2016", "In great condition",
                 "0:"+id, auction_owner.getNickname(), new Date().toInstant().plusSeconds(160L).toEpochMilli(),
-                100, false).copy(), auction_owner.getPwd());
+                100F, false).copy(), auction_owner.getPwd());
 
         System.out.println(auction);
 
@@ -155,7 +155,7 @@ class AuctionResourceTest {
 
         Auction auction = new Auction(null, "Ford Focus 2016", "In great condition",
                 "0:"+id, u1.getNickname(), System.currentTimeMillis() + 1000, //Current time so it expires
-                100, false);
+                100F, false);
 
         resource.create(auction, u1.getPwd());
 
@@ -190,6 +190,12 @@ class AuctionResourceTest {
         //assertArrayEquals(u2Aucs.toArray(), resource.showUserAuctions(u2.getNickname()).toArray(), "oh no!");
 
         //throw new NotImplementedException();*/
+    }
+
+    @Test
+    void find()
+    {
+        System.out.println(resource.search("ford"));
     }
 
     public static Question createRandomQuestion(Auction auction, User auction_owner)

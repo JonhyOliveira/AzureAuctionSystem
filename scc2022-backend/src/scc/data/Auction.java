@@ -17,7 +17,7 @@ public class Auction {
     @SuppressWarnings("unused")
     public Auction() {}
 
-    public Auction(String auctionID, String title, String description, String thumbnailId, String ownerNickname, long endTime, float minPrice,
+    public Auction(String auctionID, String title, String description, String thumbnailId, String ownerNickname, Long endTime, Float minPrice,
                    boolean isClosed/*, List<Bid> bids, List<Question> questions*/) {
         super();
         this.auctionID = auctionID;
@@ -67,14 +67,14 @@ public class Auction {
     public void setOwnerNickname(String ownerNickname) {
         this.ownerNickname = ownerNickname;
     }
-    public long getEndTime() {
+    public Long getEndTime() {
         return endTime;
     }
     @SuppressWarnings("unused")
     public void setEndTime(long endTime) {
         this.endTime = endTime;
     }
-    public float getMinPrice() {
+    public Float getMinPrice() {
         return minPrice;
     }
     @SuppressWarnings("unused")

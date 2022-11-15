@@ -3,6 +3,7 @@ package scc.data;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import redis.clients.jedis.JedisPool;
 import scc.data.layers.BlobStorageLayer;
+import scc.data.layers.CognitiveSearchLayer;
 import scc.data.layers.CosmosDBLayer;
 import scc.data.layers.RedisCacheLayer;
 import scc.data.models.AuctionDAO;
@@ -17,9 +18,11 @@ import java.util.stream.Collectors;
 
 public class DataProxy {
 
+    private static final boolean USE_CACHE = true;
     private static final CosmosDBLayer dbLayer = CosmosDBLayer.getInstance();
-    private static final RedisCacheLayer redisLayer = RedisCacheLayer.getInstance();
+    private static final RedisCacheLayer redisLayer = USE_CACHE ? RedisCacheLayer.getInstance() : null;
     private static final BlobStorageLayer blobStorage = BlobStorageLayer.getInstance();
+    private static final CognitiveSearchLayer searchLayer = CognitiveSearchLayer.getInstance();
 
     private static DataProxy instance;
 
@@ -55,7 +58,8 @@ public class DataProxy {
         newUser.setNickname(nickname);
         UserDAO u = dbLayer.updateUser(new UserDAO(newUser.hashPwd())).getItem();
 
-        redisLayer.updateUser(u);
+        if (USE_CACHE)
+            redisLayer.updateUser(u);
 
         return Optional.ofNullable(u)
                 .map(UserDAO::toUser);
@@ -66,13 +70,12 @@ public class DataProxy {
      */
     public Optional<User> getUser(String nickname)
     {
-        Optional<UserDAO> userObject = null;
+        if (USE_CACHE) {
+            Optional<UserDAO> userObject = redisLayer.getUser(nickname);
 
-        userObject = redisLayer.getUser(nickname);
-
-        if (userObject.isPresent())
-            return userObject.map(UserDAO::toUser);
-
+            if (userObject.isPresent())
+                return userObject.map(UserDAO::toUser);
+        }
         return dbLayer.getUserByNick(nickname)
                 .stream()
                 .findFirst()
@@ -85,7 +88,8 @@ public class DataProxy {
      */
     public void deleteUser(String nickname)
     {
-        redisLayer.invalidateUser(nickname);
+        if (USE_CACHE)
+            redisLayer.invalidateUser(nickname);
         dbLayer.delUserByNick(nickname);
     }
 
@@ -263,5 +267,9 @@ public class DataProxy {
 
     public List<String> listFiles() {
         return blobStorage.listFiles().collect(Collectors.toList());
+    }
+
+    public List<Auction> searchAuctions(String query) {
+        return searchLayer.findAuction(query).map(AuctionDAO::toAuction).collect(Collectors.toList());
     }
 }

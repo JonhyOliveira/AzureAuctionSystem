@@ -22,7 +22,7 @@ public final class AuctionDAO extends DAO {
         this(auc.getAuctionID(), auc.getTitle(), auc.getDescription(), auc.getPhotoId(), auc.getOwnerNickname(), auc.getEndTime(), auc.getMinPrice(), auc.getIsClosed());
     }
 
-    public AuctionDAO(String auctionID, String title, String description, String thumbnailID, String owner_nickname, long endTime, float minPrice, boolean aucStatus){
+    public AuctionDAO(String auctionID, String title, String description, String thumbnailID, String owner_nickname, Long endTime, Float minPrice, boolean aucStatus){
         super();
         this.auctionID = auctionID;
         this.title = title;
