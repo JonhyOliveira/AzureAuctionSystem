@@ -91,8 +91,13 @@ public class RedisCacheLayer {
 
 	public <T> T getFromCache(String key, Class<T> typeClass){
 		init();
+
+		String content = jedis.get(key);
+		if(content == null)
+			return null;
+
 		try {
-			return mapper.readValue(jedis.get(key),typeClass);
+			return mapper.readValue(content,typeClass);
 		} catch (JsonProcessingException e) {
 			throw new RuntimeException(e);
 		}
