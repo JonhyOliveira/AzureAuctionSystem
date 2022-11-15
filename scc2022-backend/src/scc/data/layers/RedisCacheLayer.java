@@ -89,6 +89,15 @@ public class RedisCacheLayer {
 		}
 	}
 
+	public <T> T getFromCache(String key, Class<T> typeClass){
+		init();
+		try {
+			return mapper.readValue(jedis.get(key),typeClass);
+		} catch (JsonProcessingException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
 	/*public void updateUser(UserDAO u) {
 		init();
 		try {
