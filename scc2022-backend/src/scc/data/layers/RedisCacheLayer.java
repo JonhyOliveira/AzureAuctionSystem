@@ -6,14 +6,9 @@ import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 import redis.clients.jedis.params.SetParams;
-import scc.data.SessionTemp;
-import scc.data.models.UserDAO;
 
-import javax.ws.rs.core.NewCookie;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Objects;
-import java.util.Optional;
 import java.util.Properties;
 
 public class RedisCacheLayer {
