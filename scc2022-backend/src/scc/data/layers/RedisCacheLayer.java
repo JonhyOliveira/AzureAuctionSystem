@@ -98,26 +98,8 @@ public class RedisCacheLayer {
 		}
 	}
 
-	/*public void updateUser(UserDAO u) {
+	public void deleteFromCache(String key){
 		init();
-		try {
-			jedis.setex("user:"+u.getNickname(), DEFAULT_EXPIRATION, mapper.writeValueAsString(u));
-		} catch (JsonProcessingException e) {
-			throw new RuntimeException(e);
-		}
-	}*/
-
-	public Optional<UserDAO> getUser(String nickname) {
-		init();
-		try {
-			return Optional.ofNullable(mapper.readValue(jedis.get("user:" + nickname), UserDAO.class));
-		} catch (JsonProcessingException e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	public void invalidateUser(String nickname) {
-		init();
-		jedis.del("user:"+nickname);
+		jedis.del(key);
 	}
 }
