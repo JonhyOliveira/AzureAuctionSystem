@@ -1,8 +1,6 @@
 package scc.data;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import io.netty.handler.codec.serialization.ObjectEncoder;
-import jakarta.ws.rs.NotFoundException;
 import redis.clients.jedis.JedisPool;
 import scc.data.layers.BlobStorageLayer;
 import scc.data.layers.CosmosDBLayer;
@@ -43,7 +41,7 @@ public class DataProxy {
     {
         UserDAO u = dbLayer.putUser(new UserDAO(user)).getItem();
 
-        redisLayer.putOnCache("user:"+u.getNickname(),user);
+        redisLayer.putOnCache("user:"+u.getNickname(),u);
 
         return Optional.ofNullable(u)
                 .map(UserDAO::toUser);
@@ -72,7 +70,7 @@ public class DataProxy {
         newUser.setNickname(nickname);
         UserDAO u = dbLayer.updateUser(new UserDAO(newUser.hashPwd())).getItem();
 
-        redisLayer.putOnCache("user:"+u.getNickname(),u.toUser());
+        redisLayer.putOnCache("user:"+u.getNickname(),u);
 
         return Optional.ofNullable(u)
                 .map(UserDAO::toUser);
@@ -85,21 +83,15 @@ public class DataProxy {
     {
         Optional<UserDAO> userObject;
 
-        //userObject = redisLayer.getUser(nickname);
-        User user= redisLayer.getFromCache("user:"+nickname, User.class);
+        userObject = redisLayer.getUser(nickname);
 
-        if (!Objects.isNull(user))
-            return Optional.of(user);
+        if (userObject.isPresent())
+            return userObject.map(UserDAO::toUser);
 
-        Optional<User> userDB = dbLayer.getUserByNick(nickname)
+        return dbLayer.getUserByNick(nickname)
                 .stream()
                 .findFirst()
                 .map(UserDAO::toUser);
-
-        if(userDB.isPresent()) // ! ESTE USER.GET FAZ SENTIDO?????? todo
-            redisLayer.putOnCache("user:" + userDB.get().getNickname(), userDB);
-
-        return userDB;
     }
 
     /**
