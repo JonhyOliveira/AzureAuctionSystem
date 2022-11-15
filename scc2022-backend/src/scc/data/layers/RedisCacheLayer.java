@@ -9,6 +9,7 @@ import scc.data.models.UserDAO;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Properties;
 
@@ -91,11 +92,14 @@ public class RedisCacheLayer {
 
 	public Optional<UserDAO> getUser(String nickname) {
 		init();
-		try {
-			return Optional.ofNullable(mapper.readValue(jedis.get("user:" + nickname), UserDAO.class));
-		} catch (JsonProcessingException e) {
-			throw new RuntimeException(e);
-		}
+		return Optional.ofNullable(jedis.get("user:" + nickname))
+				.map(s -> {
+					try {
+						return mapper.readValue(s, UserDAO.class);
+					} catch (JsonProcessingException e) {
+						throw new RuntimeException(e);
+					}
+				});
 	}
 
 	public void invalidateUser(String nickname) {
