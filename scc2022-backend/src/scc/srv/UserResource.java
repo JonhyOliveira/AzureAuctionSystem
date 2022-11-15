@@ -1,6 +1,8 @@
 package scc.srv;
 
 import jakarta.ws.rs.*;
+
+import javax.ws.rs.core.Cookie;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
@@ -8,7 +10,9 @@ import javax.ws.rs.core.Response;
 
 import scc.data.DataProxy;
 import scc.data.Login;
+import scc.data.SessionTemp;
 import scc.data.User;
+import scc.session.Session;
 import scc.utils.Hash;
 
 import java.util.Objects;
@@ -52,10 +56,10 @@ public class UserResource {
 
     /**
      * Deletes a user
-     * @param nickname the user nickname
-     * @param password the user password
+     * //@param nickname the user nickname
+     * //@param password the user password
      */
-    @DELETE
+    /*@DELETE
     @Path("/{nickname}")
     @Consumes(MediaType.APPLICATION_JSON)
     public void delete(@PathParam("nickname") String nickname, @HeaderParam("Authorization") String password)
@@ -72,6 +76,42 @@ public class UserResource {
             throw new NotAuthorizedException("Password Incorrect");
 
         dataProxy.deleteUser(nickname);
+    }*/
+
+    @DELETE
+    @Path("/{nickname}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public void delete(@CookieParam("scc:session") Cookie cookie, @PathParam("nickname") String nickname) {
+
+        SessionTemp s = getUserSession(cookie);
+
+        if(!s.getNickname().equals(nickname))
+            throw new NotAuthorizedException("Invalid user:" + s.getNickname());
+
+        // ! TODO ACHO QUE TBM A PARTIR DO MOMENTO EM QUE FAZEMOS A VERIFICAÇAO SE A SESSAO É VALIDA NAO NECESSITAMOS
+        // TODO DE IR BUSCAR E VERIFICAR SE O USER EXISTE, POIS ESTAMOS A ELEMINAR O NOSSO PROPRIO USER
+        //Optional<User> o = dataProxy.getUser(nickname);
+
+        /*if (o.isEmpty())
+            throw new NotFoundException("User not found");*/
+
+        dataProxy.deleteUser(nickname);
+    }
+
+    public SessionTemp getUserSession(Cookie cookie){
+        if(Objects.isNull(cookie) || Objects.isNull(cookie.getValue()))
+            throw new NotAuthorizedException("No session initialiazed.");
+
+        SessionTemp s = dataProxy.getSession(cookie);
+
+        if(Objects.isNull(s) || Objects.isNull(s.getNickname()) || s.getNickname().length()==0)
+            throw  new NotAuthorizedException("No valid session initializded.");
+
+        //! TODO É NECESSÁRIO FAZER ESTA VERIFICAÇÃO???
+        /*if(!s.getCookieId().equals(cookie.getValue())
+            throw new ????*/
+
+        return s;
     }
 
     /**
