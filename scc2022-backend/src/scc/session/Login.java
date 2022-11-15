@@ -1,4 +1,4 @@
-package scc.data;
+package scc.session;
 
 public class Login {
     private String nickname;

@@ -1,7 +1,8 @@
-package scc.data;
+package scc.session;
 
 public class SessionTemp {
     public static final int VALIDITY_SECONDS = 3600;
+    public static final String COOKIE_NAME = "scc:session";
     private String nickname;
     private String cookieId;
 
@@ -27,4 +28,5 @@ public class SessionTemp {
     public void setCookieId(String cookieId){
         this.cookieId = cookieId;
     }
+
 }

@@ -7,10 +7,10 @@
   <component name="MavenProjectsManager">
     <option name="originalFiles">
       <list>
-        <option value="$PROJECT_DIR$/pom.xml" />
         <option value="$PROJECT_DIR$/../scc2022-project/scc2022-backend/pom.xml" />
         <option value="$PROJECT_DIR$/azure-function-examples/pom.xml" />
         <option value="$PROJECT_DIR$/scc2022-backend/pom.xml" />
+        <option value="$PROJECT_DIR$/pom.xml" />
       </list>
     </option>
   </component>

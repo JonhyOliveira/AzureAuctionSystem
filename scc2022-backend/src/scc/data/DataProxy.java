@@ -1,7 +1,5 @@
 package scc.data;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import redis.clients.jedis.JedisPool;
 import scc.data.layers.BlobStorageLayer;
 import scc.data.layers.CosmosDBLayer;
 import scc.data.layers.RedisCacheLayer;
@@ -9,15 +7,16 @@ import scc.data.models.AuctionDAO;
 import scc.data.models.BidDAO;
 import scc.data.models.QuestionDAO;
 import scc.data.models.UserDAO;
-import scc.data.*;
-import scc.session.Session;
 
-import jakarta.ws.rs.core.Cookie;
 import jakarta.ws.rs.core.NewCookie;
+import scc.session.SessionTemp;
+
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class DataProxy {
 
@@ -56,11 +55,10 @@ public class DataProxy {
     {
         String cookieID = cookie.getValue();
 
-        SessionTemp session = new SessionTemp(cookieID, nickname);
-        redisLayer.putOnCache("cookie:"+cookieID, session, SessionTemp.VALIDITY_SECONDS);
+        redisLayer.putOnCache("cookie:"+nickname, cookieID);
     }
-    public SessionTemp getSession(Cookie cookie){
-        return redisLayer.getFromCache("cookie:"+ cookie.getValue(), SessionTemp.class);
+    public SessionTemp getSession(String nickname){
+        return new SessionTemp(redisLayer.getFromCache("cookie:"+ nickname, String.class), nickname);
     }
 
     /**
