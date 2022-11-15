@@ -7,8 +7,8 @@ public class SessionTemp {
     public SessionTemp() {}
 
     public SessionTemp(String cookieId, String nickname) {
-        this.nickname = nickname;
         this.cookieId = cookieId;
+        this.nickname = nickname;
     }
 
     public String getNickname(){
