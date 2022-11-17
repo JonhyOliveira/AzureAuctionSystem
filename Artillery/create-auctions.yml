@@ -1,5 +1,5 @@
 config:
-  target: 'https://scc23appnortheurope4204.azurewebsites.net/rest'
+  target: 'https://scc-backend-58001-52949-57797.azurewebsites.net/rest'
   http:
     timeout: 10
   plugins:
@@ -27,7 +27,7 @@ scenarios:
             headers:
               Content-Type: application/json
             json:
-              user: "{{ user }}"
+              nickname: "{{ user }}"
               pwd: "{{ pwd }}"
         - function: "genNewAuction"
         - post:                          # First: post image for the auction
@@ -35,7 +35,7 @@ scenarios:
             name: "POST:/media"
             headers:
               Content-Type: application/octet-stream
-              Accept: application/json
+              Accept: text/plain
             beforeRequest: "uploadImageBody"
             capture: 
               regexp: "(.+)"
@@ -50,14 +50,14 @@ scenarios:
               description: "{{ description }}"
               title: "{{ title }}"
               owner_nickname: "{{ user }}"
-              imageId: "{{ imageId }}"
-              endTime: "{{ endTime }}"
-              minimumPrice: "{{ minimumPrice }}"
-              status: "{{ status }}"
+              image_id: "{{ imageId }}"
+              end_time: "{{ endTime }}"
+              min_price: "{{ minimumPrice }}"
+              closed: "{{ status }}"
             capture:                     # Capturing auction id and store it in variable auctionId
               - json: $.id
                 as: "auctionId"
-              - json: $.owner
+              - json: $.owner_nickname
                 as: "auctionUser"
         - loop:                          # Let's add numBids bids to the auction
           - function: "selectUserSkewed"
@@ -68,7 +68,7 @@ scenarios:
               headers:
                 Content-Type: application/json
               json:
-                user: "{{ user }}"
+                nickname: "{{ user }}"
                 pwd: "{{ pwd }}"
           - post:                          # New bid     
               url: "/auction/{{ auctionId }}/bid"
@@ -77,9 +77,8 @@ scenarios:
                 Content-Type: application/json
                 Accept: application/json
               json:
-                auctionId: "{{ auctionId }}"
-                user: "{{ user }}"
-                value: "{{ value }}"
+                bidder: "{{ user }}"
+                amount: "{{ value }}"
           count: "{{ numBids }}"   
         - loop:                          # Let's add numQuestions questions to the auction
           - function: "selectUserSkewed"
@@ -90,7 +89,7 @@ scenarios:
               headers:
                 Content-Type: application/json
               json:
-                user: "{{ user }}"
+                nickname: "{{ user }}"
                 pwd: "{{ pwd }}"
           - post:                          # New question     
               url: "/auction/{{ auctionId }}/question"
@@ -99,11 +98,10 @@ scenarios:
                 Content-Type: application/json
                 Accept: application/json
               json:
-                auctionId: "{{ auctionId }}"
-                user: "{{ user }}"
+                questioner: "{{ user }}"
                 text: "{{ text }}"
               capture:                     # Capturing question id and store it in variable questionId
-                - json: $.id
+                - json: $.question_id
                   as: "questionId"
           - function: "genNewQuestionReply"
           - post:                         
@@ -112,17 +110,18 @@ scenarios:
               headers:
                 Content-Type: application/json
               json:
-                user: "{{ auctionUser }}"
+                nickname: "{{ auctionUser }}"
                 pwd: "{{ auctionUserPwd }}"
               ifTrue: "reply"
-          - post:                          # New reply     
-              url: "/auction/{{ auctionId }}/question/{{ questionId }}/reply"
-              name: "POST:/auction/*/question/*/reply"
+          - put:                          # New reply
+              url: "/auction/{{ auctionId }}/question"
+              name: "POST:/auction/*/question-reply"
               headers:
                 Content-Type: application/json
                 Accept: application/json
               json:
-                reply: "{{ reply }}"
+                question_id: "{{ questionId }}"
+                answer: "{{ reply }}"
               ifTrue: "reply"
           count: "{{ numQuestions }}"   
         count: "{{ numAuctions }}"

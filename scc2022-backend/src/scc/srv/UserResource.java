@@ -1,7 +1,6 @@
 package scc.srv;
 
 import jakarta.ws.rs.*;
-
 import jakarta.ws.rs.core.Cookie;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.NewCookie;
@@ -58,7 +57,7 @@ public class UserResource {
     @DELETE
     @Path("/{nickname}")
     @Consumes(MediaType.APPLICATION_JSON)
-    public void delete(@CookieParam("scc:session") Cookie cookie, @PathParam("nickname") String nickname) {
+    public void delete(@CookieParam(SessionTemp.COOKIE_NAME) Cookie cookie, @PathParam("nickname") String nickname) {
 
         validateUserSession(cookie, nickname);
 
@@ -75,7 +74,7 @@ public class UserResource {
     @Path("/{nickname}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public User update(@PathParam("nickname") String nickname, @CookieParam("scc:session") Cookie cookie, User newUser)
+    public User update(@PathParam("nickname") String nickname, @CookieParam(SessionTemp.COOKIE_NAME) Cookie cookie, User newUser)
     {
         validateUserFields(newUser, false);
 
@@ -126,13 +125,12 @@ public class UserResource {
 
         String uid = UUID.randomUUID().toString();
 
-        NewCookie cookie = new NewCookie.Builder("scc:session")
+        NewCookie cookie = new NewCookie.Builder(SessionTemp.COOKIE_NAME)
                 .value(uid)
-                .path("/")
+                .path("/rest/")
                 .comment("sessionid")
                 .maxAge(SessionTemp.VALIDITY_SECONDS)
                 .secure(false)
-                .httpOnly(true)
                 .build();
 
         dataProxy.storeCookie(cookie, loginInfo.getNickname());
@@ -172,15 +170,21 @@ public class UserResource {
      * @throws WebApplicationException if the session is not valid
      */
     public static void validateUserSession(Cookie cookie, String nickname){
-        if(Objects.isNull(cookie) || Objects.isNull(cookie.getValue()))
-            throw new NotAuthorizedException("No session initialiazed.");
+        if (Objects.isNull(nickname))
+            throw new BadRequestException("Can't validate session if nickname is not provided.");
 
-        SessionTemp s = dataProxy.getSession(nickname);
+        if(Objects.isNull(cookie))
+            throw new NotAuthorizedException("No session cookie found.");
 
-        if(Objects.isNull(s) || Objects.isNull(s.getNickname()) || s.getNickname().length()==0)
-            throw new NotAuthorizedException("No valid session initialized.");
+        if (Objects.isNull(cookie.getValue()))
+            throw new NotAuthorizedException("Session cookie is invalid");
 
-        if(!s.getCookieId().equals(cookie.getValue()))
-            throw new InternalServerErrorException("Unexpected session value");
+        Optional<SessionTemp> s = dataProxy.getSession(nickname);
+
+        if (s.isEmpty())
+            throw new NotAuthorizedException("Session not found. Have you tried getting a session cookie?");
+
+        if(!nickname.equals(s.get().getNickname()) || !cookie.getValue().equals(s.get().getCookieId()))
+            throw new NotAuthorizedException("No ~valid~ session initialized.");
     }
 }

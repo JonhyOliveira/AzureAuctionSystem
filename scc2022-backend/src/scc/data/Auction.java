@@ -1,29 +1,37 @@
 package scc.data;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.Objects;
 import java.util.Optional;
 
 public class Auction {
 
+    @JsonProperty("id")
     private String auctionID;
     private String title;
     private String description;
-    private String thumbnailId;
+    @JsonProperty("image_id")
+    private String imageId;
+    @JsonProperty("owner_nickname")
     private String ownerNickname;
+    @JsonProperty("closed")
     private boolean isClosed;
+    @JsonProperty("end_time")
     private Long endTime;
+    @JsonProperty("min_price")
     private Float minPrice;
 
     @SuppressWarnings("unused")
     public Auction() {}
 
-    public Auction(String auctionID, String title, String description, String thumbnailId, String ownerNickname, Long endTime, Float minPrice,
+    public Auction(String auctionID, String title, String description, String imageId, String ownerNickname, Long endTime, Float minPrice,
                    boolean isClosed/*, List<Bid> bids, List<Question> questions*/) {
         super();
         this.auctionID = auctionID;
         this.title = title;
         this.description = description;
-        this.thumbnailId = thumbnailId;
+        this.imageId = imageId;
         this.ownerNickname = ownerNickname;
         this.endTime = endTime;
         this.minPrice = minPrice;
@@ -53,12 +61,12 @@ public class Auction {
     public void setDescription(String desc) {
         this.description = desc;
     }
-    public String getPhotoId() {
-        return thumbnailId;
+    public String getImageId() {
+        return imageId;
     }
     @SuppressWarnings("unused")
-    public void setThumbnailId(String thumbnailId) {
-        this.thumbnailId = thumbnailId;
+    public void setImagedId(String thumbnailId) {
+        this.imageId = thumbnailId;
     }
     public String getOwnerNickname() {
         return ownerNickname;
@@ -91,7 +99,7 @@ public class Auction {
 
     @Override
     public String toString() {
-        return "Auction [id=" + auctionID + ", title=" + title + ", desc=" + description + ", photoId=" + thumbnailId +
+        return "Auction [id=" + auctionID + ", title=" + title + ", desc=" + description + ", photoId=" + imageId +
                 ", owner=" + ownerNickname + ", endTime=" + endTime + ", minPrice=" + minPrice + ", isClosed=" + isClosed + " ]";
     }
 
@@ -116,8 +124,8 @@ public class Auction {
             if (Objects.nonNull(auc.description)) {
                 patching.description = auc.description;
             }
-            if (Objects.nonNull(auc.thumbnailId)) {
-                patching.thumbnailId = auc.thumbnailId;
+            if (Objects.nonNull(auc.imageId)) {
+                patching.imageId = auc.imageId;
             }
             if (auc.endTime >= patching.endTime) {
                 patching.endTime = auc.endTime;
@@ -132,7 +140,7 @@ public class Auction {
     }
 
     public Auction copy() {
-        return new Auction(this.auctionID, this.title, this.description, this.thumbnailId, this.ownerNickname,
+        return new Auction(this.auctionID, this.title, this.description, this.imageId, this.ownerNickname,
                 this.endTime, this.minPrice, this.isClosed);
     }
 
@@ -141,11 +149,11 @@ public class Auction {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Auction auction = (Auction) o;
-        return isClosed == auction.isClosed && Objects.equals(auctionID, auction.auctionID) && Objects.equals(title, auction.title) && Objects.equals(description, auction.description) && Objects.equals(thumbnailId, auction.thumbnailId) && Objects.equals(ownerNickname, auction.ownerNickname) && Objects.equals(endTime, auction.endTime) && Objects.equals(minPrice, auction.minPrice);
+        return isClosed == auction.isClosed && Objects.equals(auctionID, auction.auctionID) && Objects.equals(title, auction.title) && Objects.equals(description, auction.description) && Objects.equals(imageId, auction.imageId) && Objects.equals(ownerNickname, auction.ownerNickname) && Objects.equals(endTime, auction.endTime) && Objects.equals(minPrice, auction.minPrice);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(auctionID, title, description, thumbnailId, ownerNickname, isClosed, endTime, minPrice);
+        return Objects.hash(auctionID, title, description, imageId, ownerNickname, isClosed, endTime, minPrice);
     }
 }

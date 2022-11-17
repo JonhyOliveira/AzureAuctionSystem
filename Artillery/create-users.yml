@@ -1,11 +1,11 @@
 config:
-  target: 'https://scc-backend-4204.azurewebsites.net/rest'
+  target: 'https://scc-backend-58001-52949-57797.azurewebsites.net/rest'
   plugins:
     metrics-by-endpoint:
       useOnlyRequestNames: true  # new mode to aggregate metrics in artillery
   processor: "./test-utils.js"
   variables:
-    numUsers : 100
+    numUsers : 120
   phases:
   - name: "Create users"    # Create users
     duration: 1
@@ -38,6 +38,4 @@ scenarios:
               name: "{{ name }}"
               pwd: "{{ pwd }}"
               photoId: "{{ imageId }}"
-              channelIds: []
-            afterResponse: "genNewUserReply"    # capture result and store in file
         count: "{{ numUsers }}"

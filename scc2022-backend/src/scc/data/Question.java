@@ -1,9 +1,12 @@
 package scc.data;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.Objects;
 
 public class Question {
 
+    @JsonProperty("question_id")
     private String questionID;
     private String questioner;
     private String text;
@@ -39,6 +42,7 @@ public class Question {
     /**
      * @return the question identifier
      */
+    @JsonProperty("question_id")
     public String getQuestionID() {
         return questionID;
     }

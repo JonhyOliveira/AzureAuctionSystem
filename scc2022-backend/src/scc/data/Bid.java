@@ -28,7 +28,7 @@ public final class Bid {
     /**
      * @return the bidder nickname
      */
-    @JsonProperty("bidder_nickname")
+    @JsonProperty("bidder")
     public String getBidder() {
         return bidder;
     }
@@ -36,7 +36,7 @@ public final class Bid {
     /**
      * @return the amount in this bid
      */
-    @JsonProperty(value = "bid_amount")
+    @JsonProperty(value = "amount")
     public Double getAmount() {
         return amount;
     }

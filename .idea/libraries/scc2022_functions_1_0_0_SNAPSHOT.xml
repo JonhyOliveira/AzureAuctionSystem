@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="scc2022-functions-1.0.0-SNAPSHOT">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/scc2022-functions/target/azure-functions/scc-backend-functions/scc2022-functions-1.0.0-SNAPSHOT.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

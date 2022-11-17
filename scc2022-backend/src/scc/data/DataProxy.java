@@ -1,6 +1,7 @@
 package scc.data;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import jakarta.ws.rs.core.Cookie;
 import redis.clients.jedis.JedisPool;
 import scc.data.layers.BlobStorageLayer;
 import scc.data.layers.CognitiveSearchLayer;
@@ -21,6 +22,9 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+/**
+ * This class manages
+ */
 public class DataProxy {
 
     private static final boolean USE_CACHE = true;
@@ -46,9 +50,9 @@ public class DataProxy {
     {
         UserDAO u = dbLayer.putUser(new UserDAO(user)).getItem();
 
-        redisLayer.updateUser(u);
+        redisLayer.putOnCache("u:" + u.getNickname(), u);
 
-        return Optional.ofNullable(u)
+        return Optional.of(u)
                 .map(UserDAO::toUser);
     }
 
@@ -63,9 +67,9 @@ public class DataProxy {
         newUser.setNickname(nickname);
         UserDAO u = dbLayer.updateUser(new UserDAO(newUser.hashPwd())).getItem();
 
-        redisLayer.updateUser(u);
+        redisLayer.putOnCache("u:" + u.getNickname(), u);
 
-        return Optional.ofNullable(u)
+        return Optional.of(u)
                 .map(UserDAO::toUser);
     }
 
@@ -74,16 +78,12 @@ public class DataProxy {
      */
     public Optional<User> getUser(String nickname)
     {
-        Optional<UserDAO> userObject = null;
+        UserDAO userObject = redisLayer.getFromCache("u:" + nickname, UserDAO.class);
 
-        userObject = redisLayer.getUser(nickname);
-
-        if (userObject.isPresent())
-            return userObject.map(UserDAO::toUser);
+        if (userObject != null)
+            return Optional.of(userObject.toUser());
 
         return dbLayer.getUserByNick(nickname)
-                .stream()
-                .findFirst()
                 .map(UserDAO::toUser);
     }
 
@@ -93,7 +93,7 @@ public class DataProxy {
      */
     public void deleteUser(String nickname)
     {
-        redisLayer.invalidateUser(nickname);
+        redisLayer.deleteFromCache("u:" + nickname);
         dbLayer.delUserByNick(nickname);
     }
 
@@ -271,5 +271,25 @@ public class DataProxy {
 
     public List<String> listFiles() {
         return blobStorage.listFiles().collect(Collectors.toList());
+    }
+
+    public void storeCookie(NewCookie cookie, String nickname) {
+        if (USE_CACHE)
+            redisLayer.putOnCache("session:" + nickname, cookie.getValue(), SessionTemp.VALIDITY_SECONDS);
+
+        dbLayer.storeCookie(SessionTemp.COOKIE_NAME + ":" + nickname , cookie.getValue());
+    }
+
+    public Optional<SessionTemp> getSession(String nickname) {
+        Optional<String> cookieID = Optional.ofNullable(redisLayer.getFromCache("session:" + nickname, String.class));
+
+        if (cookieID.isEmpty())
+            cookieID = dbLayer.getCookie(SessionTemp.COOKIE_NAME + ":" + nickname);
+
+        return cookieID.map(s -> new SessionTemp(s, nickname));
+    }
+
+    public List<Auction> searchAuctions(String queryString) {
+        return searchLayer.findAuction(queryString).map(AuctionDAO::toAuction).collect(Collectors.toList());
     }
 }

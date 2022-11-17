@@ -4,26 +4,28 @@
  * Exported functions to be used in the testing scripts.
  */
 module.exports = {
-  uploadImageBody,
-  genNewUser,
-  genNewUserReply,
-  selectUser,
-  selectUserSkewed,
-  genNewAuction,
-  genNewBid,
-  genNewQuestion,
-  genNewQuestionReply,
-  decideToCoverBid,
-  decideToReply,
-  decideNextAction,
-  random80,
-  random50,
+	genQueryTerm,
+	uploadImageBody,
+	genNewUser,
+	selectUser,
+	selectUserSkewed,
+	genNewAuction,
+	genNewBid,
+	genNewQuestion,
+	genNewQuestionReply,
+	decideToCoverBid,
+	decideToReply,
+	decideNextAction,
+	random80,
+	random50,
+	random20,
 }
 
 
 const Faker = require('@faker-js/faker').faker
 const fs = require('fs')
 const path = require('path')
+const {RandomModule} = require("@faker-js/faker");
 
 var imagesIds = []
 var images = []
@@ -31,7 +33,7 @@ var users = []
 
 // Auxiliary function to select an element from an array
 Array.prototype.sample = function(){
-	   return this[Math.floor(Math.random()*this.length)]
+	return this[Math.floor(Math.random()*this.length)]
 }
 
 // Auxiliary function to select an element from an array
@@ -64,10 +66,10 @@ function randomSkewed( val){
 // Loads data about images from disk
 function loadData() {
 	var basedir
-	if( fs.existsSync( '/images')) 
+	if( fs.existsSync( '/images'))
 		basedir = '/images'
 	else
-		basedir =  'images'	
+		basedir =  'images'
 	fs.readdirSync(basedir).forEach( file => {
 		if( path.extname(file) === ".jpeg") {
 			var img  = fs.readFileSync(basedir + "/" + file)
@@ -78,7 +80,7 @@ function loadData() {
 	if( fs.existsSync('users.data')) {
 		str = fs.readFileSync('users.data','utf8')
 		users = JSON.parse(str)
-	} 
+	}
 }
 
 loadData();
@@ -92,14 +94,14 @@ function uploadImageBody(requestParams, context, ee, next) {
 }
 
 /**
- * Process reply of the download of an image. 
+ * Process reply of the download of an image.
  * Update the next image to read.
  */
 function processUploadReply(requestParams, response, context, ee, next) {
 	if( typeof response.body !== 'undefined' && response.body.length > 0) {
 		imagesIds.push(response.body)
 	}
-    return next()
+	return next()
 }
 
 /**
@@ -124,20 +126,10 @@ function genNewUser(context, events, done) {
 	context.vars.id = first + "." + last
 	context.vars.name = first + " " + last
 	context.vars.pwd = `${Faker.internet.password()}`
+	let u = { id: context.vars.id, name: context.vars.name, pwd: context.vars.pwd, imageId: context.vars.imageId }
+	users.push(u)
+	fs.writeFileSync('users.data', JSON.stringify(users));
 	return done()
-}
-
-
-/**
- * Process reply for of new users to store the id on file
- */
-function genNewUserReply(requestParams, response, context, ee, next) {
-	if( response.statusCode >= 200 && response.statusCode < 300 && response.body.length > 0)  {
-		let u = JSON.parse( response.body)
-		users.push(u)
-		fs.writeFileSync('users.data', JSON.stringify(users));
-	}
-    return next()
 }
 
 /**
@@ -164,24 +156,27 @@ function selectUserSkewed(context, events, done) {
 		let user = users.sampleSkewed()
 		context.vars.user = user.id
 		context.vars.pwd = user.pwd
+		// console.log("selected " + JSON.stringify(user))
+		// console.log(context.vars)
 	} else {
 		delete context.vars.user
 		delete context.vars.pwd
 	}
+	// console.log("checkpoint - selectUser! ")
 	return done()
 }
 
 /**
  * Generate data for a new channel
  * Besides the variables for the auction, initializes the following vars:
- * numBids - number of bids to create, if batch creating 
- * numQuestions - number of questions to create, if batch creating 
+ * numBids - number of bids to create, if batch creating
+ * numQuestions - number of questions to create, if batch creating
  * bidValue - price for the next bid
  */
 function genNewAuction(context, events, done) {
 	context.vars.title = `${Faker.commerce.productName()}`
 	context.vars.description = `${Faker.commerce.productDescription()}`
-	context.vars.minimumPrice = `${Faker.commerce.price()}`
+	context.vars.minimumPrice = Math.round(parseInt(Faker.commerce.price))
 	context.vars.bidValue = context.vars.minimumPrice + random(3)
 	var maxBids = 5
 	if( typeof context.vars.maxBids !== 'undefined')
@@ -189,18 +184,22 @@ function genNewAuction(context, events, done) {
 	var maxQuestions = 2
 	if( typeof context.vars.maxQuestions !== 'undefined')
 		maxQuestions = context.vars.maxQuestions;
-	var d = new Date();
-	d.setTime(Date.now() + random( 300000));
-	context.vars.endTime = d.toISOString();
-	if( Math.random() > 0.2) { 
-		context.vars.status = "OPEN";
+	context.vars.endTime = Date.now() + random( 300000);
+	if( Math.random() > 0.2) {
+		context.vars.status = true;
 		context.vars.numBids = random( maxBids);
 		context.vars.numQuestions = random( maxQuestions);
 	} else {
-		context.vars.status = "CLOSED";
+		context.vars.status = false;
 		delete context.vars.numBids;
 		delete context.vars.numQuestions;
 	}
+	// console.log("checkpoint - genauction! - " + JSON.stringify({"status": context.vars.status, "numBids": context.vars.numBids, "numQuest": context.vars.numQuestions}))
+	return done()
+}
+
+function genQueryTerm(context, events, done) {
+	context.vars.query = Faker.commerce.productName().split(" ").sampleSkewed();
 	return done()
 }
 
@@ -217,6 +216,7 @@ function genNewBid(context, events, done) {
 	}
 	context.vars.value = context.vars.bidValue;
 	context.vars.bidValue = context.vars.bidValue + 1 + random(3)
+	// console.log("checkpoint - genbid! - aucID:" + context.vars.auctionId)
 	return done()
 }
 
@@ -225,6 +225,7 @@ function genNewBid(context, events, done) {
  */
 function genNewQuestion(context, events, done) {
 	context.vars.text = `${Faker.lorem.paragraph()}`;
+	// console.log("checkpoint - genQuest! - aucID:" + context.vars.auctionId)
 	return done()
 }
 
@@ -241,7 +242,7 @@ function genNewQuestionReply(context, events, done) {
 				context.vars.reply = `${Faker.lorem.paragraph()}`;
 			}
 		}
-	} 
+	}
 	return done()
 }
 
@@ -252,12 +253,32 @@ function genNewQuestionReply(context, events, done) {
  */
 function decideToCoverBid(context, events, done) {
 	delete context.vars.value;
-	if( typeof context.vars.user !== 'undefined' && typeof context.vars.bidsLst !== 'undefined' && 
-			context.vars.bidsLst.constructor == Array && context.vars.bidsLst.length > 0) {
-		let bid = context.vars.bidsLst[0];
-		if( bid.user !== context.vars.user && Math.random() > 0.5) {
-			context.vars.value = bid.value + random(3);
-			context.vars.auctionId = bid.auctionId;
+	if( typeof context.vars.user !== 'undefined') {
+		if( (!bid || context.vars.$loop_element.owner_nickname !== bid.bidder !== context.vars.user) && Math.random() > 0.5) {
+			if (bid)
+				context.vars.value = bid.value + random(3);
+			else
+				context.vars.value = context.vars.$loop_element.min_price + random(3);
+		}
+	}
+	return done()
+}
+
+/**
+ * Picks an auction to bid on
+ * assuming: user context.vars.user; bids context.vars.bidsLst
+ */
+function pickAuctionToBid(context, events, done) {
+	delete context.vars.value;
+	if( typeof context.vars.user !== 'undefined' && typeof context.vars.bidsLst !== 'undefined' &&
+		context.vars.bidsLst.constructor === Array && context.vars.bidsLst.length > 0) {
+		for (let i = 0; i < context.vars.bidsLst.length; i++) {
+			let bid = context.vars.bidsLst[i];
+
+			if (bid.user !== context.vars.user && Math.random() > 0.5 && bid) {
+				context.vars.value = bid.min_price + random(3);
+				context.vars.auctionId = bid.auctionId;
+			}
 		}
 	}
 	return done()
@@ -269,10 +290,10 @@ function decideToCoverBid(context, events, done) {
  */
 function decideToReply(context, events, done) {
 	delete context.vars.reply;
-	if( typeof context.vars.user !== 'undefined' && typeof context.vars.questionOne !== 'undefined' && 
-			context.vars.questionOne.user === context.vars.user && 
-			typeof context.vars.questionOne.reply !== String &&
-			Math.random() > 0) {
+	if( typeof context.vars.user !== 'undefined' && typeof context.vars.questionOne !== 'undefined' &&
+		context.vars.questionOne.user === context.vars.user &&
+		typeof context.vars.questionOne.reply !== String &&
+		Math.random() > 0) {
 		context.vars.reply = `${Faker.lorem.paragraph()}`;
 	}
 	return done()
@@ -281,8 +302,6 @@ function decideToReply(context, events, done) {
 
 /**
  * Decide next action
- * 0 -> browse popular
- * 1 -> browse recent
  */
 function decideNextAction(context, events, done) {
 	delete context.vars.auctionId;
@@ -325,11 +344,11 @@ function decideNextAction(context, events, done) {
 		if( r == 2 && typeof context.vars.auctionsLst == 'undefined')
 			r = 1;
 		if( r == 2)
-  			auct = context.vars.auctionsLst.sample();
+			auct = context.vars.auctionsLst.sample();
 		else if( r == 1)
-  			auct = context.vars.recentLst.sample();
+			auct = context.vars.recentLst.sample();
 		else if( r == 0)
-  			auct = context.vars.popularLst.sample();
+			auct = context.vars.popularLst.sample();
 		if( auct == null) {
 			return decideNextAction(context,events,done);
 		}
@@ -338,25 +357,32 @@ function decideNextAction(context, events, done) {
 	}
 	if( context.vars.nextAction == 5)
 		context.vars.text = `${Faker.lorem.paragraph()}`;
-
 	return done()
 }
 
 
 /**
- * Return true with probability 50% 
+ * Return true with probability 20%
  */
-function random50(context, next) {
-  const continueLooping = Math.random() < 0.5
-  return next(continueLooping);
+function random20(context, next) {
+	const continueLooping = Math.random() < 0.2
+	return next(continueLooping);
 }
 
 /**
- * Return true with probability 50% 
+ * Return true with probability 50%
+ */
+function random50(context, next) {
+	const continueLooping = Math.random() < 0.5
+	return next(continueLooping);
+}
+
+/**
+ * Return true with probability 80%
  */
 function random80(context, next) {
-  const continueLooping = Math.random() < 0.8
-  return next(continueLooping);
+	const continueLooping = Math.random() < 0.8
+	return next(continueLooping);
 }
 
 /**
@@ -370,7 +396,7 @@ function extractCookie(requestParams, response, context, ee, next) {
 			}
 		}
 	}
-    return next()
+	return next()
 }
 
 

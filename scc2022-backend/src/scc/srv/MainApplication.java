@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import jakarta.ws.rs.core.Application;
+import scc.utils.GenericExceptionMapper;
 
 public class MainApplication extends Application
 {
@@ -11,6 +12,8 @@ public class MainApplication extends Application
 	private final Set<Class<?>> resources = new HashSet<>();
 
 	public MainApplication() {
+		if (!System.getProperties().containsKey("production"))
+			resources.add( GenericExceptionMapper.class );
 		resources.add( ControlResource.class);
 		singletons.add( new MediaResource());
 		singletons.add( new UserResource());

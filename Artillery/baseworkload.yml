@@ -1,0 +1,66 @@
+config:
+  target: 'https://scc-backend-58001-52949-57797.azurewebsites.net/rest'
+  http:
+    timeout: 10
+  plugins:
+    metrics-by-endpoint:
+      useOnlyRequestNames: true
+  processor: "test-utils.js"
+  phases:
+    - name: "Warm up"
+      arrivalRate: 1
+      duration: 30
+    - name: "Test"
+      arrivalRate: 8
+      duration: 60
+
+scenarios:
+  - name: "Bidder logs in, searches for auctions to bid on"
+    weight: 5
+    flow:
+      - function: "selectUserSkewed"    # Select a random user
+      - post:                           # First: login as a user
+          url: "/user/auth"
+          name: "POST:/user/auth"
+          headers:
+            Content-Type: application/json
+          json:
+            nickname: "{{ user }}"
+            pwd: "{{ pwd }}"
+      - loop:                         # Then: do a random number of searches
+        - function: "genQueryTerm"    # 1. generate a random search term
+        - get:                        # 2. get the results of the search
+            name: "GET:/auction?query=*"
+            url: "/auction?query=\"{{ query }}\""
+            capture:
+              - json: $
+                as: "auctionsLst"
+        - loop:                       # 3. loop through the results
+            - get:                    # 3.1 load the image
+                url: "/media/{{ $loopElement.image_id }}"
+                name: "GET:/media/*"
+                headers:
+                  Accept: application/octet-stream
+            - get:                    # 3.2 load the highest bid
+                url: "/auction/{{ $loopElement.id }}/bid/highest"
+                name: "GET:/auction/*/bid/highest"
+                headers:
+                  Accept: application/json
+                capture:
+                  json: $
+                  as: "bid"
+            - think: random(3)
+            - function: "decideToCoverBid" # 3.3 decide on whether or not to execute a bid
+            - post:
+                url: "/auction/{{ auctionId }}/bid"
+                name: "POST:/auction/*/bid"
+                headers:
+                  Content-Type: application/json
+                  Accept: application/json
+                json:
+                  bidder: "{{ user }}"
+                  amount: "{{ value }}"
+                ifTrue: "value"
+          over: "auctionsLst"         # go back to 3.
+        whileTrue: "random50"         # go back to 1.
+

@@ -4,10 +4,7 @@ import com.azure.cosmos.*;
 import com.azure.cosmos.models.*;
 import com.azure.cosmos.util.CosmosPagedIterable;
 
-import scc.data.models.AuctionDAO;
-import scc.data.models.BidDAO;
-import scc.data.models.QuestionDAO;
-import scc.data.models.UserDAO;
+import scc.data.models.*;
 import scc.utils.Hash;
 
 import java.io.IOException;
@@ -41,7 +38,7 @@ public class CosmosDBLayer {
 		}
 	}
 
-	private static CosmosDBLayer instance;
+	private static CosmosDBLayer instance;;
 
 	public static synchronized CosmosDBLayer getInstance() {
 		if( instance != null)
@@ -67,7 +64,7 @@ public class CosmosDBLayer {
 	private CosmosContainer auctions;
 	private CosmosContainer bids;
 	private CosmosContainer questions;
-
+	private CosmosContainer cookies;
 	
 	public CosmosDBLayer(CosmosClient client) {
 		this.client = client;
@@ -84,16 +81,7 @@ public class CosmosDBLayer {
 		auctions = db.getContainer("auctions");
 		bids = db.getContainer("bids");
 		questions = db.getContainer("questions");
-	}
-
-	// ! FUNCTION TO VERIFY LOGIN CREDENTIALS, dont know if its the best way to do it
-	public boolean verifyLogin(String nickname, String pwd) {
-		init();
-		PartitionKey key = new PartitionKey(nickname);
-		UserDAO user = users.readItem(nickname, key, UserDAO.class).getItem();
-
-		return (user != null && user.getPwd().equals(Hash.of(pwd)));
-
+		cookies = db.getContainer("cookies");
 	}
 
 	public CosmosItemResponse<UserDAO> updateUser(UserDAO newUser)
@@ -172,7 +160,7 @@ public class CosmosDBLayer {
 	public Stream<BidDAO> getTopBidsByAuctionID(String auctionID, Long n)
 	{
 		init();
-		return bids.queryItems("SELECT TOP " + n + " * FROM bids WHERE bids.auction_id=\"" + auctionID + "\" ORDER BY amount",
+		return bids.queryItems("SELECT TOP " + n + " * FROM bids WHERE bids.auction_id=\"" + auctionID + "\" ORDER BY bids.amount",
 				new CosmosQueryRequestOptions(), BidDAO.class).stream();
 	}
 
@@ -228,5 +216,17 @@ public class CosmosDBLayer {
 		init();
 		return questions.queryItems("SELECT * FROM questions WHERE questions.id=\"" + questionId + "\"",
 				new CosmosQueryRequestOptions(), QuestionDAO.class).stream().findFirst();
+	}
+
+	public void storeCookie(String key, String value) {
+		init();
+		PartitionKey partKey = new PartitionKey(key);
+		cookies.createItem(new CookieDAO(key, value));
+	}
+
+	public Optional<String> getCookie(String key) {
+		init();
+		PartitionKey partKey = new PartitionKey(key);
+		return Optional.ofNullable(cookies.readItem(key, partKey, CookieDAO.class).getItem()).map(CookieDAO::getValue);
 	}
 }

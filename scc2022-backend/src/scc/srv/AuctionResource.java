@@ -7,10 +7,7 @@ import scc.data.*;
 import scc.session.SessionTemp;
 import scc.utils.Hash;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Path("/auction")
 public class AuctionResource {
@@ -66,11 +63,13 @@ public class AuctionResource {
      * @return the updated auction
      * @throws WebApplicationException if there was an error updating the auction
      */
-    @PUT
+    @PATCH
     @Path("/{auction_id}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     public Auction update(Auction auction, @PathParam("auction_id") String auctionId,
                        @CookieParam(SessionTemp.COOKIE_NAME) Cookie auctionOwnerSessionCookie)
-            throws WebApplicationException, NotFoundException, NotAuthorizedException
+            throws WebApplicationException
     {
         validateAuctionFields(auction, false);
 
@@ -81,9 +80,20 @@ public class AuctionResource {
         if (newDetails == null)
             throw new NotAuthorizedException("This auction is closed.");
 
+        UserResource.validateUserSession(auctionOwnerSessionCookie, newDetails.getOwnerNickname());
+
         return dataProxy.updateAuctionInfo(auctionId, newDetails).orElse(null);
     }
 
+    @GET
+    @Path("/{auction_id}/bid/highest")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Bid getHighestBid(@PathParam("auction_id") String auctionId) throws NotFoundException
+    {
+        validateAuction(auctionId, null);
+
+        return dataProxy.getHighestBid(auctionId).orElse(null);
+    }
     /**
      * @param auctionId the id of the auction
      * @return a list of bids associated with an auction
@@ -100,7 +110,7 @@ public class AuctionResource {
     }
 
     /**
-     * Posts a bid under this auction
+     * Posts a bid under an auction
      * @param bid the bid details
      * @param auctionId the auction to bid in
      * @param bidderSessionCookie the cookie that authenticates the bidder
@@ -145,6 +155,7 @@ public class AuctionResource {
     @POST
     @Path("/{auction_id}/question")
     @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     public Question submitQuestion(Question question, @PathParam("auction_id") String auctionId,
                                    @CookieParam(SessionTemp.COOKIE_NAME) Cookie askerSessionCookie)
             throws NotFoundException, NotAuthorizedException
@@ -232,7 +243,7 @@ public class AuctionResource {
         if (auctionDetails == null)
             throw new NotFoundException("Auction not found.");
 
-        if (auctionDetails.getOwnerNickname() != null)
+        if (auctionDetails.getOwnerNickname() != null && auctionOwnerSessionCookie != null)
             UserResource.validateUserSession(auctionOwnerSessionCookie, auctionDetails.getOwnerNickname());
 
         return auctionDetails;
