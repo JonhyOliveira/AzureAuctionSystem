@@ -8,6 +8,7 @@ import scc.data.models.AuctionDAO;
 import scc.data.models.BidDAO;
 import scc.data.models.QuestionDAO;
 import scc.data.models.UserDAO;
+import scc.utils.Hash;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -83,6 +84,16 @@ public class CosmosDBLayer {
 		auctions = db.getContainer("auctions");
 		bids = db.getContainer("bids");
 		questions = db.getContainer("questions");
+	}
+
+	// ! FUNCTION TO VERIFY LOGIN CREDENTIALS, dont know if its the best way to do it
+	public boolean verifyLogin(String nickname, String pwd) {
+		init();
+		PartitionKey key = new PartitionKey(nickname);
+		UserDAO user = users.readItem(nickname, key, UserDAO.class).getItem();
+
+		return (user != null && user.getPwd().equals(Hash.of(pwd)));
+
 	}
 
 	public CosmosItemResponse<UserDAO> updateUser(UserDAO newUser)

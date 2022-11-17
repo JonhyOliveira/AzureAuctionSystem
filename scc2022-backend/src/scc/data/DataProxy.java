@@ -11,10 +11,15 @@ import scc.data.models.BidDAO;
 import scc.data.models.QuestionDAO;
 import scc.data.models.UserDAO;
 
+import jakarta.ws.rs.core.NewCookie;
+import scc.session.SessionTemp;
+
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class DataProxy {
 
@@ -58,8 +63,7 @@ public class DataProxy {
         newUser.setNickname(nickname);
         UserDAO u = dbLayer.updateUser(new UserDAO(newUser.hashPwd())).getItem();
 
-        if (USE_CACHE)
-            redisLayer.updateUser(u);
+        redisLayer.updateUser(u);
 
         return Optional.ofNullable(u)
                 .map(UserDAO::toUser);
@@ -70,12 +74,13 @@ public class DataProxy {
      */
     public Optional<User> getUser(String nickname)
     {
-        if (USE_CACHE) {
-            Optional<UserDAO> userObject = redisLayer.getUser(nickname);
+        Optional<UserDAO> userObject = null;
 
-            if (userObject.isPresent())
-                return userObject.map(UserDAO::toUser);
-        }
+        userObject = redisLayer.getUser(nickname);
+
+        if (userObject.isPresent())
+            return userObject.map(UserDAO::toUser);
+
         return dbLayer.getUserByNick(nickname)
                 .stream()
                 .findFirst()
@@ -88,8 +93,7 @@ public class DataProxy {
      */
     public void deleteUser(String nickname)
     {
-        if (USE_CACHE)
-            redisLayer.invalidateUser(nickname);
+        redisLayer.invalidateUser(nickname);
         dbLayer.delUserByNick(nickname);
     }
 
@@ -267,9 +271,5 @@ public class DataProxy {
 
     public List<String> listFiles() {
         return blobStorage.listFiles().collect(Collectors.toList());
-    }
-
-    public List<Auction> searchAuctions(String query) {
-        return searchLayer.findAuction(query).map(AuctionDAO::toAuction).collect(Collectors.toList());
     }
 }

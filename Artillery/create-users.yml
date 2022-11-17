@@ -1,7 +1,5 @@
 config:
-  target: 'https://scc-backend-58001-52949-57797.azurewebsites.net/rest'
-  http:
-    timeout: 30
+  target: 'https://scc-backend-4204.azurewebsites.net/rest'
   plugins:
     metrics-by-endpoint:
       useOnlyRequestNames: true  # new mode to aggregate metrics in artillery
@@ -40,5 +38,6 @@ scenarios:
               name: "{{ name }}"
               pwd: "{{ pwd }}"
               photoId: "{{ imageId }}"
+              channelIds: []
             afterResponse: "genNewUserReply"    # capture result and store in file
         count: "{{ numUsers }}"

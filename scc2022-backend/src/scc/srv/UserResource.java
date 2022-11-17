@@ -1,14 +1,22 @@
 package scc.srv;
 
 import jakarta.ws.rs.*;
+
+import jakarta.ws.rs.core.Cookie;
 import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.NewCookie;
 import jakarta.ws.rs.core.Response;
+
+
 import scc.data.DataProxy;
+import scc.session.Login;
+import scc.session.SessionTemp;
 import scc.data.User;
 import scc.utils.Hash;
 
 import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 
 @Path("/user")
 public class UserResource {
@@ -21,7 +29,6 @@ public class UserResource {
      * Creates a new user
      * @param user the user information
      * @return the created user
-     * @throws ForbiddenException if the
      */
     @POST
     @Path("/")
@@ -30,6 +37,9 @@ public class UserResource {
     public User create(User user) throws ForbiddenException
     {
         validateUserFields(user, true);
+
+        if(!dataProxy.doesFileExist(user.getPhotoId()))
+            throw new NotFoundException("User's picture is missing.");
 
         if (dataProxy.getUser(user.getNickname()).isPresent())
             throw new ForbiddenException("User already exists");
@@ -44,23 +54,13 @@ public class UserResource {
     /**
      * Deletes a user
      * @param nickname the user nickname
-     * @param password the user password
      */
     @DELETE
     @Path("/{nickname}")
     @Consumes(MediaType.APPLICATION_JSON)
-    public void delete(@PathParam("nickname") String nickname, @HeaderParam("Authorization") String password)
-    {
-        if (Objects.requireNonNullElse(password, "").isBlank())
-            throw new BadRequestException("Password can not be blank");
+    public void delete(@CookieParam("scc:session") Cookie cookie, @PathParam("nickname") String nickname) {
 
-        Optional<User> o = dataProxy.getUser(nickname);
-
-        if (o.isEmpty())
-            throw new NotFoundException("User not found");
-
-        if (! o.get().getPwd().equals(Hash.of(password)))
-            throw new NotAuthorizedException("Password Incorrect");
+        validateUserSession(cookie, nickname);
 
         dataProxy.deleteUser(nickname);
     }
@@ -68,7 +68,6 @@ public class UserResource {
     /**
      * Patches the details of a user
      * @param nickname the user nickname
-     * @param password the user password
      * @param newUser the user details to patch with
      * @return the updated user
      */
@@ -76,18 +75,17 @@ public class UserResource {
     @Path("/{nickname}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public User update(@PathParam("nickname") String nickname, @HeaderParam("Authorization") String password, User newUser)
+    public User update(@PathParam("nickname") String nickname, @CookieParam("scc:session") Cookie cookie, User newUser)
     {
-        if (Objects.requireNonNullElse(password, "").isBlank())
-            throw new BadRequestException("Password can not be blank");
-
         validateUserFields(newUser, false);
 
-        User prevUserDetails = login(nickname, password);
+        validateUserSession(cookie, nickname);
 
-        return dataProxy.updateUserInfo(nickname, prevUserDetails.patch(newUser))
+        Optional<User> prevUserDetails = dataProxy.getUser(nickname);
+
+        return prevUserDetails.map(user -> dataProxy.updateUserInfo(nickname, user.patch(newUser))
                 .map(User::censored)
-                .orElse(null);
+                .orElse(null)).orElse(null);
     }
 
     /**
@@ -109,12 +107,46 @@ public class UserResource {
     }
 
     /**
+     * Authenticates the user by providing a cookie with previliges.
+     * @param loginInfo the login details
+     * @return the HTTP response, including the cookie
+     */
+    @POST
+    @Path("/auth")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response auth(Login loginInfo){
+
+        Optional<User> o = dataProxy.getUser(loginInfo.getNickname());
+
+        if (o.isEmpty())
+            throw new NotFoundException("User not found");
+
+        if (! o.get().getPwd().equals(Hash.of(loginInfo.getPwd())))
+            throw new NotAuthorizedException("Password Incorrect.");
+
+        String uid = UUID.randomUUID().toString();
+
+        NewCookie cookie = new NewCookie.Builder("scc:session")
+                .value(uid)
+                .path("/")
+                .comment("sessionid")
+                .maxAge(SessionTemp.VALIDITY_SECONDS)
+                .secure(false)
+                .httpOnly(true)
+                .build();
+
+        dataProxy.storeCookie(cookie, loginInfo.getNickname());
+
+        return Response.ok().cookie(cookie).build();
+    }
+
+    /**
      * Validates user details
      * @param user the user details
      * @param requireNonNull whether there can be null fields
      * @throws WebApplicationException if a field contains an invalid value
      */
-    void validateUserFields(User user, boolean requireNonNull) throws WebApplicationException
+    static void validateUserFields(User user, boolean requireNonNull) throws WebApplicationException
     {
         String error_message = null;
 
@@ -134,22 +166,21 @@ public class UserResource {
     }
 
     /**
-     * Logs in an user
+     * Checks if the given cookie authenticates the user with the given nickname
+     * @param cookie the auth cookie
      * @param nickname the user nickname
-     * @param password the user password
-     * @return the user details
+     * @throws WebApplicationException if the session is not valid
      */
-    User login(String nickname, String password)
-    {
-        Optional<User> o = dataProxy.getUser(nickname);
+    public static void validateUserSession(Cookie cookie, String nickname){
+        if(Objects.isNull(cookie) || Objects.isNull(cookie.getValue()))
+            throw new NotAuthorizedException("No session initialiazed.");
 
-        if (o.isEmpty())
-            throw new NotFoundException("User not found");
+        SessionTemp s = dataProxy.getSession(nickname);
 
-        if (! o.get().getPwd().equals(Hash.of(password)))
-            throw new NotAuthorizedException("Password Incorrect.");
+        if(Objects.isNull(s) || Objects.isNull(s.getNickname()) || s.getNickname().length()==0)
+            throw new NotAuthorizedException("No valid session initialized.");
 
-        return o.get();
+        if(!s.getCookieId().equals(cookie.getValue()))
+            throw new InternalServerErrorException("Unexpected session value");
     }
-
 }

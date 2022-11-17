@@ -9,7 +9,6 @@ import scc.data.models.UserDAO;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Properties;
 
@@ -80,30 +79,35 @@ public class RedisCacheLayer {
 		}
 	}
 
+	public void putOnCache(String key, Object obj) {
+		putOnCache(key, obj, DEFAULT_EXPIRATION);
+	}
 
-	public void updateUser(UserDAO u) {
+	public void putOnCache(String key, Object obj, long expirationSeconds){
 		init();
+		try{
+			jedis.set(key, mapper.writeValueAsString(obj), SetParams.setParams().ex(expirationSeconds));
+		}catch (JsonProcessingException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	public <T> T getFromCache(String key, Class<T> typeClass){
+		init();
+
+		String content = jedis.get(key);
+		if(content == null)
+			return null;
+
 		try {
-			jedis.setex("user:"+u.getNickname(), DEFAULT_EXPIRATION, mapper.writeValueAsString(u));
+			return mapper.readValue(content,typeClass);
 		} catch (JsonProcessingException e) {
 			throw new RuntimeException(e);
 		}
 	}
 
-	public Optional<UserDAO> getUser(String nickname) {
+	public void deleteFromCache(String key){
 		init();
-		return Optional.ofNullable(jedis.get("user:" + nickname))
-				.map(s -> {
-					try {
-						return mapper.readValue(s, UserDAO.class);
-					} catch (JsonProcessingException e) {
-						throw new RuntimeException(e);
-					}
-				});
-	}
-
-	public void invalidateUser(String nickname) {
-		init();
-		jedis.del("user:"+nickname);
+		jedis.del(key);
 	}
 }

@@ -1,8 +1,10 @@
 package scc.srv;
 
 import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.Cookie;
 import jakarta.ws.rs.core.MediaType;
 import scc.data.*;
+import scc.session.SessionTemp;
 import scc.utils.Hash;
 
 import java.util.List;
@@ -20,20 +22,20 @@ public class AuctionResource {
     /**
      * Creates a new auction
      * @param auction the auction details
-     * @param owner_pwd the password of the auction owner
+     * @param auctionOwnerSessionCookie the cookie that authenticates the owner of the auction being created
      * @return the created auction
-     * @throws BadRequestException if the auction already exists
+     * @throws WebApplicationException if an error occurred while creating the auction
      */
     @POST
     @Path("/")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Auction create(Auction auction, @HeaderParam("Authorization") String owner_pwd)
-            throws BadRequestException, WebApplicationException
+    public Auction create(Auction auction, @CookieParam(SessionTemp.COOKIE_NAME) Cookie auctionOwnerSessionCookie)
+            throws WebApplicationException
     {
         validateAuctionFields(auction, true);
 
-        login(auction.getOwnerNickname(), owner_pwd);
+        UserResource.validateUserSession(auctionOwnerSessionCookie, auction.getOwnerNickname());
 
         if(dataProxy.getAuction(auction.getAuctionID()).isPresent())
             throw new BadRequestException("Auction already exists");
@@ -60,20 +62,19 @@ public class AuctionResource {
      * Updates the details an auction
      * @param auction new auction details
      * @param auctionId id of the auction
-     * @param owner_pwd the password of the auction owner
+     * @param auctionOwnerSessionCookie the cookie that authenticates the auction owner
      * @return the updated auction
-     * @throws WebApplicationException if the new auction details are not valid
-     * @throws NotFoundException if the auction could not be found
-     * @throws NotAuthorizedException the auction is closed
+     * @throws WebApplicationException if there was an error updating the auction
      */
     @PUT
     @Path("/{auction_id}")
     public Auction update(Auction auction, @PathParam("auction_id") String auctionId,
-                       @HeaderParam("Authorization") String owner_pwd) throws WebApplicationException, NotFoundException, NotAuthorizedException
+                       @CookieParam(SessionTemp.COOKIE_NAME) Cookie auctionOwnerSessionCookie)
+            throws WebApplicationException, NotFoundException, NotAuthorizedException
     {
         validateAuctionFields(auction, false);
 
-        Auction prevAuctionDetails = validateAuction(auctionId, owner_pwd);
+        Auction prevAuctionDetails = validateAuction(auctionId, auctionOwnerSessionCookie);
 
         Auction newDetails = prevAuctionDetails.patch(auction).orElse(null);
 
@@ -86,7 +87,7 @@ public class AuctionResource {
     /**
      * @param auctionId the id of the auction
      * @return a list of bids associated with an auction
-     * @throws NotFoundException when the auction could not be found
+     * @throws WebApplicationException if there was an error getting the auction or the bids
      */
     @GET
     @Path("/{auction_id}/bid")
@@ -102,19 +103,19 @@ public class AuctionResource {
      * Posts a bid under this auction
      * @param bid the bid details
      * @param auctionId the auction to bid in
-     * @param bidder_pwd the bidder password
-     * @throws NotFoundException if the auction or the bidder do not exist
-     * @throws NotAuthorizedException if the bidder password is incorrect
+     * @param bidderSessionCookie the cookie that authenticates the bidder
+     * @throws WebApplicationException if there was an error validating the auction or authenticating the bidder
      */
     @POST
     @Path("/{auction_id}/bid")
     @Consumes(MediaType.APPLICATION_JSON)
     public void doBid(Bid bid, @PathParam("auction_id") String auctionId,
-                      @HeaderParam("Authorization") String bidder_pwd) throws NotFoundException, NotAuthorizedException
+                      @CookieParam(SessionTemp.COOKIE_NAME) Cookie bidderSessionCookie)
+            throws WebApplicationException
     {
         validateAuction(auctionId, null);
 
-        login(bid.getBidder(), bidder_pwd);
+        UserResource.validateUserSession(bidderSessionCookie, bid.getBidder());
 
         dataProxy.executeBid(UUID.randomUUID().toString(), auctionId, bid);
     }
@@ -122,7 +123,7 @@ public class AuctionResource {
     /**
      * @param auctionId the auction id
      * @return the Q&A list under an auction
-     * @throws NotFoundException if the auction could not be found
+     * @throws WebApplicationException if there was an error fetching the auction or it's questions
      */
     @GET
     @Path("/{auction_id}/question")
@@ -137,20 +138,22 @@ public class AuctionResource {
      * Submits a question under an auction
      * @param question the question details
      * @param auctionId the id of the auction the reply will be under
-     * @param pwd the password of the questioner
+     * @param askerSessionCookie the session cookie that authenticates the questioner
      * @return the created question details
-     * @throws NotFoundException if the auction could not be found
-     * @throws NotAuthorizedException if the questioner could not be found
+     * @throws WebApplicationException if there was an error submiting the question
      */
     @POST
     @Path("/{auction_id}/question")
     @Consumes(MediaType.APPLICATION_JSON)
     public Question submitQuestion(Question question, @PathParam("auction_id") String auctionId,
-                               @HeaderParam("Authorization") String pwd) throws NotFoundException, NotAuthorizedException
-    {   
-        //validate the auction (não sei se aqui se usaria o metodo login)
-        validateAuction(auctionId, null);
-        login(question.getQuestioner(), pwd);
+                                   @CookieParam(SessionTemp.COOKIE_NAME) Cookie askerSessionCookie)
+            throws NotFoundException, NotAuthorizedException
+    {
+        Auction a = validateAuction(auctionId, null);
+        if (a.getOwnerNickname().equals(question.getQuestioner()))
+            throw new NotAuthorizedException("The auction owner can not submit questions about their own auction.");
+
+        UserResource.validateUserSession(askerSessionCookie, question.getQuestioner());
 
         question.setAnswer(null);
         question.setQuestionID(UUID.randomUUID().toString());
@@ -162,18 +165,18 @@ public class AuctionResource {
      * Submits a reply to a question under an auction
      * @param question the details of the reply
      * @param auctionId the id of the auction the reply is under
-     * @param pwd the password of the auction owner
+     * @param ownerSessionCookie the session cookie that authenticates the auction owner
      * @return the updated question
-     * @throws NotAuthorizedException if the auction owner details are incorrect
-     * @throws NotFoundException if the auction does not exist or there is no such question to reply to
+     * @throws WebApplicationException if there was an error replying to the question
      */
     @PUT
     @Path("/{auction_id}/question")
     @Consumes(MediaType.APPLICATION_JSON)
     public Question submitReply(Question question, @PathParam("auction_id") String auctionId,
-                            @HeaderParam("Authorization") String pwd) throws NotAuthorizedException, NotFoundException
+                                @CookieParam(SessionTemp.COOKIE_NAME) Cookie ownerSessionCookie)
+            throws NotAuthorizedException, NotFoundException
     {
-        validateAuction(auctionId, pwd);
+        validateAuction(auctionId, ownerSessionCookie);
         
         Question realQuestion = dataProxy.getQuestion(question.getQuestionID()).orElse(null);
         
@@ -187,6 +190,7 @@ public class AuctionResource {
      * Shows the auctions of a user
      * @param nickname the nickname of the user
      * @return the user auctions
+     * @throws WebApplicationException if there was an error finding the user
      */
     @GET
     @Path("/user/{nickname}")
@@ -215,50 +219,21 @@ public class AuctionResource {
     }
 
     /**
-     * Logs in and returns a user
-     * @param nickname the user nickname
-     * @param pwd the user password
-     * @return the user with the given nickname
-     * @throws NotFoundException if the user could not be found
-     * @throws NotAuthorizedException if the password is incorrect
-     */
-    static User login(String nickname, String pwd) throws NotFoundException, NotAuthorizedException
-    {
-        Optional<User> o = dataProxy.getUser(nickname);
-
-        if (o.isEmpty())
-            throw new NotFoundException("User does not exist.");
-
-        User u = o.get();
-        if (! u.getPwd().equals(Hash.of(pwd)))
-            throw new NotAuthorizedException("Password incorrect.");
-
-        return u;
-    }
-
-    /**
      * Validates if an auction with the given auction id exists and has valid data
-     * also can optionally check if the auction owner pwd is right
-     * @param auctionOwnerPwd the password of the auction owner, or null to disable this check.
+     * also can optionally check if a cookie authenticates the auction owner
+     * @param auctionOwnerSessionCookie the session cookie of the auction owner, or null to disable this check.
      * @return the auction in the data layer
      */
-    static Auction validateAuction(String auctionID, String auctionOwnerPwd) throws NotFoundException, NotAuthorizedException
+    static Auction validateAuction(String auctionID, Cookie auctionOwnerSessionCookie)
+            throws NotFoundException, NotAuthorizedException
     {
         Auction auctionDetails = dataProxy.getAuction(auctionID).orElse(null);
 
         if (auctionDetails == null)
             throw new NotFoundException("Auction not found.");
 
-        User auctionOwner = dataProxy.getUser(auctionDetails.getOwnerNickname()).orElse(null);
-
-        if (auctionOwner == null)
-        {
-            dataProxy.deleteAuction(auctionID, auctionDetails.getOwnerNickname());
-            throw new NotFoundException("User associated with the auction does not exist.");
-        }
-
-        if (Objects.nonNull(auctionOwnerPwd) && ! auctionOwner.getPwd().equals(Hash.of(auctionOwnerPwd)))
-            throw new NotAuthorizedException("Password Incorrect.");
+        if (auctionDetails.getOwnerNickname() != null)
+            UserResource.validateUserSession(auctionOwnerSessionCookie, auctionDetails.getOwnerNickname());
 
         return auctionDetails;
     }
