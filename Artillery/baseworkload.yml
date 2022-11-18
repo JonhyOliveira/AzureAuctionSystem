@@ -11,7 +11,7 @@ config:
       arrivalRate: 1
       duration: 30
     - name: "Test"
-      arrivalRate: 8
+      arrivalRate: 5
       duration: 60
 
 scenarios:
@@ -47,7 +47,6 @@ scenarios:
                 headers:
                   Accept: application/json
                 capture:
-                  json: $
                   as: "bid"
             - think: random(3)
             - function: "decideToCoverBid" # 3.3 decide on whether or not to execute a bid

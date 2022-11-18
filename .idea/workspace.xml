@@ -4,7 +4,34 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7991c95c-82c2-46fc-9c8e-7c42557a1805" name="Changes" comment="Added Cognitive Search and uncensored return of User create" />
+    <list default="true" id="7991c95c-82c2-46fc-9c8e-7c42557a1805" name="Changes" comment="Updated timer functions.">
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_microsoft_azure_functions_azure_functions_java_core_library_1_0_0.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_microsoft_azure_functions_azure_functions_java_library_2_0_1.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__net_bytebuddy_byte_buddy_1_9_3.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__net_bytebuddy_byte_buddy_agent_1_9_3.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_apiguardian_apiguardian_api_1_0_0.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_junit_jupiter_junit_jupiter_5_4_2.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_junit_jupiter_junit_jupiter_api_5_4_2.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_junit_jupiter_junit_jupiter_engine_5_4_2.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_junit_jupiter_junit_jupiter_params_5_4_2.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_junit_platform_junit_platform_commons_1_4_2.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_junit_platform_junit_platform_engine_1_4_2.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_mockito_mockito_core_2_23_4.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_objenesis_objenesis_2_6.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_opentest4j_opentest4j_1_1_1.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/encodings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Artillery/baseworkload.yml" beforeDir="false" afterPath="$PROJECT_DIR$/Artillery/baseworkload.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Artillery/create-users.yml" beforeDir="false" afterPath="$PROJECT_DIR$/Artillery/create-users.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Artillery/report.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Artillery/test-utils.js" beforeDir="false" afterPath="$PROJECT_DIR$/Artillery/test-utils.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Artillery/users.data" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/scc2022-backend/src/scc/data/layers/CosmosDBLayer.java" beforeDir="false" afterPath="$PROJECT_DIR$/scc2022-backend/src/scc/data/layers/CosmosDBLayer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scc2022-backend/src/scc/data/models/CookieDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/scc2022-backend/src/scc/data/models/CookieDAO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scc2022-backend/src/scc/srv/ControlResource.java" beforeDir="false" afterPath="$PROJECT_DIR$/scc2022-backend/src/scc/srv/ControlResource.java" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -46,22 +73,23 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;javascript.nodejs.core.library.configured.version&quot;: &quot;14.20.1&quot;,
-    &quot;javascript.nodejs.core.library.typings.version&quot;: &quot;14.18.33&quot;,
-    &quot;jdk.selected.JAVA_MODULE&quot;: &quot;11&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/home/joaooliv/Documents/UNI/2022_23/SCC/scc-project/azure-function-examples&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;com.microsoft.intellij.AzureConfigurable&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "javascript.nodejs.core.library.configured.version": "14.20.1",
+    "javascript.nodejs.core.library.typings.version": "14.18.33",
+    "jdk.selected.JAVA_MODULE": "11",
+    "last_opened_file_path": "/home/joaooliv/Documents/UNI/2022_23/SCC/scc-project/azure-function-examples",
+    "nodejs_package_manager_path": "npm",
+    "project.structure.last.edited": "Modules",
+    "project.structure.proportion": "0.15",
+    "project.structure.side.proportion": "0.2",
+    "settings.editor.selected.configurable": "com.microsoft.intellij.AzureConfigurable"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/Artillery" />
@@ -101,6 +129,9 @@
       </method>
     </configuration>
     <configuration name="scc2022_backend-endpoints | #1" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" nameIsGenerated="true" path="$APPLICATION_CONFIG_DIR$/scratches/scc2022_backend-endpoints.http" requestIdentifier="#1" runType="Run single request">
+      <method v="2" />
+    </configuration>
+    <configuration name="scc2022_backend-endpoints | #10" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" nameIsGenerated="true" path="$APPLICATION_CONFIG_DIR$/scratches/scc2022_backend-endpoints.http" index="10" requestIdentifier="#10" runType="Run single request">
       <method v="2" />
     </configuration>
     <configuration name="AuctionResourceTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
@@ -194,6 +225,7 @@
       <method v="2" />
     </configuration>
     <list>
+      <item itemvalue="HTTP Request.scc2022_backend-endpoints | #10" />
       <item itemvalue="HTTP Request.scc2022_backend-endpoints | #1" />
       <item itemvalue="JUnit.AuctionResourceTest.find" />
       <item itemvalue="JUnit.AuctionResourceTest" />
@@ -203,10 +235,10 @@
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="HTTP Request.scc2022_backend-endpoints | #10" />
         <item itemvalue="JUnit.AuctionResourceTest.find" />
         <item itemvalue="Node.js.test-utils.js" />
         <item itemvalue="JUnit.AuctionResourceTest" />
-        <item itemvalue="HTTP Request.scc2022_backend-endpoints | #1" />
         <item itemvalue="HTTP Request.scc2022_backend-endpoints | #1" />
       </list>
     </recent_temporary>

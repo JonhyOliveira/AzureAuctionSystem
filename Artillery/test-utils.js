@@ -254,9 +254,11 @@ function genNewQuestionReply(context, events, done) {
 function decideToCoverBid(context, events, done) {
 	delete context.vars.value;
 	if( typeof context.vars.user !== 'undefined') {
-		if( (!bid || context.vars.$loop_element.owner_nickname !== bid.bidder !== context.vars.user) && Math.random() > 0.5) {
-			if (bid)
-				context.vars.value = bid.value + random(3);
+		if( (!context.vars.bid.toString().length > 0 || context.vars.$loop_element.owner_nickname !== bid.bidder !== context.vars.user) && Math.random() > 0.5) {
+			if (context.vars.bid.toString().length > 0) {
+				context.vars.bid = JSON.parse(bid);
+				context.vars.value = context.vars.bid.value + random(3);
+			}
 			else
 				context.vars.value = context.vars.$loop_element.min_price + random(3);
 		}

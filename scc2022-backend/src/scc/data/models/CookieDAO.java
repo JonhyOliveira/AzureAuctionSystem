@@ -6,6 +6,7 @@ public class CookieDAO extends DAO {
 
     private String id;
     private String value;
+    private Integer ttl;
 
     public CookieDAO()
     {
@@ -14,8 +15,14 @@ public class CookieDAO extends DAO {
 
     public CookieDAO(String id, String value)
     {
+        this(id, value, -1);
+    }
+
+    public CookieDAO(String id, String value, Integer ttl)
+    {
         this.id = id;
         this.value = value;
+        this.ttl = ttl;
     }
 
     public String getId() {
@@ -32,5 +39,13 @@ public class CookieDAO extends DAO {
 
     public void setValue(String value) {
         this.value = value;
+    }
+
+    public Integer getTtl() {
+        return ttl;
+    }
+
+    public void setTtl(Integer ttl) {
+        this.ttl = ttl;
     }
 }

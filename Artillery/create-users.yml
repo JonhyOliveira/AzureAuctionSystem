@@ -4,8 +4,10 @@ config:
     metrics-by-endpoint:
       useOnlyRequestNames: true  # new mode to aggregate metrics in artillery
   processor: "./test-utils.js"
+  http:
+    timeout: 10
   variables:
-    numUsers : 120
+    numUsers : 100
   phases:
   - name: "Create users"    # Create users
     duration: 1

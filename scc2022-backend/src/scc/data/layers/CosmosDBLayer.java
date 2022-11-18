@@ -5,6 +5,7 @@ import com.azure.cosmos.models.*;
 import com.azure.cosmos.util.CosmosPagedIterable;
 
 import scc.data.models.*;
+import scc.session.SessionTemp;
 import scc.utils.Hash;
 
 import java.io.IOException;
@@ -220,8 +221,7 @@ public class CosmosDBLayer {
 
 	public void storeCookie(String key, String value) {
 		init();
-		PartitionKey partKey = new PartitionKey(key);
-		cookies.createItem(new CookieDAO(key, value));
+		cookies.upsertItem(new CookieDAO(key, value, SessionTemp.VALIDITY_SECONDS));
 	}
 
 	public Optional<String> getCookie(String key) {
