@@ -80,7 +80,19 @@ public class UserResource {
 
         validateUserSession(cookie, nickname);
 
+        String newPhotoId = newUser.getPhotoId();
+        boolean changedPhoto = false;
+
+        if(!Objects.isNull(newPhotoId)){
+            changedPhoto = true;
+            if(!dataProxy.doesFileExist(newPhotoId))
+                throw new NotFoundException("User's picture is missing.");
+        }
+
         Optional<User> prevUserDetails = dataProxy.getUser(nickname);
+
+        if(changedPhoto && prevUserDetails.isPresent())
+            dataProxy.updateGarbageCollection(prevUserDetails.get().getPhotoId());
 
         return prevUserDetails.map(user -> dataProxy.updateUserInfo(nickname, user.patch(newUser))
                 .map(User::censored)

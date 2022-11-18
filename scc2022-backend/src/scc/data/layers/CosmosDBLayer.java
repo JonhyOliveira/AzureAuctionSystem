@@ -6,7 +6,6 @@ import com.azure.cosmos.util.CosmosPagedIterable;
 
 import scc.data.models.*;
 import scc.session.SessionTemp;
-import scc.utils.Hash;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -124,6 +123,19 @@ public class CosmosDBLayer {
 		return users.queryItems("SELECT * FROM users ", new CosmosQueryRequestOptions(), UserDAO.class)
 				.stream().iterator();
 	}
+
+	/*public Stream<UserDAO> getUsersByPhoto(String photoId){
+		init();
+		return users.queryItems("SELECT count(*) FROM users, auctions WHERE users.photoId=\"" + photoId + "\" AND auctions.imageId=\"" + photoId + "\"",
+						new CosmosQueryRequestOptions(), UserDAO.class).stream();
+	}*/
+
+	public CosmosPagedIterable<Integer> getPhotoRepeated(String photoId){
+		init();
+		return users.queryItems("SELECT SUM(c) FROM (SELECT COUNT(*) AS c FROM users WHERE users.photoId=\"" + photoId + "\" UNION ALL SELECT COUNT(*) FROM auctions WHERE auctions.imageId=\"" + photoId + "\")",
+				new CosmosQueryRequestOptions(), Integer.class);
+	}
+
 
 	public Optional<AuctionDAO> getAuctionByID(String auctionID){
 		init();

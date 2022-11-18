@@ -111,4 +111,9 @@ public class RedisCacheLayer {
 		init();
 		jedis.del(key);
 	}
+
+	public void putElemOnList(String key, String elem){
+		init();
+		jedis.lpush(key,elem);
+	}
 }

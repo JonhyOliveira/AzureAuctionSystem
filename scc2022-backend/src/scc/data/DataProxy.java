@@ -73,6 +73,15 @@ public class DataProxy {
                 .map(UserDAO::toUser);
     }
 
+    public void updateGarbageCollection(String photoId){
+        //List<UserDAO> usersWithPhoto = dbLayer.getUsersByPhoto(photoId).toList();
+        Integer photoAmount = dbLayer.getPhotoRepeated(photoId).stream().toList().get(0);
+
+        if(photoAmount == 1){
+             redisLayer.putElemOnList("gc", photoId);
+        }
+    }
+
     /**
      * @return the user associated with the given nickname, if found
      */
