@@ -90,9 +90,9 @@ public class CosmosDBLayer {
     public Stream<String>  getAllImagesFromTable(String table){
         init();
         if(table.equals("users"))
-            return users.queryItems("SELECT photo_id FROM users", new CosmosQueryRequestOptions(), String.class).stream();
+            return users.queryItems("SELECT * FROM users", new CosmosQueryRequestOptions(), String.class).stream();
 
-        return auctions.queryItems("SELECT thumbnail_id FROM auctions", new CosmosQueryRequestOptions(), String.class).stream();
+        return auctions.queryItems("SELECT * FROM auctions", new CosmosQueryRequestOptions(), String.class).stream();
     }
 
     public Stream<BidDAO> getBidsByUser(String nickname) {
