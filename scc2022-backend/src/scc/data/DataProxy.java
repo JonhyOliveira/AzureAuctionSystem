@@ -1,8 +1,5 @@
 package scc.data;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import jakarta.ws.rs.core.Cookie;
-import redis.clients.jedis.JedisPool;
 import scc.data.layers.BlobStorageLayer;
 import scc.data.layers.CognitiveSearchLayer;
 import scc.data.layers.CosmosDBLayer;
@@ -15,12 +12,9 @@ import scc.data.models.UserDAO;
 import jakarta.ws.rs.core.NewCookie;
 import scc.session.SessionTemp;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * This class manages
@@ -243,8 +237,8 @@ public class DataProxy {
      * Gets auctions about to be closed
      * @return list of auctions which are less or equal to 5 minutes away of getting closed
      */
-    public List<Auction> getClosingAuctions(){
-        return dbLayer.getClosingAuctions()
+    public List<Auction> getAuctionsClosingInXMinutes(long x){
+        return dbLayer.getAuctionsClosingInXMins(x)
                 .map(AuctionDAO::toAuction)
                 .collect(Collectors.toList());
     }

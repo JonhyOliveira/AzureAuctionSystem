@@ -24,4 +24,8 @@ class CosmosDBLayerTest {
         System.out.println("Without:\n" + query);
     }
 
+    @Test
+    void getAuctionsClosingInXMins() {
+        CosmosDBLayer.getInstance().getAuctionsClosingInXMins(20).forEach(System.out::println);
+    }
 }

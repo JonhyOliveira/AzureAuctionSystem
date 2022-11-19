@@ -123,12 +123,6 @@ public class CosmosDBLayer {
 				.stream();
 	}
 
-	/*public Stream<UserDAO> getUsersByPhoto(String photoId){
-		init();
-		return users.queryItems("SELECT count(*) FROM users, auctions WHERE users.photoId=\"" + photoId + "\" AND auctions.imageId=\"" + photoId + "\"",
-						new CosmosQueryRequestOptions(), UserDAO.class).stream();
-	}*/
-
 	public CosmosPagedIterable<Integer> getPhotoRepeated(String photoId){
 		init();
 		return users.queryItems("SELECT SUM(c) FROM (SELECT COUNT(*) AS c FROM users WHERE users.photo_id=\"" + photoId + "\" UNION ALL SELECT COUNT(*) FROM auctions WHERE auctions.thumbnail_id=\"" + photoId + "\")",
@@ -193,16 +187,9 @@ public class CosmosDBLayer {
 				new CosmosQueryRequestOptions(), AuctionDAO.class).stream();
 	}
 
-	/*
-	public CosmosPagedIterable<AuctionDAO> getClosingAuctions(){
+	public Stream<AuctionDAO> getAuctionsClosingInXMins(long x){
 		init();
-		return auctions.queryItems("SELECT * FROM auctions WHERE ((auctions.endTime - MINUTE(now())) <= 5)\"", new CosmosQueryRequestOptions(), AuctionDAO.class);
-	}
-	*/
-
-	public Stream<AuctionDAO> getClosingAuctions(){
-		init();
-		return auctions.queryItems("SELECT * FROM auctions WHERE auctions.end_time <= GetCurrentTimestamp() AND NOT auctions.closed",
+		return auctions.queryItems("SELECT * FROM auctions WHERE auctions.end_time <= (GetCurrentTimestamp() + " + x + " * 60000) AND NOT auctions.closed",
 				new CosmosQueryRequestOptions(), AuctionDAO.class).stream();
 	}
 	

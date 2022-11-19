@@ -5,7 +5,6 @@ import jakarta.ws.rs.core.Cookie;
 import jakarta.ws.rs.core.MediaType;
 import scc.data.*;
 import scc.session.SessionTemp;
-import scc.utils.Hash;
 
 import java.util.*;
 
@@ -226,7 +225,7 @@ public class AuctionResource {
     @Produces(MediaType.APPLICATION_JSON)
     public List<Auction> showAuctionsAboutToClose()
     {
-        return dataProxy.getClosingAuctions();
+        return dataProxy.getAuctionsClosingInXMinutes(10);
     }
 
     /**
