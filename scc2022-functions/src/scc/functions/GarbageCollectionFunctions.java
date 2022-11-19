@@ -1,6 +1,8 @@
 package scc.functions;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -12,6 +14,7 @@ import com.microsoft.azure.functions.annotation.*;
 import com.microsoft.azure.functions.*;
 import scc.data.layers.BlobStorageLayer;
 import scc.data.layers.CosmosDBLayer;
+import scc.data.layers.RedisCacheLayer;
 
 /**
  * Azure Functions with Timer trigger for garbage collection.
@@ -22,20 +25,51 @@ public class GarbageCollectionFunctions {
     /**
      * This funtion will be invoked every 10 minutes to ensure that auctions from deleted users are deleted
      */
-    @FunctionName("GC-AuctionsNullOwner")
+    @FunctionName("GCRemoveUsers")
     public void deleteAuctionNullUser(
-            @TimerTrigger(name = "GC-NullAuctionOwnerTrigger", schedule = "0 */10 * * * *") String timerInfo,
+            @TimerTrigger(name = "GCRemoveUsersTrigger", schedule = "1 */10 * * * *") String timerInfo,
             final ExecutionContext context) {
         context.getLogger().info("GC function executed @ " + LocalDateTime.now());
+        RedisCacheLayer cacheLayer = RedisCacheLayer.getInstance();
         CosmosDBLayer db = CosmosDBLayer.getInstance();
 
-        List<String> deletedAuctions = db.getAuctionsByUser(null)
-                .map(auctionDAO -> db.delAuctionByID(auctionDAO.getAuctionID(), auctionDAO.getOwnerNickname()) ? auctionDAO.getAuctionID() : null)
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList());
+        AtomicLong usersDeleted = new AtomicLong();
+        AtomicLong questionsUpdated = new AtomicLong();
+        AtomicLong bidsUpdated = new AtomicLong();
+        AtomicLong auctionsUpdated = new AtomicLong();
 
-        context.getLogger().info(String.format("Deleted %d auctions: [ %s ]", deletedAuctions.size(),
-                String.join(", ", deletedAuctions)));
+        Optional<String> op = cacheLayer.popFromSet("gc:users");
+        while (op.isPresent())
+        {
+            String nickname = op.get();
+            db.getAuctionsByUser(nickname).forEach(auctionDAO -> {
+                auctionDAO.setOwnerNickname(null);
+                db.updateAuction(auctionDAO);
+                auctionsUpdated.getAndIncrement();
+            });
+
+            db.getBidsByUser(nickname).forEach(bidDAO -> {
+                bidDAO.setBidderNickname(null);
+                db.updateBid(bidDAO);
+                bidsUpdated.getAndIncrement();
+            });
+
+            db.getQuestionsAskedByUser(nickname).forEach(questionDAO -> {
+                questionDAO.setQuestioner(null);
+                db.updateQuestion(questionDAO);
+                questionsUpdated.getAndIncrement();
+            });
+
+            db.deleteUserByNickname(nickname);
+            usersDeleted.getAndIncrement();
+
+            op = cacheLayer.popFromSet("gc:users");
+        }
+
+        context.getLogger().info(String.format("Execution breakdown:\n\t%d users deleted." +
+                "\n\t%d auctions updated.\n\t%d bids updated.\n\t%dquestions updated.", usersDeleted.get(),
+                auctionsUpdated.get(), bidsUpdated.get(), questionsUpdated.get()));
+
     }
 
     /**

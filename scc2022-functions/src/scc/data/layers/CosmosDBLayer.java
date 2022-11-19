@@ -1,14 +1,14 @@
 package scc.data.layers;
 
-import com.azure.core.implementation.util.EnvironmentConfiguration;
 import com.azure.cosmos.*;
 import com.azure.cosmos.models.CosmosItemRequestOptions;
 import com.azure.cosmos.models.CosmosQueryRequestOptions;
 import com.azure.cosmos.models.PartitionKey;
 import scc.data.AuctionDAO;
+import scc.data.BidDAO;
+import scc.data.QuestionDAO;
 
 import java.util.Optional;
-import java.util.Properties;
 import java.util.stream.Stream;
 
 public class CosmosDBLayer {
@@ -95,4 +95,32 @@ public class CosmosDBLayer {
         return auctions.queryItems("SELECT thumbnail_id FROM auctions", new CosmosQueryRequestOptions(), String.class).stream();
     }
 
+    public Stream<BidDAO> getBidsByUser(String nickname) {
+        init();
+        return bids.queryItems("SELECT * FROM bids WHERE bids.bidder_nickname=\"" + nickname + "\"", new CosmosQueryRequestOptions(), BidDAO.class)
+                .stream();
+    }
+
+    public Stream<QuestionDAO> getQuestionsAskedByUser(String nickname) {
+        init();
+        return questions.queryItems("SELECT * FROM questions WHERE questions.questioner=\"" + nickname + "\"", new CosmosQueryRequestOptions(), QuestionDAO.class)
+                .stream();
+    }
+
+    public void updateBid(BidDAO bidDAO) {
+        init();
+        bids.upsertItem(bidDAO);
+    }
+
+    public void updateQuestion(QuestionDAO questionDAO) {
+        init();
+        questions.upsertItem(questionDAO);
+    }
+
+    public boolean deleteUserByNickname(String nickname) {
+        init();
+        PartitionKey key = new PartitionKey( nickname);
+        int result = users.deleteItem(nickname, key, new CosmosItemRequestOptions()).getStatusCode();
+        return result >= 200 && result < 300;
+    }
 }
