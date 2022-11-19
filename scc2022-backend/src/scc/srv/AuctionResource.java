@@ -237,10 +237,9 @@ public class AuctionResource {
     static Auction validateAuction(String auctionID, Cookie auctionOwnerSessionCookie)
             throws NotFoundException, NotAuthorizedException
     {
-        Auction auctionDetails = dataProxy.getAuction(auctionID).orElse(null);
+        Auction auctionDetails = dataProxy.getAuction(auctionID)
+                .orElseThrow(() -> new NotFoundException("Auction not found."));
 
-        if (auctionDetails == null)
-            throw new NotFoundException("Auction not found.");
 
         if (auctionDetails.getOwnerNickname() != null && auctionOwnerSessionCookie != null)
             UserResource.validateUserSession(auctionOwnerSessionCookie, auctionDetails.getOwnerNickname());

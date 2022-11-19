@@ -40,7 +40,6 @@ public class GenericExceptionMapper implements ExceptionMapper<Throwable> {
         }
 
         ex.printStackTrace();
-
         return Response.status(Status.INTERNAL_SERVER_ERROR).entity(ExceptionUtils.getStackTrace(ex)).type(MediaType.TEXT_PLAIN).build();
     }
 }

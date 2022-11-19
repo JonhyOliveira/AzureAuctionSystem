@@ -79,19 +79,12 @@ public class UserResource {
 
         validateUserSession(cookie, nickname);
 
-        String newImageId = newUser.getImageId();
-        boolean changedPhoto = false;
-
-        if(!Objects.isNull(newImageId)){
-            changedPhoto = true;
-            if(!dataProxy.doesFileExist(newImageId))
-                throw new NotFoundException("User's picture is missing.");
-        }
-
         Optional<User> prevUserDetails = dataProxy.getUser(nickname);
 
-        if(changedPhoto && prevUserDetails.isPresent() && !newImageId.equals(prevUserDetails.get().getImageId()))
-            dataProxy.updateGarbageCollection(prevUserDetails.get().getImageId());
+        if (prevUserDetails.isPresent() && Objects.nonNull(newUser.getImageId())
+                && !prevUserDetails.get().getImageId().equals(newUser.getImageId()))
+            if (!dataProxy.doesFileExist(newUser.getImageId()))
+                throw new NotFoundException("User picture was not found.");
 
         return prevUserDetails.flatMap(user -> dataProxy.updateUserInfo(nickname, user.patch(newUser))
                 .map(User::censored)).orElse(null);
@@ -125,12 +118,10 @@ public class UserResource {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response auth(Login loginInfo){
 
-        Optional<User> o = dataProxy.getUser(loginInfo.getNickname());
+        User u = dataProxy.getUser(loginInfo.getNickname())
+                .orElseThrow(() -> new NotFoundException("User not found"));
 
-        if (o.isEmpty())
-            throw new NotFoundException("User not found");
-
-        if (! o.get().getPwd().equals(Hash.of(loginInfo.getPwd())))
+        if (!u.getPwd().equals(Hash.of(loginInfo.getPwd())))
             throw new NotAuthorizedException("Password Incorrect.");
 
         String uid = UUID.randomUUID().toString();
@@ -189,12 +180,10 @@ public class UserResource {
         if (Objects.isNull(cookie.getValue()))
             throw new NotAuthorizedException("Session cookie is invalid");
 
-        Optional<SessionTemp> s = dataProxy.getSession(nickname);
+        SessionTemp s = dataProxy.getSession(nickname)
+                .orElseThrow(() -> new NotAuthorizedException("Session not found. Have you tried getting a session cookie?"));
 
-        if (s.isEmpty())
-            throw new NotAuthorizedException("Session not found. Have you tried getting a session cookie?");
-
-        if(!nickname.equals(s.get().getNickname()) || !cookie.getValue().equals(s.get().getCookieId()))
+        if(!nickname.equals(s.getNickname()) || !cookie.getValue().equals(s.getCookieId()))
             throw new NotAuthorizedException("No ~valid~ session initialized.");
     }
 }

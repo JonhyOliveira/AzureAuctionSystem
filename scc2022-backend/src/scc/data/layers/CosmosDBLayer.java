@@ -123,13 +123,6 @@ public class CosmosDBLayer {
 				.stream();
 	}
 
-	public CosmosPagedIterable<Integer> getPhotoRepeated(String photoId){
-		init();
-		return users.queryItems("SELECT SUM(c) FROM (SELECT COUNT(*) AS c FROM users WHERE users.photo_id=\"" + photoId + "\" UNION ALL SELECT COUNT(*) FROM auctions WHERE auctions.thumbnail_id=\"" + photoId + "\")",
-				new CosmosQueryRequestOptions(), Integer.class);
-	}
-
-
 	public Optional<AuctionDAO> getAuctionByID(String auctionID){
 		init();
 		return auctions.queryItems("SELECT * FROM auctions WHERE auctions.id=\"" + auctionID + "\"",
@@ -166,7 +159,7 @@ public class CosmosDBLayer {
 	public Stream<BidDAO> getTopBidsByAuctionID(String auctionID, Long n)
 	{
 		init();
-		return bids.queryItems("SELECT TOP " + n + " * FROM bids WHERE bids.auction_id=\"" + auctionID + "\" ORDER BY bids.amount",
+		return bids.queryItems("SELECT TOP " + n + " * FROM bids WHERE bids.auction_id=\"" + auctionID + "\" ORDER BY bids.amount DESC",
 				new CosmosQueryRequestOptions(), BidDAO.class).stream();
 	}
 
