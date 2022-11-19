@@ -1,9 +1,11 @@
 package scc.data.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import scc.data.Auction;
 
 
+@JsonIgnoreProperties
 public final class AuctionDAO extends DAO {
 
     @JsonProperty("id")

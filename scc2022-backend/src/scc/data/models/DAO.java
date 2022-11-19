@@ -1,5 +1,8 @@
 package scc.data.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties
 public abstract class DAO {
 
     protected String _rid;

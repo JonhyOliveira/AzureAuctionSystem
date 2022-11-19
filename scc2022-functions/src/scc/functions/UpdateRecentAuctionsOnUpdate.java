@@ -42,13 +42,26 @@ public class UpdateRecentAuctionsOnUpdate {
                         try {
                             return new ObjectMapper().readValue(document, AuctionDAO.class);
                         } catch (JsonProcessingException e) {
+                            context.getLogger().warning(e.getMessage());
                             return null;
                         }
                     })
-                    .filter(Objects::nonNull)
-                    .filter(auctionDAO -> !auctionDAO.isClosed())
-                    .map(AuctionDAO::getAuctionID)
-                    .forEach(s -> jedis.lpush("recentlyUpdatedAuctions", s));
+                    .filter(auctionDAO -> {
+                        context.getLogger().info("convert to: " + auctionDAO);
+                        return Objects.nonNull(auctionDAO);
+                    })
+                    .filter(auctionDAO -> {
+                        context.getLogger().info("not null");
+                        return !auctionDAO.isClosed();
+                    })
+                    .map(auctionDAO -> {
+                        context.getLogger().info("not closed");
+                        return auctionDAO.getAuctionID();
+                    })
+                    .forEach(s -> {
+                        jedis.lpush("recentlyUpdatedAuctions", s);
+                        context.getLogger().info("jedis");
+                    });
         }
 
     }
