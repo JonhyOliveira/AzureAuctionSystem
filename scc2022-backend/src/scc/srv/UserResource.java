@@ -37,7 +37,7 @@ public class UserResource {
     {
         validateUserFields(user, true);
 
-        if(!dataProxy.doesFileExist(user.getImageId()))
+        if(!dataProxy.doesImageExist(user.getImageId()))
             throw new NotFoundException("User's picture is missing.");
 
         if (dataProxy.getUser(user.getNickname()).isPresent())
@@ -83,11 +83,11 @@ public class UserResource {
 
         if (prevUserDetails.isPresent() && Objects.nonNull(newUser.getImageId())
                 && !prevUserDetails.get().getImageId().equals(newUser.getImageId()))
-            if (!dataProxy.doesFileExist(newUser.getImageId()))
+            if (!dataProxy.doesImageExist(newUser.getImageId()))
                 throw new NotFoundException("User picture was not found.");
 
-        return prevUserDetails.flatMap(user -> dataProxy.updateUserInfo(nickname, user.patch(newUser))
-                .map(User::censored)).orElse(null);
+        return prevUserDetails.flatMap(user -> dataProxy.updateUserInfo(nickname, user.patch(newUser)))
+                .orElse(null);
     }
 
     /**
@@ -134,7 +134,7 @@ public class UserResource {
                 .secure(false)
                 .build();
 
-        dataProxy.storeCookie(cookie, loginInfo.getNickname());
+        dataProxy.storeSession(cookie, loginInfo.getNickname());
 
         return Response.ok().cookie(cookie).build();
     }

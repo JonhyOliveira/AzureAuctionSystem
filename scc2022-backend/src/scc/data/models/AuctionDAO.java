@@ -6,6 +6,7 @@ import scc.data.Auction;
 
 public final class AuctionDAO extends DAO {
 
+    @JsonProperty("id")
     private String auctionID;
     private String title;
     private String description;
@@ -34,7 +35,6 @@ public final class AuctionDAO extends DAO {
         this.isClosed = aucStatus;
     }
 
-    @JsonProperty("id")
     public String getAuctionID()
     {
         return auctionID;

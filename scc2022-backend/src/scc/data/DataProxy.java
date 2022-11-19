@@ -59,9 +59,9 @@ public class DataProxy {
     public Optional<User> updateUserInfo(String nickname, User newUser)
     {
         newUser.setNickname(nickname);
-        UserDAO u = dbLayer.updateUser(new UserDAO(newUser.hashPwd())).getItem();
+        UserDAO u = dbLayer.updateUser(new UserDAO(newUser.hashPwd()));
 
-        redisLayer.putOnCache("u:" + u.getNickname(), u);
+        redisLayer.putOnCache("u:" + u.getNickname(), u, 60);
 
         return Optional.of(u)
                 .map(UserDAO::toUser);
@@ -77,8 +77,13 @@ public class DataProxy {
         if (userObject != null)
             return Optional.of(userObject.toUser());
 
-        return dbLayer.getUserByNick(nickname)
-                .map(UserDAO::toUser);
+        userObject = dbLayer.getUserByNick(nickname)
+                .filter(userDAO -> !userDAO.isToDelete()).orElse(null);
+
+        if (userObject != null)
+            redisLayer.putOnCache("u:" + nickname, userObject, 60);
+
+        return Optional.ofNullable(userObject).map(UserDAO::toUser);
     }
 
     /**
@@ -87,8 +92,15 @@ public class DataProxy {
      */
     public void deleteUser(String nickname)
     {
-        redisLayer.deleteFromCache("u:" + nickname);
-        dbLayer.delUserByNick(nickname);
+        getUser(nickname).ifPresent(user -> {
+            UserDAO dao = new UserDAO(user);
+            dao.setToDelete(true);
+            dbLayer.updateUser(dao);
+            redisLayer.deleteFromCache("u:" + user.getNickname());
+            deleteSession(user.getNickname());
+
+            redisLayer.insertInSet("gc:users", user.getNickname());
+        });
     }
 
     /**
@@ -235,56 +247,61 @@ public class DataProxy {
     }
 
     /**
-     * Downlaods a file from the shared storage
-     * @param fileID the id of the file
-     * @return the byte contents of the blob
+     * Downlaods an image from the shared storage
+     * @param imageID the id of the image
+     * @return the byte contents of the image
      */
-    public byte[] downloadFile(String fileID)
+    public byte[] downloadImage(String imageID)
     {
-        return blobStorage.downloadBlob(fileID);
+        return blobStorage.downloadBlob(imageID);
     }
 
     /**
-     * Checks if a file exists in the shared storage
-     * @param fileID the id of the file
+     * Checks if an iamge exists in the shared storage
+     * @param imageID the id of the image
      * @return true if it exists, false otherwise
      */
-    public boolean doesFileExist(String fileID)
+    public boolean doesImageExist(String imageID)
     {
-        return blobStorage.blobExists(fileID);
+        return blobStorage.blobExists(imageID);
     }
 
     /**
-     * Uploads a file to the shared storage
-     * @param fileID the id to store the file under
+     * Uploads an image to the shared storage
+     * @param imageID the id to retrieve the image afterwards
      * @param contents the contents of the file
      */
-    public void uploadFile(String fileID, byte[] contents) {
-        blobStorage.createBlob(fileID, contents);
+    public void uploadImage(String imageID, byte[] contents) {
+        blobStorage.createBlob(imageID, contents);
     }
 
-    public void deleteFile(String fileID) {
-        blobStorage.deleteBlob(fileID);
+    public void deleteImage(String imageID) {
+        blobStorage.deleteBlob(imageID);
     }
 
-    public List<String> listFiles() {
-        return blobStorage.listFiles().collect(Collectors.toList());
+    public List<String> listImages() {
+        return blobStorage.listImages().collect(Collectors.toList());
     }
 
-    public void storeCookie(NewCookie cookie, String nickname) {
+    public void storeSession(NewCookie cookie, String nickname) {
         if (USE_CACHE)
-            redisLayer.putOnCache("session:" + nickname, cookie.getValue(), Session.VALIDITY_SECONDS);
+            redisLayer.putOnCache( Session.COOKIE_NAME + ":" + nickname, cookie.getValue(), Session.VALIDITY_SECONDS);
 
         dbLayer.storeCookie(Session.COOKIE_NAME + ":" + nickname , cookie.getValue());
     }
 
     public Optional<Session> getSession(String nickname) {
-        Optional<String> cookieID = Optional.ofNullable(redisLayer.getFromCache("session:" + nickname, String.class));
+        Optional<String> cookieID = Optional.ofNullable(redisLayer.getFromCache(Session.COOKIE_NAME + ":" + nickname, String.class));
 
         if (cookieID.isEmpty())
             cookieID = dbLayer.getCookie(Session.COOKIE_NAME + ":" + nickname);
 
         return cookieID.map(s -> new Session(s, nickname));
+    }
+
+    public void deleteSession(String nickname) {
+        redisLayer.deleteFromCache(Session.COOKIE_NAME + ":" + nickname);
+        dbLayer.deleteCookie(Session.COOKIE_NAME + ":" + nickname);
     }
 
     public List<Auction> searchAuctions(String queryString) {

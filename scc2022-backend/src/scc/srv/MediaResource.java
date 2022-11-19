@@ -5,9 +5,6 @@ import scc.data.DataProxy;
 import scc.data.layers.BlobStorageLayer;
 import scc.utils.Hash;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import jakarta.ws.rs.core.MediaType;
 
 /**
@@ -32,8 +29,8 @@ public class MediaResource {
 	public String upload(byte[] contents) {
 		String fileID = Hash.of(contents);
 
-		if (!dataProxy.doesFileExist(fileID))
-			dataProxy.uploadFile(fileID, contents);
+		if (!dataProxy.doesImageExist(fileID))
+			dataProxy.uploadImage(fileID, contents);
 		
 		return fileID;
 	}
@@ -47,7 +44,7 @@ public class MediaResource {
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_OCTET_STREAM)
 	public byte[] download(@PathParam("id") String id) {
-		byte[] data = dataProxy.downloadFile(id);
+		byte[] data = dataProxy.downloadImage(id);
 
 		if (data == null)
 			throw new NotFoundException("Image not found.");
@@ -65,6 +62,6 @@ public class MediaResource {
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON)
 	public String[] list() {
-		return dataProxy.listFiles().toArray(new String[0]);
+		return dataProxy.listImages().toArray(new String[0]);
 	}
 }

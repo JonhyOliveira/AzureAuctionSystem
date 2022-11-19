@@ -81,11 +81,10 @@ public class CosmosDBLayer {
 		cookies = db.getContainer("cookies");
 	}
 
-	public CosmosItemResponse<UserDAO> updateUser(UserDAO newUser)
+	public UserDAO updateUser(UserDAO newUser)
 	{
 		init();
-		PartitionKey key = new PartitionKey(newUser.getNickname());
-		return users.replaceItem(newUser, newUser.getNickname(), key, new CosmosItemRequestOptions());
+		return users.upsertItem(newUser).getItem();
 	}
 
 	public boolean delUserByNick(String nickname) {
@@ -219,4 +218,10 @@ public class CosmosDBLayer {
 		return cookies.queryItems("SELECT * FROM cookies WHERE cookies.id=\"" + key + "\"",
 				new CosmosQueryRequestOptions(), CookieDAO.class).stream().findAny().map(CookieDAO::getValue);
 	}
+
+	public void deleteCookie(String key) {
+		init();
+		getCookie(key).ifPresent(s -> cookies.deleteItem(s, new PartitionKey(s), new CosmosItemRequestOptions()));
+	}
+
 }

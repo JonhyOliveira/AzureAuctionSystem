@@ -5,11 +5,9 @@ import com.azure.storage.blob.BlobClient;
 import com.azure.storage.blob.BlobContainerClient;
 import com.azure.storage.blob.BlobContainerClientBuilder;
 import com.azure.storage.blob.models.BlobItem;
-import jakarta.ws.rs.NotFoundException;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
 import java.util.Properties;
 import java.util.stream.Stream;
 
@@ -62,7 +60,7 @@ public class BlobStorageLayer {
         containerClient.getBlobClient(blobID).upload(BinaryData.fromBytes(data));
     }
 
-    public Stream<String> listFiles() {
+    public Stream<String> listImages() {
         return containerClient.listBlobs().stream().map(BlobItem::getName);
     }
 

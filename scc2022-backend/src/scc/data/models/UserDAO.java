@@ -12,6 +12,8 @@ public final class UserDAO extends DAO {
 	private String name;
 	private String pwd;
 	private String photoId;
+	@JsonProperty(value = "to_delete",defaultValue = "false")
+	private boolean to_delete;
 
 	@SuppressWarnings("unused")
 	public UserDAO() {
@@ -59,6 +61,14 @@ public final class UserDAO extends DAO {
 	@SuppressWarnings("unused")
     public void setPhotoId(String photoId) {
 		this.photoId = photoId;
+	}
+
+	public boolean isToDelete() {
+		return to_delete;
+	}
+
+	public void setToDelete(boolean toDelete) {
+		this.to_delete = toDelete;
 	}
 
 	public User toUser() {

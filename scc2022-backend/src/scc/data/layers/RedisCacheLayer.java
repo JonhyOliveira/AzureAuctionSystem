@@ -98,10 +98,28 @@ public class RedisCacheLayer {
 		}
 	}
 
-	public void putElemOnList(String key, String elem){
+	public void insertInSet(String key, String elem){
 
 		try (Jedis jedis = getCachePool().getResource()) {
-			jedis.lpush(key, elem);
+			jedis.sadd(key, elem);
+		}
+	}
+
+	public boolean setContains(String key, String elem) {
+		try (Jedis jedis = getCachePool().getResource()) {
+			return jedis.sismember(key, elem);
+		}
+	}
+
+	public String popFromSet(String key) {
+		try (Jedis jedis = getCachePool().getResource()) {
+			return jedis.spop(key);
+		}
+	}
+
+	public boolean removeFromSet(String key, String elem) {
+		try (Jedis jedis = getCachePool().getResource()) {
+			return jedis.srem(key, elem) > 0;
 		}
 	}
 }
