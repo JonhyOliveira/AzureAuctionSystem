@@ -1,5 +1,6 @@
 package scc.data;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import scc.utils.Hash;
 
 import java.util.Objects;
@@ -11,17 +12,18 @@ public class User {
 	private String nickname;
 	private String name;
 	private String pwd;
-	private String photoId;
+	@JsonProperty("image_id")
+	private String imageId;
 
 	@SuppressWarnings("unused")
 	public User() {}
 
-	public User(String nickname, String name, String pwd, String photoId) {
+	public User(String nickname, String name, String pwd, String imageId) {
 		super();
 		this.nickname = nickname;
 		this.name = name;
 		this.pwd = pwd;
-		this.photoId = photoId;
+		this.imageId = imageId;
 	}
 	public String getNickname() {
 		return nickname;
@@ -42,12 +44,12 @@ public class User {
 	public void setPwd(String pwd) {
 		this.pwd = pwd;
 	}
-	public String getPhotoId() {
-		return photoId;
+	public String getImageId() {
+		return imageId;
 	}
 	@SuppressWarnings("unused")
-	public void setPhotoId(String photoId) {
-		this.photoId = photoId;
+	public void setImageId(String imageId) {
+		this.imageId = imageId;
 	}
 
 	/**
@@ -84,8 +86,8 @@ public class User {
 				patched.name = user.name;
 			if (Objects.nonNull(user.pwd))
 				patched.pwd = user.pwd;
-			if (Objects.nonNull(user.photoId))
-				patched.photoId = user.photoId;
+			if (Objects.nonNull(user.imageId))
+				patched.imageId = user.imageId;
 		}
 
 		return patched;
@@ -95,7 +97,7 @@ public class User {
 	 * @return a new object witch is a copy of this user
 	 */
 	public User copy() {
-		return new User(this.nickname, this.name, this.pwd, this.photoId);
+		return new User(this.nickname, this.name, this.pwd, this.imageId);
 	}
 
 	@Override
@@ -103,17 +105,17 @@ public class User {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
 		User user = (User) o;
-		return nickname.equals(user.nickname) && Objects.equals(name, user.name) && pwd.equals(user.pwd) && Objects.equals(photoId, user.photoId);
+		return nickname.equals(user.nickname) && Objects.equals(name, user.name) && pwd.equals(user.pwd) && Objects.equals(imageId, user.imageId);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(nickname, name, pwd, photoId);
+		return Objects.hash(nickname, name, pwd, imageId);
 	}
 
 	@Override
 	public String toString() {
-		return "User [nickname=" + nickname + ", name=" + name + ", pwd=" + pwd + ", photoId=" + photoId + " ]";
+		return "User [nickname=" + nickname + ", name=" + name + ", pwd=" + pwd + ", photoId=" + imageId + " ]";
 	}
 
 }

@@ -14,10 +14,10 @@ public class MainApplication extends Application
 	public MainApplication() {
 		if (!System.getProperties().containsKey("production"))
 			resources.add( GenericExceptionMapper.class );
-		resources.add( ControlResource.class);
-		singletons.add( new MediaResource());
-		singletons.add( new UserResource());
-		singletons.add( new AuctionResource());
+		resources.add( ControlResource.class );
+		resources.add( MediaResource.class );
+		resources.add( UserResource.class );
+		resources.add( AuctionResource.class );
 	}
 
 	@Override

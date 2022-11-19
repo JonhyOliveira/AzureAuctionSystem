@@ -3,13 +3,11 @@ package scc.data.layers;
 import com.azure.cosmos.*;
 import com.azure.cosmos.models.*;
 import com.azure.cosmos.util.CosmosPagedIterable;
-
 import scc.data.models.*;
 import scc.session.SessionTemp;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Properties;
@@ -38,7 +36,7 @@ public class CosmosDBLayer {
 		}
 	}
 
-	private static CosmosDBLayer instance;;
+	private static CosmosDBLayer instance;
 
 	public static synchronized CosmosDBLayer getInstance() {
 		if( instance != null)
@@ -91,10 +89,11 @@ public class CosmosDBLayer {
 		return users.replaceItem(newUser, newUser.getNickname(), key, new CosmosItemRequestOptions());
 	}
 
-	public CosmosItemResponse<Object> delUserByNick(String nickname) {
+	public boolean delUserByNick(String nickname) {
 		init();
 		PartitionKey key = new PartitionKey( nickname);
-		return users.deleteItem(nickname, key, new CosmosItemRequestOptions());
+		int result = users.deleteItem(nickname, key, new CosmosItemRequestOptions()).getStatusCode();
+		return result >= 200 && result < 300;
 	}
 	
 	@SuppressWarnings("unused")
@@ -118,10 +117,10 @@ public class CosmosDBLayer {
 	}
 
 	@SuppressWarnings("unused")
-	public Iterator<UserDAO> getUsers() {
+	public Stream<UserDAO> getUsers() {
 		init();
-		return users.queryItems("SELECT * FROM users ", new CosmosQueryRequestOptions(), UserDAO.class)
-				.stream().iterator();
+		return users.queryItems("SELECT * FROM users", new CosmosQueryRequestOptions(), UserDAO.class)
+				.stream();
 	}
 
 	/*public Stream<UserDAO> getUsersByPhoto(String photoId){
@@ -238,7 +237,7 @@ public class CosmosDBLayer {
 
 	public Optional<String> getCookie(String key) {
 		init();
-		PartitionKey partKey = new PartitionKey(key);
-		return Optional.ofNullable(cookies.readItem(key, partKey, CookieDAO.class).getItem()).map(CookieDAO::getValue);
+		return cookies.queryItems("SELECT * FROM cookies WHERE cookies.id=\"" + key + "\"",
+				new CosmosQueryRequestOptions(), CookieDAO.class).stream().findAny().map(CookieDAO::getValue);
 	}
 }

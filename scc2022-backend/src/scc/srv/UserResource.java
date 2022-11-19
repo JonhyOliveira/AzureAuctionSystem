@@ -37,16 +37,15 @@ public class UserResource {
     {
         validateUserFields(user, true);
 
-        if(!dataProxy.doesFileExist(user.getPhotoId()))
+        if(!dataProxy.doesFileExist(user.getImageId()))
             throw new NotFoundException("User's picture is missing.");
 
         if (dataProxy.getUser(user.getNickname()).isPresent())
             throw new ForbiddenException("User already exists");
 
-        user.setPwd(Hash.of(user.getPwd()));
+        dataProxy.createUser(user.hashPwd());
 
-        return dataProxy.createUser(user)
-                .orElse(null);
+        return user;
 
     }
 
@@ -80,23 +79,22 @@ public class UserResource {
 
         validateUserSession(cookie, nickname);
 
-        String newPhotoId = newUser.getPhotoId();
+        String newImageId = newUser.getImageId();
         boolean changedPhoto = false;
 
-        if(!Objects.isNull(newPhotoId)){
+        if(!Objects.isNull(newImageId)){
             changedPhoto = true;
-            if(!dataProxy.doesFileExist(newPhotoId))
+            if(!dataProxy.doesFileExist(newImageId))
                 throw new NotFoundException("User's picture is missing.");
         }
 
         Optional<User> prevUserDetails = dataProxy.getUser(nickname);
 
-        if(changedPhoto && prevUserDetails.isPresent())
-            dataProxy.updateGarbageCollection(prevUserDetails.get().getPhotoId());
+        if(changedPhoto && prevUserDetails.isPresent() && !newImageId.equals(prevUserDetails.get().getImageId()))
+            dataProxy.updateGarbageCollection(prevUserDetails.get().getImageId());
 
-        return prevUserDetails.map(user -> dataProxy.updateUserInfo(nickname, user.patch(newUser))
-                .map(User::censored)
-                .orElse(null)).orElse(null);
+        return prevUserDetails.flatMap(user -> dataProxy.updateUserInfo(nickname, user.patch(newUser))
+                .map(User::censored)).orElse(null);
     }
 
     /**

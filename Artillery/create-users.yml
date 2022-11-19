@@ -40,4 +40,5 @@ scenarios:
               name: "{{ name }}"
               pwd: "{{ pwd }}"
               photoId: "{{ imageId }}"
+            afterResponse: "saveUserReply"
         count: "{{ numUsers }}"

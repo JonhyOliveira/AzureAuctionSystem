@@ -6,11 +6,9 @@ import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 import redis.clients.jedis.params.SetParams;
-import scc.data.models.UserDAO;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Optional;
 import java.util.Properties;
 
 public class RedisCacheLayer {
@@ -69,24 +67,12 @@ public class RedisCacheLayer {
 		return myInstance;
 	}
 
-	private Jedis jedis = null;
-
-	private void init() {
-		if (jedis == null || jedis.isBroken() || jedis.isConnected()) {
-			if (jedis != null)
-				jedis.close();
-
-			jedis = getCachePool().getResource();
-		}
-	}
-
 	public void putOnCache(String key, Object obj) {
 		putOnCache(key, obj, DEFAULT_EXPIRATION);
 	}
 
 	public void putOnCache(String key, Object obj, long expirationSeconds){
-		init();
-		try{
+		try (Jedis jedis = getCachePool().getResource()) {
 			jedis.set(key, mapper.writeValueAsString(obj), SetParams.setParams().ex(expirationSeconds));
 		}catch (JsonProcessingException e) {
 			throw new RuntimeException(e);
@@ -94,13 +80,11 @@ public class RedisCacheLayer {
 	}
 
 	public <T> T getFromCache(String key, Class<T> typeClass){
-		init();
+		try (Jedis jedis = getCachePool().getResource()) {
+			String content = jedis.get(key);
+			if(content == null)
+				return null;
 
-		String content = jedis.get(key);
-		if(content == null)
-			return null;
-
-		try {
 			return mapper.readValue(content,typeClass);
 		} catch (JsonProcessingException e) {
 			throw new RuntimeException(e);
@@ -108,12 +92,16 @@ public class RedisCacheLayer {
 	}
 
 	public void deleteFromCache(String key){
-		init();
-		jedis.del(key);
+
+		try (Jedis jedis = getCachePool().getResource()) {
+			jedis.del(key);
+		}
 	}
 
 	public void putElemOnList(String key, String elem){
-		init();
-		jedis.lpush(key,elem);
+
+		try (Jedis jedis = getCachePool().getResource()) {
+			jedis.lpush(key, elem);
+		}
 	}
 }

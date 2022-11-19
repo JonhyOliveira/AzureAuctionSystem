@@ -4,6 +4,8 @@
  * Exported functions to be used in the testing scripts.
  */
 module.exports = {
+	decideOnBid,
+	saveUserReply,
 	genQueryTerm,
 	uploadImageBody,
 	genNewUser,
@@ -126,11 +128,37 @@ function genNewUser(context, events, done) {
 	context.vars.id = first + "." + last
 	context.vars.name = first + " " + last
 	context.vars.pwd = `${Faker.internet.password()}`
-	let u = { id: context.vars.id, name: context.vars.name, pwd: context.vars.pwd, imageId: context.vars.imageId }
-	users.push(u)
-	fs.writeFileSync('users.data', JSON.stringify(users));
 	return done()
 }
+
+/**
+ * Process reply for of new users to store the id on file
+ */
+function saveUserReply(requestParams, response, context, ee, next) {
+	if( response.statusCode >= 200 && response.statusCode < 300 && response.body.length > 0)  {
+		let u = JSON.parse( response.body)
+		users.push(u)
+		fs.writeFileSync('users.data', JSON.stringify(users));
+	}
+	return next()
+}
+
+function decideOnBid(requestsParams, response, context, ee, next) {
+	delete context.vars.value
+	if (response.statusCode >= 200 && response.statusCode < 300 && Math.random() < 0.5
+			&& context.vars.user !== context.vars.$loopElement.owner_nickname) {
+		// console.log("auction:", context.vars.$loopElement)
+		if (response.body.length > 0) {
+			// console.log("highest-bid:", JSON.parse(response.body))
+			if (JSON.parse(response.body).bidder !== context.vars.user)
+				context.vars.value = JSON.parse(response.body).amount + random(30)
+		}
+		else
+			context.vars.value = context.vars.$loopElement.min_price + random(30)
+	}
+	return next()
+}
+
 
 /**
  * Select user
@@ -138,7 +166,7 @@ function genNewUser(context, events, done) {
 function selectUser(context, events, done) {
 	if( users.length > 0) {
 		let user = users.sample()
-		context.vars.user = user.id
+		context.vars.user = user.nickname
 		context.vars.pwd = user.pwd
 	} else {
 		delete context.vars.user
@@ -154,7 +182,7 @@ function selectUser(context, events, done) {
 function selectUserSkewed(context, events, done) {
 	if( users.length > 0) {
 		let user = users.sampleSkewed()
-		context.vars.user = user.id
+		context.vars.user = user.nickname
 		context.vars.pwd = user.pwd
 		// console.log("selected " + JSON.stringify(user))
 		// console.log(context.vars)
@@ -176,7 +204,7 @@ function selectUserSkewed(context, events, done) {
 function genNewAuction(context, events, done) {
 	context.vars.title = `${Faker.commerce.productName()}`
 	context.vars.description = `${Faker.commerce.productDescription()}`
-	context.vars.minimumPrice = Math.round(parseInt(Faker.commerce.price))
+	context.vars.minimumPrice = Math.round(parseInt(random(300)))
 	context.vars.bidValue = context.vars.minimumPrice + random(3)
 	var maxBids = 5
 	if( typeof context.vars.maxBids !== 'undefined')
@@ -253,35 +281,11 @@ function genNewQuestionReply(context, events, done) {
  */
 function decideToCoverBid(context, events, done) {
 	delete context.vars.value;
-	if( typeof context.vars.user !== 'undefined') {
-		if( (!context.vars.bid.toString().length > 0 || context.vars.$loop_element.owner_nickname !== bid.bidder !== context.vars.user) && Math.random() > 0.5) {
-			if (context.vars.bid.toString().length > 0) {
-				context.vars.bid = JSON.parse(bid);
-				context.vars.value = context.vars.bid.value + random(3);
-			}
-			else
-				context.vars.value = context.vars.$loop_element.min_price + random(3);
-		}
-	}
-	return done()
-}
-
-/**
- * Picks an auction to bid on
- * assuming: user context.vars.user; bids context.vars.bidsLst
- */
-function pickAuctionToBid(context, events, done) {
-	delete context.vars.value;
-	if( typeof context.vars.user !== 'undefined' && typeof context.vars.bidsLst !== 'undefined' &&
-		context.vars.bidsLst.constructor === Array && context.vars.bidsLst.length > 0) {
-		for (let i = 0; i < context.vars.bidsLst.length; i++) {
-			let bid = context.vars.bidsLst[i];
-
-			if (bid.user !== context.vars.user && Math.random() > 0.5 && bid) {
-				context.vars.value = bid.min_price + random(3);
-				context.vars.auctionId = bid.auctionId;
-			}
-		}
+	if( typeof context.vars.user !== 'undefined' && Math.random() > 0.5) {
+		if (context.vars.bid !== undefined && context.vars.bid.user !== context.vars.user)
+			context.vars.value = context.vars.bid.value + random(3);
+		else
+			context.vars.value = context.vars.$loopElement.min_price + random(3);
 	}
 	return done()
 }

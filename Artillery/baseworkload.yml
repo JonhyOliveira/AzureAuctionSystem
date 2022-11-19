@@ -46,12 +46,10 @@ scenarios:
                 name: "GET:/auction/*/bid/highest"
                 headers:
                   Accept: application/json
-                capture:
-                  as: "bid"
+                afterResponse: "decideOnBid" # 3.3 decide on whether or not to execute a bid
             - think: random(3)
-            - function: "decideToCoverBid" # 3.3 decide on whether or not to execute a bid
             - post:
-                url: "/auction/{{ auctionId }}/bid"
+                url: "/auction/{{ $loopElement.id }}/bid"
                 name: "POST:/auction/*/bid"
                 headers:
                   Content-Type: application/json
