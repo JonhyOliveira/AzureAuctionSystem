@@ -197,26 +197,6 @@ public class AuctionResource {
     }
 
     /**
-     * Shows the auctions of a user
-     * @param nickname the nickname of the user
-     * @return the user auctions
-     * @throws WebApplicationException if there was an error finding the user
-     */
-    @GET
-    @Path("/user/{nickname}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public List<Auction> showUserAuctions(@PathParam("nickname") String nickname)
-    {   
-        //Request to validate if user exists
-        Optional<User> u = dataProxy.getUser(nickname);
-
-        if(Objects.nonNull(u))
-            return dataProxy.getAuctionsByUser(nickname);
-
-        throw new NotFoundException("User not found");
-    }
-
-    /**
      * Shows the auctions that are about to close (<5 minutes)
      * @return the auctions closing in 5 minutes
      */
@@ -226,6 +206,14 @@ public class AuctionResource {
     public List<Auction> showAuctionsAboutToClose()
     {
         return dataProxy.getAuctionsClosingInXMinutes(10);
+    }
+
+    @GET
+    @Path("/recentlyUpdated")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<Auction> showAuctionsRecentlyUpdated()
+    {
+        return dataProxy.getRecentlyUpdatedAuctions();
     }
 
     /**

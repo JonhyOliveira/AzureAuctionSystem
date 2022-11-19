@@ -1,5 +1,6 @@
 package scc.data;
 
+import redis.clients.jedis.Jedis;
 import scc.data.layers.BlobStorageLayer;
 import scc.data.layers.CognitiveSearchLayer;
 import scc.data.layers.CosmosDBLayer;
@@ -12,8 +13,7 @@ import scc.data.models.UserDAO;
 import jakarta.ws.rs.core.NewCookie;
 import scc.session.Session;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -42,6 +42,9 @@ public class DataProxy {
      */
     public Optional<User> createUser(User user)
     {
+        if (dbLayer.getUserByNick(user.getNickname()).isPresent())
+            return Optional.empty();
+
         UserDAO u = dbLayer.putUser(new UserDAO(user)).getItem();
 
         redisLayer.putOnCache("u:" + u.getNickname(), u);
@@ -75,7 +78,7 @@ public class DataProxy {
         UserDAO userObject = redisLayer.getFromCache("u:" + nickname, UserDAO.class);
 
         if (userObject != null)
-            return Optional.of(userObject.toUser());
+            return Optional.of(userObject).map(UserDAO::toUser);
 
         userObject = dbLayer.getUserByNick(nickname)
                 .filter(userDAO -> !userDAO.isToDelete()).orElse(null);
@@ -306,5 +309,21 @@ public class DataProxy {
 
     public List<Auction> searchAuctions(String queryString) {
         return searchLayer.findAuction(queryString).map(AuctionDAO::toAuction).collect(Collectors.toList());
+    }
+
+    public List<Auction> getRecentlyUpdatedAuctions() {
+        Set<String> recentlyUpdatedIDs = new HashSet<>();
+
+        try (Jedis jedis = RedisCacheLayer.getCachePool().getResource()) {
+            String id;
+            for (long i = 0; (id = jedis.lindex("recentlyUpdatedAuctions", i)) != null; i++)
+                recentlyUpdatedIDs.add(id);
+        }
+
+        return recentlyUpdatedIDs.stream()
+                .map(this::getAuction)
+                .map(auction -> auction.orElse(null))
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
     }
 }

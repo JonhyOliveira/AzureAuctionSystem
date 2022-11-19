@@ -7,12 +7,14 @@ import jakarta.ws.rs.core.NewCookie;
 import jakarta.ws.rs.core.Response;
 
 
+import scc.data.Auction;
 import scc.data.DataProxy;
 import scc.session.Login;
 import scc.session.Session;
 import scc.data.User;
 import scc.utils.Hash;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
@@ -43,10 +45,10 @@ public class UserResource {
         if (dataProxy.getUser(user.getNickname()).isPresent())
             throw new ForbiddenException("User already exists");
 
-        dataProxy.createUser(user.hashPwd());
-
-        return user;
-
+        if (dataProxy.createUser(user.hashPwd()).isPresent())
+            return user;
+        else
+            return null;
     }
 
     /**
@@ -106,6 +108,26 @@ public class UserResource {
             throw new NotFoundException();
 
         return userOptional.map(User::censored).orElse(null);
+    }
+
+    /**
+     * Shows the auctions of a user
+     * @param nickname the nickname of the user
+     * @return the user auctions
+     * @throws WebApplicationException if there was an error finding the user
+     */
+    @GET
+    @Path("/{nickname}/auctions")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<Auction> showUserAuctions(@PathParam("nickname") String nickname)
+    {
+        //Request to validate if user exists
+        Optional<User> u = dataProxy.getUser(nickname);
+
+        if(Objects.nonNull(u))
+            return dataProxy.getAuctionsByUser(nickname);
+
+        throw new NotFoundException("User not found");
     }
 
     /**

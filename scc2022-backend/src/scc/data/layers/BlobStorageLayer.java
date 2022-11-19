@@ -17,28 +17,18 @@ public class BlobStorageLayer {
 
     public final BlobContainerClient containerClient;
 
-    {
-        try {
-            InputStream fis = this.getClass().getClassLoader().getResourceAsStream("blobstore.properties");
-            Properties props = new Properties();
-
-            props.load(fis);
-
-            containerClient = new BlobContainerClientBuilder()
-                    .connectionString(props.getProperty("CONN_STRING"))
-                    .containerName("images")
-                    .buildClient();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-    }
-
     public static BlobStorageLayer getInstance() {
         if (instance == null)
-            instance = new BlobStorageLayer();
+            instance = new BlobStorageLayer(System.getenv("BLOBSTORE_CONNSTRING"));
 
         return instance;
+    }
+
+    public BlobStorageLayer(String connString) {
+        containerClient = new BlobContainerClientBuilder()
+                .connectionString(connString)
+                .containerName("images")
+                .buildClient();
     }
 
     public byte[] downloadBlob(String blobID)

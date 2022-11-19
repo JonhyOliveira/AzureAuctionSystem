@@ -82,25 +82,27 @@ public class GarbageCollectionFunctions {
             final ExecutionContext context) {
 
         CosmosDBLayer db = CosmosDBLayer.getInstance();
-        BlobStorageLayer bs = BlobStorageLayer.getInstance();
+        BlobStorageLayer bs1 = new BlobStorageLayer(System.getenv("BLOBSTORE_CONNSTRING"));
+        BlobStorageLayer bs2 = new BlobStorageLayer(System.getenv("BLOBSTORE_STRINGREP"));
 
         List<String> imagesFromUsers = db.getAllImagesFromTable("users").collect(Collectors.toList());
         List<String> imagesFromAuctions = db.getAllImagesFromTable("auctions").collect(Collectors.toList());
         Set<String> allImages = new HashSet<>(imagesFromUsers);
         allImages.addAll(imagesFromAuctions);
 
-        List<String> imagesFromBS = bs.listFiles().collect(Collectors.toList());
+        Set<String> imagesFromBS = bs1.listFiles().collect(Collectors.toSet());
+        imagesFromBS.addAll(bs2.listFiles().collect(Collectors.toSet()));
         long deleted = 0;
 
         for(String imgId : imagesFromBS){
             if(!allImages.contains(imgId)) {
-                bs.deleteBlob(imgId);
+                bs1.deleteBlob(imgId);
+                bs2.deleteBlob(imgId);
                 deleted++;
             }
         }
 
         context.getLogger().info(String.format("%d images that were not being used were removed from blob storage.", deleted));
-        //throw new NotImplementedException(":(");
     }
 
 }

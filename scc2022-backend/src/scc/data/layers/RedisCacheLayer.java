@@ -7,6 +7,7 @@ import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 import redis.clients.jedis.params.SetParams;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Optional;
@@ -14,34 +15,12 @@ import java.util.Properties;
 
 public class RedisCacheLayer {
 
-	private static final String REDIS_HOSTNAME; //é preciso dar nome a isto ------ Joao
-	private static final String REDIS_KEY; //é preciso dar nome a isto ------ Joao
-	private static final Integer REDIS_PORT;
+	private static final String REDIS_HOSTNAME = System.getenv("REDIS_HOSTNAME");
+	private static final String REDIS_KEY = System.getenv("REDIS_KEY");
+	private static final Integer REDIS_PORT = Integer.parseInt(System.getenv("REDIS_PORT"));
 	private static long DEFAULT_EXPIRATION = 3600;  //  TIME FOR AN OBJECT TO EXPIRE FROM CACHE
 
 	private static final ObjectMapper mapper = new ObjectMapper();
-
-	static // read from properties file
-	{
-
-		try {
-			InputStream fis = RedisCacheLayer.class.getClassLoader().getResourceAsStream("redis.properties");
-			Properties props = new Properties();
-
-			props.load(fis);
-
-			REDIS_HOSTNAME = props.getProperty("URI");
-			REDIS_KEY = props.getProperty("PKEY");
-			REDIS_PORT = Integer.parseInt(props.getProperty("PORT"));
-			if (props.containsKey("DEFAULT_EXPIRATION"))
-				DEFAULT_EXPIRATION = Integer.parseUnsignedInt(props.getProperty("DEFAULT_EXPIRATION"));
-
-			System.out.printf("Redis = %s:%s\n", REDIS_HOSTNAME, REDIS_PORT);
-
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-	}
 
 	private static JedisPool instance;
 	private static RedisCacheLayer myInstance;
@@ -68,6 +47,10 @@ public class RedisCacheLayer {
 		return myInstance;
 	}
 
+	public void putOnCacheNoExpire(String key, Object obj) {
+
+	}
+
 	public void putOnCache(String key, Object obj) {
 		putOnCache(key, obj, DEFAULT_EXPIRATION);
 	}
@@ -75,6 +58,7 @@ public class RedisCacheLayer {
 	public void putOnCache(String key, Object obj, long expirationSeconds){
 		try (Jedis jedis = getCachePool().getResource()) {
 			jedis.set(key, mapper.writeValueAsString(obj), SetParams.setParams().ex(expirationSeconds));
+
 		}catch (JsonProcessingException e) {
 			throw new RuntimeException(e);
 		}

@@ -9,20 +9,25 @@ import com.azure.storage.blob.models.BlobItem;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
+import java.util.logging.Logger;
 import java.util.stream.Stream;
 
 public class BlobStorageLayer {
 
     private static BlobStorageLayer instance;
 
-    public final BlobContainerClient containerClient = new BlobContainerClientBuilder()
-                    .connectionString(System.getenv("BLOBSTORE_CONNSTRING"))
-                    .containerName("images")
-                    .buildClient();
+    public final BlobContainerClient containerClient;
+
+    public BlobStorageLayer(String connString) {
+        containerClient = new BlobContainerClientBuilder()
+                .connectionString(connString)
+                .containerName("images")
+                .buildClient();
+    }
 
     public static BlobStorageLayer getInstance() {
         if (instance == null)
-            instance = new BlobStorageLayer();
+            instance = new BlobStorageLayer(System.getenv("BLOBSTORE_CONNSTRING"));
 
         return instance;
     }
@@ -50,5 +55,5 @@ public class BlobStorageLayer {
         return containerClient.listBlobs().stream().map(BlobItem::getName);
     }
 
-    public void deleteBlob(String blobID){ containerClient.getBlobClient(blobID).delete();}
+    public void deleteBlob(String blobID){ containerClient.getBlobClient(blobID).deleteIfExists();}
 }

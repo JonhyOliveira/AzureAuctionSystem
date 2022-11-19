@@ -14,27 +14,6 @@ import java.util.stream.Stream;
 
 public class CosmosDBLayer {
 
-	private static final String CONNECTION_URL, DB_KEY, DB_NAME;
-
-	static // read from properties file
-	{
-		try {
-			InputStream fis = CosmosDBLayer.class.getClassLoader().getResourceAsStream("database.properties");
-			Properties props = new Properties();
-
-			props.load(fis);
-
-			CONNECTION_URL = props.getProperty("URI");
-			DB_KEY = props.getProperty("DB_PKEY");
-			DB_NAME = props.getProperty("DB_NAME");
-
-			System.out.printf("CosmosDB = %s@%s\n", DB_NAME, CONNECTION_URL);
-
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-	}
-
 	private static CosmosDBLayer instance;
 
 	public static synchronized CosmosDBLayer getInstance() {
@@ -42,14 +21,14 @@ public class CosmosDBLayer {
 			return instance;
 
 		CosmosClient client = new CosmosClientBuilder()
-		         .endpoint(CONNECTION_URL)
-		         .key(DB_KEY)
-		         // .directMode() // connects directly to backend node
-		         .gatewayMode() // one more hop (needed to work within FCT)
-		         .consistencyLevel(ConsistencyLevel.SESSION)
-		         .connectionSharingAcrossClientsEnabled(true)
-		         .contentResponseOnWriteEnabled(true)
-		         .buildClient();
+				.endpoint(System.getenv("DB_URI"))
+				.key(System.getenv("DB_PKEY"))
+				// .directMode() // connects directly to backend node
+				.gatewayMode() // one more hop (needed to work within FCT)
+				.consistencyLevel(ConsistencyLevel.SESSION)
+				.connectionSharingAcrossClientsEnabled(true)
+				.contentResponseOnWriteEnabled(true)
+				.buildClient();
 			instance = new CosmosDBLayer( client);
 		return instance;
 		
@@ -71,7 +50,7 @@ public class CosmosDBLayer {
 		if( db != null)
 			return;
 
-		db = client.getDatabase(DB_NAME);
+		db = client.getDatabase(System.getenv("DB_NAME"));
 
 		// containers
 		users = db.getContainer("users");

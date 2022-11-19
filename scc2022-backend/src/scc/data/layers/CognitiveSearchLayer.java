@@ -14,26 +14,7 @@ import java.util.stream.Stream;
 
 public class CognitiveSearchLayer {
 
-    private static final String ADMIN_KEY;
-    private static final String ENDPOINT;
-    private static final String AUCTIONS_INDEX;
-
-    static {
-
-        Properties properties = new Properties();
-
-        InputStream pis = CognitiveSearchLayer.class.getClassLoader().getResourceAsStream("cognitive_search.properties");
-
-        try {
-            properties.load(pis);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-        ADMIN_KEY = properties.getProperty("ADMIN_KEY");
-        ENDPOINT = properties.getProperty("ENDPOINT");
-        AUCTIONS_INDEX = properties.getProperty("AUCTIONS_INDEX");
-    }
+    private static final String AUCTIONS_INDEX = "";
 
     private static CognitiveSearchLayer instance;
     private SearchClient client = null;
@@ -41,8 +22,8 @@ public class CognitiveSearchLayer {
     private SearchClient getClient() {
         if (Objects.isNull(client))
             client = new SearchClientBuilder()
-                    .endpoint(ENDPOINT)
-                    .credential(new AzureKeyCredential(ADMIN_KEY))
+                    .endpoint(System.getenv("SEARCH_ENDPOINT"))
+                    .credential(new AzureKeyCredential(System.getenv("SEARCH_ADMIN_KEY")))
                     .indexName(AUCTIONS_INDEX)
                     .buildClient();
         return client;
