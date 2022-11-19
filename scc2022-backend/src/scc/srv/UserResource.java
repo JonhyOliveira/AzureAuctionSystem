@@ -9,7 +9,7 @@ import jakarta.ws.rs.core.Response;
 
 import scc.data.DataProxy;
 import scc.session.Login;
-import scc.session.SessionTemp;
+import scc.session.Session;
 import scc.data.User;
 import scc.utils.Hash;
 
@@ -56,7 +56,7 @@ public class UserResource {
     @DELETE
     @Path("/{nickname}")
     @Consumes(MediaType.APPLICATION_JSON)
-    public void delete(@CookieParam(SessionTemp.COOKIE_NAME) Cookie cookie, @PathParam("nickname") String nickname) {
+    public void delete(@CookieParam(Session.COOKIE_NAME) Cookie cookie, @PathParam("nickname") String nickname) {
 
         validateUserSession(cookie, nickname);
 
@@ -73,7 +73,7 @@ public class UserResource {
     @Path("/{nickname}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public User update(@PathParam("nickname") String nickname, @CookieParam(SessionTemp.COOKIE_NAME) Cookie cookie, User newUser)
+    public User update(@PathParam("nickname") String nickname, @CookieParam(Session.COOKIE_NAME) Cookie cookie, User newUser)
     {
         validateUserFields(newUser, false);
 
@@ -126,11 +126,11 @@ public class UserResource {
 
         String uid = UUID.randomUUID().toString();
 
-        NewCookie cookie = new NewCookie.Builder(SessionTemp.COOKIE_NAME)
+        NewCookie cookie = new NewCookie.Builder(Session.COOKIE_NAME)
                 .value(uid)
                 .path("/rest/")
                 .comment("sessionid")
-                .maxAge(SessionTemp.VALIDITY_SECONDS)
+                .maxAge(Session.VALIDITY_SECONDS)
                 .secure(false)
                 .build();
 
@@ -180,7 +180,7 @@ public class UserResource {
         if (Objects.isNull(cookie.getValue()))
             throw new NotAuthorizedException("Session cookie is invalid");
 
-        SessionTemp s = dataProxy.getSession(nickname)
+        Session s = dataProxy.getSession(nickname)
                 .orElseThrow(() -> new NotAuthorizedException("Session not found. Have you tried getting a session cookie?"));
 
         if(!nickname.equals(s.getNickname()) || !cookie.getValue().equals(s.getCookieId()))

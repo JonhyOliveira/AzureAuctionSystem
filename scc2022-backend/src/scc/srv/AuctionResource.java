@@ -4,7 +4,7 @@ import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Cookie;
 import jakarta.ws.rs.core.MediaType;
 import scc.data.*;
-import scc.session.SessionTemp;
+import scc.session.Session;
 
 import java.util.*;
 
@@ -26,7 +26,7 @@ public class AuctionResource {
     @Path("/")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Auction create(Auction auction, @CookieParam(SessionTemp.COOKIE_NAME) Cookie auctionOwnerSessionCookie)
+    public Auction create(Auction auction, @CookieParam(Session.COOKIE_NAME) Cookie auctionOwnerSessionCookie)
             throws WebApplicationException
     {
         validateAuctionFields(auction, true);
@@ -67,7 +67,7 @@ public class AuctionResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Auction update(Auction auction, @PathParam("auction_id") String auctionId,
-                       @CookieParam(SessionTemp.COOKIE_NAME) Cookie auctionOwnerSessionCookie)
+                       @CookieParam(Session.COOKIE_NAME) Cookie auctionOwnerSessionCookie)
             throws WebApplicationException
     {
         validateAuctionFields(auction, false);
@@ -119,7 +119,7 @@ public class AuctionResource {
     @Path("/{auction_id}/bid")
     @Consumes(MediaType.APPLICATION_JSON)
     public void doBid(Bid bid, @PathParam("auction_id") String auctionId,
-                      @CookieParam(SessionTemp.COOKIE_NAME) Cookie bidderSessionCookie)
+                      @CookieParam(Session.COOKIE_NAME) Cookie bidderSessionCookie)
             throws WebApplicationException
     {
         validateAuction(auctionId, null);
@@ -156,7 +156,7 @@ public class AuctionResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Question submitQuestion(Question question, @PathParam("auction_id") String auctionId,
-                                   @CookieParam(SessionTemp.COOKIE_NAME) Cookie askerSessionCookie)
+                                   @CookieParam(Session.COOKIE_NAME) Cookie askerSessionCookie)
             throws NotFoundException, NotAuthorizedException
     {
         Auction a = validateAuction(auctionId, null);
@@ -183,7 +183,7 @@ public class AuctionResource {
     @Path("/{auction_id}/question")
     @Consumes(MediaType.APPLICATION_JSON)
     public Question submitReply(Question question, @PathParam("auction_id") String auctionId,
-                                @CookieParam(SessionTemp.COOKIE_NAME) Cookie ownerSessionCookie)
+                                @CookieParam(Session.COOKIE_NAME) Cookie ownerSessionCookie)
             throws NotAuthorizedException, NotFoundException
     {
         validateAuction(auctionId, ownerSessionCookie);

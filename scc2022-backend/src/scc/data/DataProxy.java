@@ -10,7 +10,7 @@ import scc.data.models.QuestionDAO;
 import scc.data.models.UserDAO;
 
 import jakarta.ws.rs.core.NewCookie;
-import scc.session.SessionTemp;
+import scc.session.Session;
 
 import java.util.List;
 import java.util.Optional;
@@ -273,18 +273,18 @@ public class DataProxy {
 
     public void storeCookie(NewCookie cookie, String nickname) {
         if (USE_CACHE)
-            redisLayer.putOnCache("session:" + nickname, cookie.getValue(), SessionTemp.VALIDITY_SECONDS);
+            redisLayer.putOnCache("session:" + nickname, cookie.getValue(), Session.VALIDITY_SECONDS);
 
-        dbLayer.storeCookie(SessionTemp.COOKIE_NAME + ":" + nickname , cookie.getValue());
+        dbLayer.storeCookie(Session.COOKIE_NAME + ":" + nickname , cookie.getValue());
     }
 
-    public Optional<SessionTemp> getSession(String nickname) {
+    public Optional<Session> getSession(String nickname) {
         Optional<String> cookieID = Optional.ofNullable(redisLayer.getFromCache("session:" + nickname, String.class));
 
         if (cookieID.isEmpty())
-            cookieID = dbLayer.getCookie(SessionTemp.COOKIE_NAME + ":" + nickname);
+            cookieID = dbLayer.getCookie(Session.COOKIE_NAME + ":" + nickname);
 
-        return cookieID.map(s -> new SessionTemp(s, nickname));
+        return cookieID.map(s -> new Session(s, nickname));
     }
 
     public List<Auction> searchAuctions(String queryString) {
