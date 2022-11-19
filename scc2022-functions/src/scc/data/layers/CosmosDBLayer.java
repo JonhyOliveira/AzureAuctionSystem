@@ -87,4 +87,12 @@ public class CosmosDBLayer {
         return result >= 200 && result < 300;
     }
 
+    public Stream<String>  getAllImagesFromTable(String table){
+        init();
+        if(table.equals("users"))
+            return users.queryItems("SELECT photo_id FROM users", new CosmosQueryRequestOptions(), String.class).stream();
+
+        return auctions.queryItems("SELECT thumbnail_id FROM auctions", new CosmosQueryRequestOptions(), String.class).stream();
+    }
+
 }
