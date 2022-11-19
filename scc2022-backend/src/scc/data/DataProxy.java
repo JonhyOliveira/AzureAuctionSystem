@@ -78,7 +78,7 @@ public class DataProxy {
         Integer photoAmount = dbLayer.getPhotoRepeated(photoId).stream().toList().get(0);
 
         if(photoAmount == 1){
-             redisLayer.putElemOnList("gc", photoId);
+            deleteFile(photoId);
         }
     }
 
@@ -276,6 +276,10 @@ public class DataProxy {
      */
     public void uploadFile(String fileID, byte[] contents) {
         blobStorage.createBlob(fileID, contents);
+    }
+
+    public void deleteFile(String fileID) {
+        blobStorage.deleteBlob(fileID);
     }
 
     public List<String> listFiles() {
