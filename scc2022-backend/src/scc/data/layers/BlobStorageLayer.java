@@ -65,4 +65,6 @@ public class BlobStorageLayer {
     public Stream<String> listFiles() {
         return containerClient.listBlobs().stream().map(BlobItem::getName);
     }
+
+    public void deleteBlob(String blobID){ containerClient.getBlobClient(blobID).delete();}
 }
