@@ -131,7 +131,7 @@ public class CosmosDBLayer {
 
 	public CosmosPagedIterable<Integer> getPhotoRepeated(String photoId){
 		init();
-		return users.queryItems("SELECT SUM(c) FROM (SELECT COUNT(*) AS c FROM users WHERE users.photoId=\"" + photoId + "\" UNION ALL SELECT COUNT(*) FROM auctions WHERE auctions.imageId=\"" + photoId + "\")",
+		return users.queryItems("SELECT SUM(c) FROM (SELECT COUNT(*) AS c FROM users WHERE users.photo_id=\"" + photoId + "\" UNION ALL SELECT COUNT(*) FROM auctions WHERE auctions.thumbnail_id=\"" + photoId + "\")",
 				new CosmosQueryRequestOptions(), Integer.class);
 	}
 
