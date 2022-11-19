@@ -66,8 +66,8 @@ public class GarbageCollectionFunctions {
             op = cacheLayer.popFromSet("gc:users");
         }
 
-        context.getLogger().info(String.format("Execution breakdown:\n\t%d users deleted." +
-                "\n\t%d auctions updated.\n\t%d bids updated.\n\t%dquestions updated.", usersDeleted.get(),
+        context.getLogger().info(String.format("Breakdown:\n\t%d users deleted." +
+                "\n\t%d auctions updated.\n\t%d bids updated.\n\t%d zquestions updated.", usersDeleted.get(),
                 auctionsUpdated.get(), bidsUpdated.get(), questionsUpdated.get()));
 
     }
@@ -76,9 +76,9 @@ public class GarbageCollectionFunctions {
      * This function will be invoked every 3 days to ensure that images that have no entity associated with them are
      * removed from the blob storage
      */
-    @FunctionName("GC-DanglingImages")
+    @FunctionName("GCDanglingImages")
     public void deleteDanglingImages( // TODO change schedule to "0 0 0 */3 * *" when this is working
-            @TimerTrigger(name = "GC-DanglingImagesTrigger", schedule = "0 */1 * * * *") String timerInfo,
+            @TimerTrigger(name = "GCDanglingImagesTrigger", schedule = "0 */1 * * * *") String timerInfo,
             final ExecutionContext context) {
 
         CosmosDBLayer db = CosmosDBLayer.getInstance();
@@ -90,13 +90,16 @@ public class GarbageCollectionFunctions {
         allImages.addAll(imagesFromAuctions);
 
         List<String> imagesFromBS = bs.listFiles().collect(Collectors.toList());
+        long deleted = 0;
 
         for(String imgId : imagesFromBS){
-            if(!allImages.contains(imgId))
+            if(!allImages.contains(imgId)) {
                 bs.deleteBlob(imgId);
+                deleted++;
+            }
         }
 
-        context.getLogger().info("All images that were not being used were removed from blob storage.");
+        context.getLogger().info(String.format("%d images that were not being used were removed from blob storage.", deleted));
         //throw new NotImplementedException(":(");
     }
 

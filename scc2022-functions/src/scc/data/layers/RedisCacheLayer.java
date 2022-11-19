@@ -14,9 +14,9 @@ import java.util.Properties;
 
 public class RedisCacheLayer {
 
-	private static final String REDIS_HOSTNAME = "scc2223.redis.cache.windows.net";
-	private static final String REDIS_KEY = "MfKj6SF3U6aIPfNgjKJYwT3Arw3QTRTkFAzCaIuXwuM=";
-	private static final Integer REDIS_PORT = 6380;
+	private static final String REDIS_HOSTNAME = System.getenv("REDIS_HOSTNAME");
+	private static final String REDIS_KEY = System.getenv("REDIS_KEY");
+	private static final Integer REDIS_PORT = Integer.parseInt(System.getenv("REDIS_PORT"));
 	private static long DEFAULT_EXPIRATION = 3600;  //  TIME FOR AN OBJECT TO EXPIRE FROM CACHE
 
 	private static final ObjectMapper mapper = new ObjectMapper();

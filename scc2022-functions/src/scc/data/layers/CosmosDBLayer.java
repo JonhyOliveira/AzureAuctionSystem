@@ -20,8 +20,8 @@ public class CosmosDBLayer {
             return instance;
 
         CosmosClient client = new CosmosClientBuilder()
-                .endpoint("https://scc-backend-db.documents.azure.com:443/")
-                .key("NoxlgMjT9lxW2Bq6355IlKbQ1WJybDuLiz7sw22L9GLatWMIUxYQnFsU49vkCH5n58ewhDihNgcdrwdaUE4QQw==")
+                .endpoint(System.getenv("DB_URI"))
+                .key(System.getenv("DB_PKEY"))
                 // .directMode() // connects directly to backend node
                 .gatewayMode() // one more hop (needed to work within FCT)
                 .consistencyLevel(ConsistencyLevel.SESSION)
@@ -49,7 +49,7 @@ public class CosmosDBLayer {
         if( db != null)
             return;
 
-        db = client.getDatabase("scc-backend-database");
+        db = client.getDatabase(System.getenv("DB_NAME"));
 
         // containers
         users = db.getContainer("users");

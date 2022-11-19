@@ -16,7 +16,7 @@ public class BlobStorageLayer {
     private static BlobStorageLayer instance;
 
     public final BlobContainerClient containerClient = new BlobContainerClientBuilder()
-                    .connectionString("DefaultEndpointsProtocol=https;AccountName=backendstore;AccountKey=TRlEWKv54b/IyQLuOmyd/bzt+r1V9dU3hl7x/PlkUcWGRzce+Y6RKtATWbsmshrncq+5pFFHl6Jn+AStCvcnNQ==;EndpointSuffix=core.windows.net")
+                    .connectionString(System.getenv("BLOBSTORE_CONNSTRING"))
                     .containerName("images")
                     .buildClient();
 
