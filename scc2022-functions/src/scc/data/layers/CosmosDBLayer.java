@@ -7,6 +7,7 @@ import com.azure.cosmos.models.PartitionKey;
 import scc.data.AuctionDAO;
 import scc.data.BidDAO;
 import scc.data.QuestionDAO;
+import scc.data.UserDAO;
 
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -87,12 +88,12 @@ public class CosmosDBLayer {
         return result >= 200 && result < 300;
     }
 
-    public Stream<String>  getAllImagesFromTable(String table){
+    public Stream<String> getAllImagesFromTable(String table){
         init();
         if(table.equals("users"))
-            return users.queryItems("SELECT * FROM users", new CosmosQueryRequestOptions(), String.class).stream();
+            return users.queryItems("SELECT * FROM users", new CosmosQueryRequestOptions(), UserDAO.class).stream().map(UserDAO::getPhotoId);
 
-        return auctions.queryItems("SELECT * FROM auctions", new CosmosQueryRequestOptions(), String.class).stream();
+        return auctions.queryItems("SELECT * FROM auctions", new CosmosQueryRequestOptions(), AuctionDAO.class).stream().map(AuctionDAO::getThumbnailID);
     }
 
     public Stream<BidDAO> getBidsByUser(String nickname) {
