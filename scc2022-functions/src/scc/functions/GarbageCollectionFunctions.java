@@ -44,7 +44,7 @@ public class GarbageCollectionFunctions {
      */
     @FunctionName("GC-DanglingImages")
     public void deleteDanglingImages( // TODO change schedule to "0 0 0 */3 * *" when this is working
-            @TimerTrigger(name = "GC-DanglingImagesTrigger", schedule = "0 0 0 * * *") String timerInfo,
+            @TimerTrigger(name = "GC-DanglingImagesTrigger", schedule = "0 */1 * * * *") String timerInfo,
             final ExecutionContext context) {
 
         CosmosDBLayer db = CosmosDBLayer.getInstance();
