@@ -9,6 +9,7 @@ import redis.clients.jedis.params.SetParams;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Optional;
 import java.util.Properties;
 
 public class RedisCacheLayer {
@@ -111,9 +112,9 @@ public class RedisCacheLayer {
 		}
 	}
 
-	public String popFromSet(String key) {
+	public Optional<String> popFromSet(String key) {
 		try (Jedis jedis = getCachePool().getResource()) {
-			return jedis.spop(key);
+			return Optional.ofNullable(jedis.spop(key));
 		}
 	}
 
