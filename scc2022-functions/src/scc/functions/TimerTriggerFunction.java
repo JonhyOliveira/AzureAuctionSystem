@@ -1,8 +1,18 @@
 package scc.functions;
 
-import java.time.*;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import com.microsoft.azure.functions.annotation.*;
 import com.microsoft.azure.functions.*;
+import scc.data.AuctionDAO;
+import scc.data.UserDAO;
+import scc.data.layers.RedisCacheLayer;
+import scc.data.layers.CosmosDBLayer;
 
 /**
  * Azure Functions with Timer trigger.
@@ -13,50 +23,54 @@ import com.microsoft.azure.functions.*;
 public class TimerTriggerFunction {
 
     /**
-     * This function will be invoked every 5min to ensure that the auction is deleted
+     * This function will be invoked every 2 minutes to ensure that the auctions are closed
      */
-    @FunctionName("DeleteAuctionPeriodicFunction")
-    public void deleteAuctionCleanup(
+    @FunctionName("CloseAuctions")
+    public void closeAuctions(
         @TimerTrigger(
-                    name = "deleleAuctionPeriodicTrigger", 
-                    schedule = "*/5 * * * *") 
+                    name = "closeAuctionTrigger",
+                    schedule = "0 */2 * * * *")
                     String timerInfo,
         final ExecutionContext context) {
-        
-        CosmosDBLayer db = new CosmosDBLayer();
-        RedisCacheLayer cache = new RedisCacheLayer();
+
+        CosmosDBLayer db = CosmosDBLayer.getInstance();
+        context.getLogger().info("Auction closure executed @ " + LocalTime.now());
         
         /*
          * Get all auctions that are expired and delete them
          */
-        List<AuctionDAO> auctions = db.getClosedAuctions();
-        for (AuctionDAO auction : auctions) {
-            //db.deleteAuction(auction.getId()); ------------------------------ provavelmente não é para apagar da base de dados
-            cache.deleteFromCache("auction:"+ auction.getId());
-        }
+        List<String> closedAuctionsIDs = db.getClosingAuctions().map(auctionDAO -> {
+            auctionDAO.setClosed(true);
+            db.updateAuction(auctionDAO);
+            return auctionDAO.getAuctionID();
+        }).collect(Collectors.toList());
+
+
+        context.getLogger().info(String.format("Closed %d auctions: [ %s ]", closedAuctionsIDs.size(),
+                String.join(", ", closedAuctionsIDs)));
+
     }
 
     /**
-     * This function will be invoked every 5min to ensure that the user is deleted from cache
+     * This funtion will be invoked every 10 minutes to ensure that auctions from deleted users are deleted
      */
-    @FunctionName("DeleteUserPeriodicFunction")
-    public void deleteUserCleanup(
-        @TimerTrigger(
-                    name = "deleleUserPeriodicTrigger", 
-                    schedule = "*/5 * * * *") 
-                    String timerInfo,
-        final ExecutionContext context) {
-        
-        CosmosDBLayer db = new CosmosDBLayer();
-        RedisCacheLayer cache = new RedisCacheLayer();
-        
-        /*
-         * Get all users that are expired and delete them
-         */
-        List<UserDAO> users = cache.getExpiredUsers();
-        for (UserDAO user : users) {
-            cache.deleteFromCache("user:"+ user.getNickname());
-        }
+    @FunctionName("GC-AuctionsNullOwner")
+    public void deleteAuctionNullUser(
+            @TimerTrigger(
+                    name = "GC-NullAuctionOwnerTrigger",
+                    schedule = "* */10 * * * *")
+            String timerInfo,
+            final ExecutionContext context) {
+        context.getLogger().info("GC function executed @ " + LocalDateTime.now());
+        CosmosDBLayer db = CosmosDBLayer.getInstance();
+
+        List<String> deletedAuctions = db.getAuctionsByUser(null)
+                .map(auctionDAO -> db.delAuctionByID(auctionDAO.getAuctionID(), auctionDAO.getOwnerNickname()) ? auctionDAO.getAuctionID() : null)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+
+        context.getLogger().info(String.format("Deleted %d auctions: [ %s ]", deletedAuctions.size(),
+                String.join(", ", deletedAuctions)));
     }
 
 }
