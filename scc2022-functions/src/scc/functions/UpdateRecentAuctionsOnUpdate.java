@@ -51,8 +51,8 @@ public class UpdateRecentAuctionsOnUpdate {
                     .map(AuctionDAO::getAuctionID)
                     .forEach(s -> {
                         jedis.lpush("recentlyUpdatedAuctions", s);
-                        context.getLogger().info("jedis");
                     });
+            jedis.ltrim("recentlyUpdatedAuctions", 0, 20);
         }
 
     }
