@@ -8,8 +8,8 @@ config:
   processor: "./test-utils.js"
   variables:
     numAuctions : 300
-    maxBids : 10  # maximum number of bids to generate for each new auction
-    maxQuestions : 2 # maximum number of questions to generate for each new auction
+    maxBids : 3  # maximum number of bids to generate for each new auction
+    maxQuestions : 10 # maximum number of questions to generate for each new auction
   phases:
   - name: "Create auctions"    # Create channels
     duration: 1
@@ -54,11 +54,7 @@ scenarios:
               end_time: "{{ endTime }}"
               min_price: "{{ minimumPrice }}"
               closed: "{{ status }}"
-            capture:                     # Capturing auction id and store it in variable auctionId
-              - json: $.id
-                as: "auctionId"
-              - json: $.owner_nickname
-                as: "auctionUser"
+            afterResponse: "captureAuction"
         - loop:                          # Let's add numBids bids to the auction
           - function: "selectUserSkewed"
           - function: "genNewBid"
@@ -100,29 +96,6 @@ scenarios:
               json:
                 questioner: "{{ user }}"
                 text: "{{ text }}"
-              capture:                     # Capturing question id and store it in variable questionId
-                - json: $.question_id
-                  as: "questionId"
-          - function: "genNewQuestionReply"
-          - post:                         
-              url: "/user/auth"
-              name: "POST:/user/auth"
-              headers:
-                Content-Type: application/json
-              json:
-                nickname: "{{ auctionUser }}"
-                pwd: "{{ auctionUserPwd }}"
-              ifTrue: "reply"
-          - put:                          # New reply
-              url: "/auction/{{ auctionId }}/question"
-              name: "POST:/auction/*/question-reply"
-              headers:
-                Content-Type: application/json
-                Accept: application/json
-              json:
-                question_id: "{{ questionId }}"
-                answer: "{{ reply }}"
-              ifTrue: "reply"
           count: "{{ numQuestions }}"   
         count: "{{ numAuctions }}"
 

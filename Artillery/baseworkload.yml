@@ -15,8 +15,8 @@ config:
       duration: 60
 
 scenarios:
-  - name: "Bidder logs in, searches for auctions to bid on"
-    weight: 5
+  - name: "Bidder searches for auctions to bid on"
+    weight: 0
     flow:
       - function: "selectUserSkewed"    # Select a random user
       - post:                           # First: login as a user
@@ -61,3 +61,47 @@ scenarios:
           over: "auctionsLst"         # go back to 3.
         whileTrue: "random50"         # go back to 1.
 
+  - name: "Users responds to questions"
+    weight: 5
+    flow:
+      - function: "selectUserSkewed"    # Select a random user
+      - post: # First: login as a user
+          url: "/user/auth"
+          name: "POST:/user/auth"
+          headers:
+            Content-Type: application/json
+          json:
+            nickname: "{{ user }}"
+            pwd: "{{ pwd }}"
+      - get: # 2. get user auctions
+          name: "GET:/user/*/auctions"
+          url: "/user/{{ user }}/auctions"
+          capture:
+            - json: $
+              as: "auctionsLst"
+      - function: "chooseAuctions"
+      - loop:
+        - function: "saveLoopElementAsAuction"
+        - get:
+            url: "/media/{{ auction.image_id }}"
+            name: "GET:/media/*"
+            headers:
+              Accept: application/octet-stream
+        - get:
+            url: "/auction/{{ auction.id }}/question"
+            name: "GET:/auctions/*/question"
+            headers:
+              Accept: application/json
+            afterResponse: "decideOnQuestions"
+        - loop:
+            - function: "genNewQuestion"
+            - put:
+                url: "/auction/{{ auction.id }}/question"
+                name: "PUT:/auctions/*/question"
+                headers:
+                  Accept: application/json
+                json:
+                  question_id: "{{ $loopElement }}"
+                  answer: "{{ text }}"
+          over: "responses"
+        over: "auctionsLst"

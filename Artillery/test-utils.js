@@ -4,6 +4,10 @@
  * Exported functions to be used in the testing scripts.
  */
 module.exports = {
+	captureAuction,
+	chooseAuctions,
+	saveLoopElementAsAuction,
+	decideOnQuestions,
 	decideOnBid,
 	saveUserReply,
 	genQueryTerm,
@@ -159,6 +163,48 @@ function decideOnBid(requestsParams, response, context, ee, next) {
 	return next()
 }
 
+function decideOnQuestions(requestsParams, response, context, ee, next) {
+	context.vars.responses = []
+	if (response.statusCode >= 200 && response.statusCode < 300 && response.body.length > 0) {
+		let questions = JSON.parse(response.body)
+		if (questions.length > 0)
+			// console.log(questions, context.vars.auction)
+		for (let i = 0; i < questions.length; i++) {
+			if (!questions[i].answer && Math.random() < 0.5)
+				context.vars.responses.push(questions[i].question_id)
+		}
+	}
+	/*if (context.vars.responses.length > 0)
+		console.log(context.vars.auction, context.vars.responses)*/
+	return next()
+}
+
+function captureAuction(requestsParams, response, context, ee, next) {
+	if (response.statusCode >= 200 && response.statusCode < 300 && response.body.length > 0) {
+		let auction = JSON.parse(response.body)
+		context.vars.auctionId = auction.id
+		context.vars.auctionUser = auction.owner_nickname
+		// console.log(context.vars.auctionId, context.vars.auctionUser, context.vars.numBids, context.vars.numQuestions)
+	}
+	else
+	{
+		delete context.vars.numBids
+		delete context.vars.numQuestions
+	}
+	return next()
+}
+
+function saveLoopElementAsAuction(context, event, done) {
+	context.vars.auction = context.vars.$loopElement
+	return done()
+}
+
+function chooseAuctions(context, events, done) {
+	context.vars.auctionsLst = context.vars.auctionsLst.filter(value => !value.closed)
+	// console.log(context.vars.auctionsLst)
+	return done()
+}
+
 
 /**
  * Select user
@@ -212,13 +258,13 @@ function genNewAuction(context, events, done) {
 	var maxQuestions = 2
 	if( typeof context.vars.maxQuestions !== 'undefined')
 		maxQuestions = context.vars.maxQuestions;
-	context.vars.endTime = Date.now() + random( 300000);
+	context.vars.endTime = Date.now() + 172800000 + random( 300000);
 	if( Math.random() > 0.2) {
-		context.vars.status = true;
+		context.vars.status = false;
 		context.vars.numBids = random( maxBids);
 		context.vars.numQuestions = random( maxQuestions);
 	} else {
-		context.vars.status = false;
+		context.vars.status = true;
 		delete context.vars.numBids;
 		delete context.vars.numQuestions;
 	}
@@ -253,6 +299,7 @@ function genNewBid(context, events, done) {
  */
 function genNewQuestion(context, events, done) {
 	context.vars.text = `${Faker.lorem.paragraph()}`;
+	// console.log(context.vars.$loopElement, context.vars.auction)
 	// console.log("checkpoint - genQuest! - aucID:" + context.vars.auctionId)
 	return done()
 }

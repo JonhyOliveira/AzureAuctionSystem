@@ -39,6 +39,6 @@ scenarios:
               nickname: "{{ id }}"
               name: "{{ name }}"
               pwd: "{{ pwd }}"
-              photoId: "{{ imageId }}"
+              image_id: "{{ imageId }}"
             afterResponse: "saveUserReply"
         count: "{{ numUsers }}"

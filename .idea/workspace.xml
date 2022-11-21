@@ -4,18 +4,21 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7991c95c-82c2-46fc-9c8e-7c42557a1805" name="Changes" comment="">
+    <list default="true" id="7991c95c-82c2-46fc-9c8e-7c42557a1805" name="Changes" comment="Final version">
+      <change afterPath="$PROJECT_DIR$/scc2022-backend/pom-northeu.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Artillery/baseworkload.yml" beforeDir="false" afterPath="$PROJECT_DIR$/Artillery/baseworkload.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Artillery/create-auctions.yml" beforeDir="false" afterPath="$PROJECT_DIR$/Artillery/create-auctions.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Artillery/create-users.yml" beforeDir="false" afterPath="$PROJECT_DIR$/Artillery/create-users.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Artillery/package-lock.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Artillery/package.json" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/Artillery/test-utils.js" beforeDir="false" afterPath="$PROJECT_DIR$/Artillery/test-utils.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scc2022-backend/src/resources/cognitive_search.properties" beforeDir="false" afterPath="$PROJECT_DIR$/scc2022-backend/src/resources/cognitive_search.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scc2022-backend/src/scc/data/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/scc2022-backend/src/scc/data/User.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scc2022-backend/src/scc/data/layers/CosmosDBLayer.java" beforeDir="false" afterPath="$PROJECT_DIR$/scc2022-backend/src/scc/data/layers/CosmosDBLayer.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scc2022-backend/src/scc/data/layers/RedisCacheLayer.java" beforeDir="false" afterPath="$PROJECT_DIR$/scc2022-backend/src/scc/data/layers/RedisCacheLayer.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scc2022-backend/src/scc/data/models/UserDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/scc2022-backend/src/scc/data/models/UserDAO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scc2022-backend/src/scc/srv/MainApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/scc2022-backend/src/scc/srv/MainApplication.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scc2022-backend/src/scc/srv/UserResource.java" beforeDir="false" afterPath="$PROJECT_DIR$/scc2022-backend/src/scc/srv/UserResource.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scc2022-backend/src/scc/data/DataProxy.java" beforeDir="false" afterPath="$PROJECT_DIR$/scc2022-backend/src/scc/data/DataProxy.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scc2022-backend/src/scc/data/layers/CognitiveSearchLayer.java" beforeDir="false" afterPath="$PROJECT_DIR$/scc2022-backend/src/scc/data/layers/CognitiveSearchLayer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scc2022-backend/src/scc/srv/AuctionResource.java" beforeDir="false" afterPath="$PROJECT_DIR$/scc2022-backend/src/scc/srv/AuctionResource.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scc2022-backend/test/scc/data/layers/CosmosDBLayerTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/scc2022-backend/test/scc/data/layers/CosmosDBLayerTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scc2022-functions/src/scc/data/AuctionDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/scc2022-functions/src/scc/data/AuctionDAO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scc2022-functions/src/scc/functions/UpdateRecentAuctionsOnUpdate.java" beforeDir="false" afterPath="$PROJECT_DIR$/scc2022-functions/src/scc/functions/UpdateRecentAuctionsOnUpdate.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -58,30 +61,48 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;javascript.nodejs.core.library.configured.version&quot;: &quot;14.20.1&quot;,
-    &quot;javascript.nodejs.core.library.typings.version&quot;: &quot;14.18.33&quot;,
-    &quot;jdk.selected.JAVA_MODULE&quot;: &quot;11&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/home/joaooliv/Documents/UNI/2022_23/SCC/scc-project/azure-function-examples&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;com.microsoft.intellij.AzureConfigurable&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary": "JUnit5",
+    "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit5": "",
+    "javascript.nodejs.core.library.configured.version": "14.20.1",
+    "javascript.nodejs.core.library.typings.version": "14.18.33",
+    "jdk.selected.JAVA_MODULE": "11",
+    "last_opened_file_path": "/home/joaooliv/Documents/UNI/2022_23/SCC/scc-project/scc2022-backend",
+    "nodejs_package_manager_path": "npm",
+    "project.structure.last.edited": "Modules",
+    "project.structure.proportion": "0.15",
+    "project.structure.side.proportion": "0.2",
+    "settings.editor.selected.configurable": "preferences.pluginManager"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/scc2022-backend" />
+      <recent name="$PROJECT_DIR$/scc2022-functions/src/scc/data" />
+      <recent name="$PROJECT_DIR$/scc2022-functions/src/data" />
+    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/Artillery" />
       <recent name="$PROJECT_DIR$" />
     </key>
+    <key name="CreateTestDialog.Recents.Supers">
+      <recent name="" />
+    </key>
+    <key name="CreateTestDialog.RecentsKey">
+      <recent name="scc.data.layers" />
+    </key>
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="scc.data.layers" />
+      <recent name="data.layers" />
+      <recent name="data" />
+    </key>
   </component>
-  <component name="RunManager" selected="Maven.Deploy App">
+  <component name="RunManager" selected="JUnit.CosmosDBLayerTest.resetContainers">
     <configuration default="true" type="AZURE_FUNCTION_SUPPORT" factoryName="Run Functions">
       <option name="appName" />
       <option name="appServicePlanName" />
@@ -113,39 +134,59 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="scc2022_backend-endpoints | #1" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" nameIsGenerated="true" path="$APPLICATION_CONFIG_DIR$/scratches/scc2022_backend-endpoints.http" requestIdentifier="#1" runType="Run single request">
+    <configuration name="scc2022_backend-endpoints | #18" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" nameIsGenerated="true" path="$APPLICATION_CONFIG_DIR$/scratches/scc2022_backend-endpoints.http" index="18" requestIdentifier="#18" runType="Run single request">
       <method v="2" />
     </configuration>
-    <configuration name="scc2022_backend-endpoints | #10" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" nameIsGenerated="true" path="$APPLICATION_CONFIG_DIR$/scratches/scc2022_backend-endpoints.http" index="10" requestIdentifier="#10" runType="Run single request">
+    <configuration name="scc2022_backend-endpoints | #19" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" nameIsGenerated="true" path="$APPLICATION_CONFIG_DIR$/scratches/scc2022_backend-endpoints.http" index="19" requestIdentifier="#19" runType="Run single request">
       <method v="2" />
     </configuration>
-    <configuration name="AuctionResourceTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+    <configuration name="scc2022_backend-endpoints | #5" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" nameIsGenerated="true" path="$APPLICATION_CONFIG_DIR$/scratches/scc2022_backend-endpoints.http" index="5" requestIdentifier="#5" runType="Run single request">
+      <method v="2" />
+    </configuration>
+    <configuration name="CosmosDBLayerTest.deleteContainers" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="scc2022-backend" />
       <extension name="coverage">
         <pattern>
-          <option name="PATTERN" value="scc.srv.*" />
+          <option name="PATTERN" value="scc.data.layers.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
-      <option name="PACKAGE_NAME" value="scc.srv" />
-      <option name="MAIN_CLASS_NAME" value="scc.srv.AuctionResourceTest" />
-      <option name="TEST_OBJECT" value="class" />
+      <option name="PACKAGE_NAME" value="scc.data.layers" />
+      <option name="MAIN_CLASS_NAME" value="scc.data.layers.CosmosDBLayerTest" />
+      <option name="METHOD_NAME" value="deleteContainers" />
+      <option name="TEST_OBJECT" value="method" />
+      <envs>
+        <env name="DB_NAME" value="scc-backend-database" />
+        <env name="DB_PKEY" value="NoxlgMjT9lxW2Bq6355IlKbQ1WJybDuLiz7sw22L9GLatWMIUxYQnFsU49vkCH5n58ewhDihNgcdrwdaUE4QQw==" />
+        <env name="DB_URI" value="https://scc-backend-db.documents.azure.com:443/" />
+        <env name="REDIS_HOSTNAME" value="scc2223.redis.cache.windows.net" />
+        <env name="REDIS_KEY" value="MfKj6SF3U6aIPfNgjKJYwT3Arw3QTRTkFAzCaIuXwuM=" />
+        <env name="REDIS_PORT" value="6380" />
+      </envs>
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="AuctionResourceTest.find" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+    <configuration name="CosmosDBLayerTest.resetContainers" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="scc2022-backend" />
       <extension name="coverage">
         <pattern>
-          <option name="PATTERN" value="scc.srv.*" />
+          <option name="PATTERN" value="scc.data.layers.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
-      <option name="PACKAGE_NAME" value="scc.srv" />
-      <option name="MAIN_CLASS_NAME" value="scc.srv.AuctionResourceTest" />
-      <option name="METHOD_NAME" value="find" />
+      <option name="PACKAGE_NAME" value="scc.data.layers" />
+      <option name="MAIN_CLASS_NAME" value="scc.data.layers.CosmosDBLayerTest" />
+      <option name="METHOD_NAME" value="resetContainers" />
       <option name="TEST_OBJECT" value="method" />
+      <envs>
+        <env name="DB_NAME" value="scc-backend-database" />
+        <env name="DB_PKEY" value="NoxlgMjT9lxW2Bq6355IlKbQ1WJybDuLiz7sw22L9GLatWMIUxYQnFsU49vkCH5n58ewhDihNgcdrwdaUE4QQw==" />
+        <env name="DB_URI" value="https://scc-backend-db.documents.azure.com:443/" />
+        <env name="REDIS_HOSTNAME" value="scc2223.redis.cache.windows.net" />
+        <env name="REDIS_KEY" value="MfKj6SF3U6aIPfNgjKJYwT3Arw3QTRTkFAzCaIuXwuM=" />
+        <env name="REDIS_PORT" value="6380" />
+      </envs>
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -167,7 +208,7 @@
                 <option value="azure-webapp:deploy" />
               </list>
             </option>
-            <option name="pomFileName" />
+            <option name="pomFileName" value="pom-northeu.xml" />
             <option name="profilesMap">
               <map />
             </option>
@@ -200,31 +241,28 @@
               <map />
             </option>
             <option name="resolveToWorkspace" value="false" />
-            <option name="workingDirPath" value="$PROJECT_DIR$/azure-function-examples" />
+            <option name="workingDirPath" value="$PROJECT_DIR$/scc2022-functions" />
           </MavenRunnerParameters>
         </option>
       </MavenSettings>
       <method v="2" />
     </configuration>
-    <configuration name="test-utils.js" type="NodeJSConfigurationType" temporary="true" nameIsGenerated="true" path-to-js-file="$PROJECT_DIR$/Artillery/test-utils.js" working-dir="$PROJECT_DIR$/Artillery">
-      <method v="2" />
-    </configuration>
     <list>
-      <item itemvalue="HTTP Request.scc2022_backend-endpoints | #10" />
-      <item itemvalue="HTTP Request.scc2022_backend-endpoints | #1" />
-      <item itemvalue="JUnit.AuctionResourceTest.find" />
-      <item itemvalue="JUnit.AuctionResourceTest" />
+      <item itemvalue="HTTP Request.scc2022_backend-endpoints | #18" />
+      <item itemvalue="HTTP Request.scc2022_backend-endpoints | #19" />
+      <item itemvalue="HTTP Request.scc2022_backend-endpoints | #5" />
+      <item itemvalue="JUnit.CosmosDBLayerTest.resetContainers" />
+      <item itemvalue="JUnit.CosmosDBLayerTest.deleteContainers" />
       <item itemvalue="Maven.Deploy App" />
       <item itemvalue="Maven.Deploy Functions" />
-      <item itemvalue="Node.js.test-utils.js" />
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="HTTP Request.scc2022_backend-endpoints | #10" />
-        <item itemvalue="JUnit.AuctionResourceTest.find" />
-        <item itemvalue="Node.js.test-utils.js" />
-        <item itemvalue="JUnit.AuctionResourceTest" />
-        <item itemvalue="HTTP Request.scc2022_backend-endpoints | #1" />
+        <item itemvalue="JUnit.CosmosDBLayerTest.resetContainers" />
+        <item itemvalue="JUnit.CosmosDBLayerTest.deleteContainers" />
+        <item itemvalue="HTTP Request.scc2022_backend-endpoints | #19" />
+        <item itemvalue="HTTP Request.scc2022_backend-endpoints | #5" />
+        <item itemvalue="HTTP Request.scc2022_backend-endpoints | #18" />
       </list>
     </recent_temporary>
   </component>
@@ -238,6 +276,7 @@
       <updated>1668161664006</updated>
       <workItem from="1668161665292" duration="25955000" />
       <workItem from="1668521667152" duration="978000" />
+      <workItem from="1668949661139" duration="29760000" />
     </task>
     <task id="LOCAL-00001" summary="Added azure functions">
       <created>1668172376418</created>
@@ -274,7 +313,84 @@
       <option name="project" value="LOCAL" />
       <updated>1668521690236</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="Improved auctions about to close request, now returns auctions about to close in the next 10 minutes">
+      <created>1668864838102</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1668864838102</updated>
+    </task>
+    <task id="LOCAL-00007" summary="Functions now work :)">
+      <created>1668864879752</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1668864879752</updated>
+    </task>
+    <task id="LOCAL-00008" summary="Fixed malfunctioning highest bid endpoint">
+      <created>1668870005830</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1668870005830</updated>
+    </task>
+    <task id="LOCAL-00009" summary="Organized functions and added BlobStorage support">
+      <created>1668870053051</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1668870053051</updated>
+    </task>
+    <task id="LOCAL-00010" summary="SessionTemp.java is now Session.java">
+      <created>1668870133408</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1668870133408</updated>
+    </task>
+    <task id="LOCAL-00011" summary="Updated a lot of stuff, added support for gc of user information">
+      <created>1668875280627</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1668875280627</updated>
+    </task>
+    <task id="LOCAL-00012" summary="Updated RedisCacheLayer popFromSet to return optional.">
+      <created>1668878287957</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1668878287957</updated>
+    </task>
+    <task id="LOCAL-00013" summary="Updated removed users GC function">
+      <created>1668879489592</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1668879489592</updated>
+    </task>
+    <task id="LOCAL-00014" summary="Now secrets are retrieved from environment variables.">
+      <created>1668881971009</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1668881971009</updated>
+    </task>
+    <task id="LOCAL-00015" summary="Semi-final version of the project">
+      <created>1668892968026</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1668892968026</updated>
+    </task>
+    <task id="LOCAL-00016" summary="Final version">
+      <created>1668894638650</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1668894638650</updated>
+    </task>
+    <option name="localTasksCounter" value="17" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -291,7 +407,7 @@
                   <entry key="branch">
                     <value>
                       <list>
-                        <option value="master" />
+                        <option value="stable" />
                       </list>
                     </value>
                   </entry>
@@ -310,7 +426,18 @@
     <MESSAGE value="Added base artillery stuff" />
     <MESSAGE value="Added Cognitive Search and changed return of User create to return uncensored User." />
     <MESSAGE value="Added Cognitive Search and uncensored return of User create" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added Cognitive Search and uncensored return of User create" />
+    <MESSAGE value="Improved auctions about to close request, now returns auctions about to close in the next 10 minutes" />
+    <MESSAGE value="Functions now work :)" />
+    <MESSAGE value="Fixed malfunctioning highest bid endpoint" />
+    <MESSAGE value="Organized functions and added BlobStorage support" />
+    <MESSAGE value="SessionTemp.java is now Session.java" />
+    <MESSAGE value="Updated a lot of stuff, added support for gc of user information" />
+    <MESSAGE value="Updated RedisCacheLayer popFromSet to return optional." />
+    <MESSAGE value="Updated removed users GC function" />
+    <MESSAGE value="Now secrets are retrieved from environment variables." />
+    <MESSAGE value="Semi-final version of the project" />
+    <MESSAGE value="Final version" />
+    <option name="LAST_COMMIT_MESSAGE" value="Final version" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
