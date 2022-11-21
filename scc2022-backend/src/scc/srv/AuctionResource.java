@@ -136,6 +136,7 @@ public class AuctionResource {
      */
     @GET
     @Path("/{auction_id}/question")
+    @Produces(MediaType.APPLICATION_JSON)
     public List<Question> listQuestions(@PathParam("auction_id") String auctionId) throws NotFoundException
     {
         validateAuction(auctionId, null);
@@ -182,6 +183,7 @@ public class AuctionResource {
     @PUT
     @Path("/{auction_id}/question")
     @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     public Question submitReply(Question question, @PathParam("auction_id") String auctionId,
                                 @CookieParam(Session.COOKIE_NAME) Cookie ownerSessionCookie)
             throws NotAuthorizedException, NotFoundException

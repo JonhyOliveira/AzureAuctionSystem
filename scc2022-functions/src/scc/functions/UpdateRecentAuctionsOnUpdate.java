@@ -46,18 +46,9 @@ public class UpdateRecentAuctionsOnUpdate {
                             return null;
                         }
                     })
-                    .filter(auctionDAO -> {
-                        context.getLogger().info("convert to: " + auctionDAO);
-                        return Objects.nonNull(auctionDAO);
-                    })
-                    .filter(auctionDAO -> {
-                        context.getLogger().info("not null");
-                        return !auctionDAO.isClosed();
-                    })
-                    .map(auctionDAO -> {
-                        context.getLogger().info("not closed");
-                        return auctionDAO.getAuctionID();
-                    })
+                    .filter(Objects::nonNull)
+                    .filter(auctionDAO -> !auctionDAO.isClosed())
+                    .map(AuctionDAO::getAuctionID)
                     .forEach(s -> {
                         jedis.lpush("recentlyUpdatedAuctions", s);
                         context.getLogger().info("jedis");

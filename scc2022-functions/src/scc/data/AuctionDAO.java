@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 
-@JsonIgnoreProperties
+@JsonIgnoreProperties(ignoreUnknown = true)
 public final class AuctionDAO extends DAO {
 
     private String auctionID;

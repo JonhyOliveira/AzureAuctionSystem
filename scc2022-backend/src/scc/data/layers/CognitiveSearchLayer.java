@@ -14,7 +14,7 @@ import java.util.stream.Stream;
 
 public class CognitiveSearchLayer {
 
-    private static final String AUCTIONS_INDEX = "";
+    private static final String AUCTIONS_INDEX = "cosmosdb-auction-index";
 
     private static CognitiveSearchLayer instance;
     private SearchClient client = null;

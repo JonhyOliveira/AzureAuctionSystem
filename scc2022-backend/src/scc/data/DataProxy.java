@@ -23,7 +23,7 @@ public class DataProxy {
 
     private static final boolean USE_CACHE = true;
     private static final CosmosDBLayer dbLayer = CosmosDBLayer.getInstance();
-    private static final RedisCacheLayer redisLayer = USE_CACHE ? RedisCacheLayer.getInstance() : null;
+    private static final RedisCacheLayer redisLayer = RedisCacheLayer.getInstance();
     private static final BlobStorageLayer blobStorage = BlobStorageLayer.getInstance();
     private static final CognitiveSearchLayer searchLayer = CognitiveSearchLayer.getInstance();
 
@@ -64,7 +64,8 @@ public class DataProxy {
         newUser.setNickname(nickname);
         UserDAO u = dbLayer.updateUser(new UserDAO(newUser.hashPwd()));
 
-        redisLayer.putOnCache("u:" + u.getNickname(), u, 60);
+        if (USE_CACHE)
+            redisLayer.putOnCache("u:" + u.getNickname(), u, 60);
 
         return Optional.of(u)
                 .map(UserDAO::toUser);
@@ -75,7 +76,11 @@ public class DataProxy {
      */
     public Optional<User> getUser(String nickname)
     {
-        UserDAO userObject = redisLayer.getFromCache("u:" + nickname, UserDAO.class);
+
+        UserDAO userObject;
+
+        if (USE_CACHE)
+            userObject = redisLayer.getFromCache("u:" + nickname, UserDAO.class);
 
         if (userObject != null)
             return Optional.of(userObject).map(UserDAO::toUser);
@@ -83,7 +88,7 @@ public class DataProxy {
         userObject = dbLayer.getUserByNick(nickname)
                 .filter(userDAO -> !userDAO.isToDelete()).orElse(null);
 
-        if (userObject != null)
+        if (userObject != null && USE_CACHE)
             redisLayer.putOnCache("u:" + nickname, userObject, 60);
 
         return Optional.ofNullable(userObject).map(UserDAO::toUser);
@@ -99,7 +104,8 @@ public class DataProxy {
             UserDAO dao = new UserDAO(user);
             dao.setToDelete(true);
             dbLayer.updateUser(dao);
-            redisLayer.deleteFromCache("u:" + user.getNickname());
+            if (USE_CACHE)
+                redisLayer.deleteFromCache("u:" + user.getNickname());
             deleteSession(user.getNickname());
 
             redisLayer.insertInSet("gc:users", user.getNickname());
@@ -303,7 +309,8 @@ public class DataProxy {
     }
 
     public void deleteSession(String nickname) {
-        redisLayer.deleteFromCache(Session.COOKIE_NAME + ":" + nickname);
+        if (USE_CACHE)
+            redisLayer.deleteFromCache(Session.COOKIE_NAME + ":" + nickname);
         dbLayer.deleteCookie(Session.COOKIE_NAME + ":" + nickname);
     }
 
