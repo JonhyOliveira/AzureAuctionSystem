@@ -1,5 +1,5 @@
 config:
-  target: 'https://scc-backend-58001-52949-57797.azurewebsites.net/rest'
+  target: 'https://scc2223-backend-northeu.azurewebsites.net/rest'
   http:
     timeout: 10
   plugins:
@@ -16,7 +16,7 @@ config:
 
 scenarios:
   - name: "Bidder searches for auctions to bid on"
-    weight: 0
+    weight: 5
     flow:
       - function: "selectUserSkewed"    # Select a random user
       - post:                           # First: login as a user

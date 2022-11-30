@@ -12,7 +12,7 @@ import java.util.Optional;
 import java.util.Properties;
 import java.util.stream.Stream;
 
-public class CosmosDBLayer {
+public class CosmosDBLayer implements DBLayer {
 
 	private static CosmosDBLayer instance;
 
@@ -60,12 +60,14 @@ public class CosmosDBLayer {
 		cookies = db.getContainer("cookies");
 	}
 
+	@Override
 	public UserDAO updateUser(UserDAO newUser)
 	{
 		init();
 		return users.upsertItem(newUser).getItem();
 	}
 
+	@Override
 	public boolean delUserByNick(String nickname) {
 		init();
 		PartitionKey key = new PartitionKey( nickname);
@@ -73,17 +75,20 @@ public class CosmosDBLayer {
 		return result >= 200 && result < 300;
 	}
 	
+	@Override
 	@SuppressWarnings("unused")
-	public CosmosItemResponse<Object> delUser(UserDAO user) {
+	public Optional<UserDAO> delUser(UserDAO user) {
 		init();
-		return users.deleteItem(user, new CosmosItemRequestOptions());
+		return Optional.ofNullable((UserDAO) users.deleteItem(user, new CosmosItemRequestOptions()).getItem());
 	}
 	
-	public CosmosItemResponse<UserDAO> putUser(UserDAO user) {
+	@Override
+	public UserDAO putUser(UserDAO user) {
 		init();
-		return users.createItem(user);
+		return users.createItem(user).getItem();
 	}
 	
+	@Override
 	public Optional<UserDAO> getUserByNick(String nickname) {
 		init();
 		SqlQuerySpec query = new SqlQuerySpec("SELECT * FROM users WHERE users.id=@nickname",
@@ -93,6 +98,7 @@ public class CosmosDBLayer {
 				.stream().findAny();
 	}
 
+	@Override
 	@SuppressWarnings("unused")
 	public Stream<UserDAO> getUsers() {
 		init();
@@ -100,16 +106,19 @@ public class CosmosDBLayer {
 				.stream();
 	}
 
+	@Override
 	public Optional<AuctionDAO> getAuctionByID(String auctionID){
 		init();
 		return auctions.queryItems("SELECT * FROM auctions WHERE auctions.id=\"" + auctionID + "\"",
 						new CosmosQueryRequestOptions(), AuctionDAO.class).stream().findAny();
 	}
+	@Override
 	public Optional<AuctionDAO> putAuction(AuctionDAO auction){
 		init();
 		return Optional.ofNullable(auctions.createItem(auction).getItem());
 	}
 
+	@Override
 	public Optional<AuctionDAO> updateAuction(AuctionDAO auction)
 	{
 		init();
@@ -118,6 +127,7 @@ public class CosmosDBLayer {
 				.getItem());
 	}
 
+	@Override
 	public boolean delAuctionByID(String auctionID, String owner_nickname)
 	{
 		init();
@@ -126,6 +136,7 @@ public class CosmosDBLayer {
 		return result >= 200 && result < 300;
 	}
 
+	@Override
 	public Stream<BidDAO> getBidsByAuctionID(String auctionID)
 	{
 		init();
@@ -133,6 +144,7 @@ public class CosmosDBLayer {
 				new CosmosQueryRequestOptions(), BidDAO.class).stream();
 	}
 
+	@Override
 	public Stream<BidDAO> getTopBidsByAuctionID(String auctionID, Long n)
 	{
 		init();
@@ -140,23 +152,27 @@ public class CosmosDBLayer {
 				new CosmosQueryRequestOptions(), BidDAO.class).stream();
 	}
 
+	@Override
 	public Optional<BidDAO> putBid(BidDAO bid) {
 		init();
 		return Optional.ofNullable(bids.createItem(bid).getItem());
 	}
 
+	@Override
 	public Stream<QuestionDAO> getQuestionsByAuctionID(String auctionID){
 		init();
 		return questions.queryItems("SELECT * FROM questions WHERE questions.auction_id=\"" + auctionID + "\"",
 						new CosmosQueryRequestOptions(), QuestionDAO.class).stream();
 	}
 
+	@Override
 	public Stream<AuctionDAO> getAuctionsByUser(String nickname){
 		init();
 		return auctions.queryItems("SELECT * FROM auctions WHERE auctions.owner_nickname=\"" + nickname + "\"",
 				new CosmosQueryRequestOptions(), AuctionDAO.class).stream();
 	}
 
+	@Override
 	public Stream<AuctionDAO> getAuctionsClosingInXMins(long x){
 		init();
 		return auctions.queryItems("SELECT * FROM auctions WHERE auctions.end_time <= (GetCurrentTimestamp() + " + x + " * 60000) AND NOT auctions.closed",
@@ -168,12 +184,14 @@ public class CosmosDBLayer {
 		client.close();
 	}
 
+	@Override
 	public Optional<QuestionDAO> putQuestion(QuestionDAO question)
 	{
 		init();
 		return Optional.ofNullable(questions.createItem(question).getItem());
 	}
 
+	@Override
 	public Optional<QuestionDAO> updateQuestion(QuestionDAO question)
 	{
 		init();
@@ -181,23 +199,27 @@ public class CosmosDBLayer {
 		return Optional.ofNullable(questions.replaceItem(question, question.getId(), key, new CosmosItemRequestOptions()).getItem());
 	}
 
+	@Override
 	public Optional<QuestionDAO> getQuestionByID(String questionId) {
 		init();
 		return questions.queryItems("SELECT * FROM questions WHERE questions.id=\"" + questionId + "\"",
 				new CosmosQueryRequestOptions(), QuestionDAO.class).stream().findFirst();
 	}
 
+	@Override
 	public void storeCookie(String key, String value) {
 		init();
 		cookies.upsertItem(new CookieDAO(key, value, Session.VALIDITY_SECONDS));
 	}
 
+	@Override
 	public Optional<String> getCookie(String key) {
 		init();
 		return cookies.queryItems("SELECT * FROM cookies WHERE cookies.id=\"" + key + "\"",
 				new CosmosQueryRequestOptions(), CookieDAO.class).stream().findAny().map(CookieDAO::getValue);
 	}
 
+	@Override
 	public void deleteCookie(String key) {
 		init();
 		getCookie(key).ifPresent(s -> cookies.deleteItem(s, new PartitionKey(s), new CosmosItemRequestOptions()));

@@ -200,7 +200,7 @@ function saveLoopElementAsAuction(context, event, done) {
 }
 
 function chooseAuctions(context, events, done) {
-	context.vars.auctionsLst = context.vars.auctionsLst.filter(value => !value.closed)
+	context.vars.auctionsLst = context.vars.auctionsLst.filter(value => !value.closed && Math.random() > 0.5)
 	// console.log(context.vars.auctionsLst)
 	return done()
 }

@@ -1,13 +1,16 @@
 package scc.data.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import scc.data.User;
 
 /**
  * Represents a User, as stored in the database
  */
-public final class UserDAO extends DAO {
+@JsonIgnoreProperties(ignoreUnknown = true)
+public final class UserDAO {
 
+	@JsonProperty("_id")
 	private String nickname;
 	private String name;
 	private String pwd;
@@ -29,12 +32,11 @@ public final class UserDAO extends DAO {
 		this.photoId = photoId;
 	}
 
-	@JsonProperty("id")
 	public String getNickname() {
 		return nickname;
 	}
 	@SuppressWarnings("unused")
-    public void setId(String nickname) {
+    public void setNickname(String nickname) {
 		this.nickname = nickname;
 	}
 	@SuppressWarnings("unused")
@@ -77,7 +79,7 @@ public final class UserDAO extends DAO {
 
 	@Override
 	public String toString() {
-		return "UserDAO [_rid=" + _rid + ", _ts=" + _ts + ", id=" + nickname + ", name=" + name + ", pwd=" + pwd
+		return "UserDAO [nickname=" + nickname + ", name=" + name + ", pwd=" + pwd
 				+ ", photoId=" + photoId + " ]";
 	}
 

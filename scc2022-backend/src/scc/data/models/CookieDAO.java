@@ -1,8 +1,6 @@
 package scc.data.models;
 
-import jakarta.annotation.Nonnull;
-
-public class CookieDAO extends DAO {
+public final class CookieDAO {
 
     private String id;
     private String value;

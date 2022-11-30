@@ -6,7 +6,7 @@ import scc.data.Auction;
 
 
 @JsonIgnoreProperties
-public final class AuctionDAO extends DAO {
+public final class AuctionDAO {
 
     @JsonProperty("id")
     private String auctionID;

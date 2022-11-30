@@ -5,7 +5,7 @@ import scc.data.Bid;
 
 import java.util.Objects;
 
-public final class BidDAO extends DAO {
+public final class BidDAO {
 
     private String id;
     private String auctionID;

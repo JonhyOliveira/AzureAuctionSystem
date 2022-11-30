@@ -3,7 +3,7 @@ package scc.data.models;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import scc.data.Question;
 
-public class QuestionDAO extends DAO{
+public final class QuestionDAO {
 
     private String id;
     private String auctionID;

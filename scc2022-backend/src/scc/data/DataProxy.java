@@ -1,10 +1,7 @@
 package scc.data;
 
 import redis.clients.jedis.Jedis;
-import scc.data.layers.BlobStorageLayer;
-import scc.data.layers.CognitiveSearchLayer;
-import scc.data.layers.CosmosDBLayer;
-import scc.data.layers.RedisCacheLayer;
+import scc.data.layers.*;
 import scc.data.models.AuctionDAO;
 import scc.data.models.BidDAO;
 import scc.data.models.QuestionDAO;
@@ -13,6 +10,7 @@ import scc.data.models.UserDAO;
 import jakarta.ws.rs.core.NewCookie;
 import scc.session.Session;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -21,9 +19,22 @@ import java.util.stream.Collectors;
  */
 public class DataProxy {
 
-    private static final boolean USE_CACHE = true;
-    private static final CosmosDBLayer dbLayer = CosmosDBLayer.getInstance();
-    private static final RedisCacheLayer redisLayer = RedisCacheLayer.getInstance();
+    private static final boolean USE_CACHE = !Boolean.parseBoolean(System.getenv("DISABLE_CACHE"));
+    private static final DBLayer dbLayer;
+
+    static {
+        try {
+            if (System.getenv().containsKey("DB_LAYER_CLASS"))
+                dbLayer = (DBLayer) Class.forName(System.getenv("DBLayerClass")).getDeclaredConstructor().newInstance();
+            else
+                dbLayer = null;
+        } catch (InvocationTargetException | InstantiationException | IllegalAccessException | NoSuchMethodException |
+                 ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static final RedisCacheLayer cachingLayer = RedisCacheLayer.getInstance();
     private static final BlobStorageLayer blobStorage = BlobStorageLayer.getInstance();
     private static final CognitiveSearchLayer searchLayer = CognitiveSearchLayer.getInstance();
 
@@ -45,9 +56,10 @@ public class DataProxy {
         if (dbLayer.getUserByNick(user.getNickname()).isPresent())
             return Optional.empty();
 
-        UserDAO u = dbLayer.putUser(new UserDAO(user)).getItem();
+        UserDAO u = dbLayer.putUser(new UserDAO(user));
 
-        redisLayer.putOnCache("u:" + u.getNickname(), u);
+        if (USE_CACHE)
+            cachingLayer.putOnCache("u:" + u.getNickname(), u);
 
         return Optional.of(u)
                 .map(UserDAO::toUser);
@@ -65,7 +77,7 @@ public class DataProxy {
         UserDAO u = dbLayer.updateUser(new UserDAO(newUser.hashPwd()));
 
         if (USE_CACHE)
-            redisLayer.putOnCache("u:" + u.getNickname(), u, 60);
+            cachingLayer.putOnCache("u:" + u.getNickname(), u, 60);
 
         return Optional.of(u)
                 .map(UserDAO::toUser);
@@ -77,10 +89,10 @@ public class DataProxy {
     public Optional<User> getUser(String nickname)
     {
 
-        UserDAO userObject;
+        UserDAO userObject = null;
 
         if (USE_CACHE)
-            userObject = redisLayer.getFromCache("u:" + nickname, UserDAO.class);
+            userObject = cachingLayer.getFromCache("u:" + nickname, UserDAO.class);
 
         if (userObject != null)
             return Optional.of(userObject).map(UserDAO::toUser);
@@ -89,7 +101,7 @@ public class DataProxy {
                 .filter(userDAO -> !userDAO.isToDelete()).orElse(null);
 
         if (userObject != null && USE_CACHE)
-            redisLayer.putOnCache("u:" + nickname, userObject, 60);
+            cachingLayer.putOnCache("u:" + nickname, userObject, 60);
 
         return Optional.ofNullable(userObject).map(UserDAO::toUser);
     }
@@ -105,10 +117,10 @@ public class DataProxy {
             dao.setToDelete(true);
             dbLayer.updateUser(dao);
             if (USE_CACHE)
-                redisLayer.deleteFromCache("u:" + user.getNickname());
+                cachingLayer.deleteFromCache("u:" + user.getNickname());
             deleteSession(user.getNickname());
 
-            redisLayer.insertInSet("gc:users", user.getNickname());
+            cachingLayer.insertInSet("gc:users", user.getNickname());
         });
     }
 
@@ -294,13 +306,14 @@ public class DataProxy {
 
     public void storeSession(NewCookie cookie, String nickname) {
         if (USE_CACHE)
-            redisLayer.putOnCache( Session.COOKIE_NAME + ":" + nickname, cookie.getValue(), Session.VALIDITY_SECONDS);
+            cachingLayer.putOnCache( Session.COOKIE_NAME + ":" + nickname, cookie.getValue(), Session.VALIDITY_SECONDS);
 
         dbLayer.storeCookie(Session.COOKIE_NAME + ":" + nickname , cookie.getValue());
     }
 
     public Optional<Session> getSession(String nickname) {
-        Optional<String> cookieID = Optional.ofNullable(redisLayer.getFromCache(Session.COOKIE_NAME + ":" + nickname, String.class));
+        Optional<String> cookieID = Optional.ofNullable(USE_CACHE ?
+                cachingLayer.getFromCache(Session.COOKIE_NAME + ":" + nickname, String.class) : null);
 
         if (cookieID.isEmpty())
             cookieID = dbLayer.getCookie(Session.COOKIE_NAME + ":" + nickname);
@@ -310,7 +323,7 @@ public class DataProxy {
 
     public void deleteSession(String nickname) {
         if (USE_CACHE)
-            redisLayer.deleteFromCache(Session.COOKIE_NAME + ":" + nickname);
+            cachingLayer.deleteFromCache(Session.COOKIE_NAME + ":" + nickname);
         dbLayer.deleteCookie(Session.COOKIE_NAME + ":" + nickname);
     }
 
