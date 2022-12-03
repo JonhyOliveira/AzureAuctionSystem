@@ -7,11 +7,7 @@ import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 import redis.clients.jedis.params.SetParams;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.Optional;
-import java.util.Properties;
 
 public class RedisCacheLayer {
 
@@ -22,12 +18,11 @@ public class RedisCacheLayer {
 
 	private static final ObjectMapper mapper = new ObjectMapper();
 
-	private static JedisPool instance;
-	private static RedisCacheLayer myInstance;
+	private static JedisPool pool;
 
 	public synchronized static JedisPool getCachePool() {
-		if( instance != null)
-			return instance;
+		if( pool != null)
+			return pool;
 		final JedisPoolConfig poolConfig = new JedisPoolConfig();
 		poolConfig.setMaxTotal(128);
 		poolConfig.setMaxIdle(128);
@@ -37,18 +32,16 @@ public class RedisCacheLayer {
 		poolConfig.setTestWhileIdle(true);
 		poolConfig.setNumTestsPerEvictionRun(3);
 		poolConfig.setBlockWhenExhausted(true);
-		instance = new JedisPool(poolConfig, REDIS_HOSTNAME, REDIS_PORT, 1000, REDIS_KEY, true);
-		return instance;
+		pool = new JedisPool(poolConfig, REDIS_HOSTNAME, REDIS_PORT, 1000, REDIS_KEY, false);
+
+		return pool;
 	}
 
+	private static RedisCacheLayer instance;
 	public static RedisCacheLayer getInstance() {
-		if (myInstance == null)
-			myInstance = new RedisCacheLayer();
-		return myInstance;
-	}
-
-	public void putOnCacheNoExpire(String key, Object obj) {
-
+		if (instance == null)
+			instance = new RedisCacheLayer();
+		return instance;
 	}
 
 	public void putOnCache(String key, Object obj) {

@@ -152,7 +152,7 @@ public class UserResource {
                 .value(uid)
                 .path("/rest/")
                 .comment("sessionid")
-                .maxAge(Session.VALIDITY_SECONDS)
+                .maxAge(((int) Session.VALIDITY_SECONDS))
                 .secure(false)
                 .build();
 

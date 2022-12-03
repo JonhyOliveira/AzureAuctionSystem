@@ -1,11 +1,14 @@
 package scc.data.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import scc.data.Question;
 
-public final class QuestionDAO {
+@JsonIgnoreProperties(ignoreUnknown = true)
+public final class QuestionDAO extends BaseDAO {
 
-    private String id;
+    public static final String AuctionID = "auction_id";
+    @JsonProperty(AuctionID)
     private String auctionID;
     private String questioner;
     private String question;
@@ -15,7 +18,7 @@ public final class QuestionDAO {
 
     public QuestionDAO(String auctionID, Question question)
     {
-        this.id = question.getQuestionID();
+        super(question.getQuestionID());
         this.auctionID = auctionID;
         this.questioner = question.getQuestioner();
         this.question = question.getText();
@@ -30,16 +33,6 @@ public final class QuestionDAO {
 
     public Question toQuestion(){
         return new Question(id, questioner, question, answer);
-    }
-
-    @SuppressWarnings("UnusedDeclaration")
-    public String getId(){
-        return this.id;
-    }
-
-    @SuppressWarnings("UnusedDeclaration")
-    public void setId(String id){
-        this.id = id;
     }
 
     @SuppressWarnings("UnusedDeclaration")

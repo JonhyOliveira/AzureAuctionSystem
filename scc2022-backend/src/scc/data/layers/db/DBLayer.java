@@ -1,6 +1,5 @@
-package scc.data.layers;
+package scc.data.layers.db;
 
-import com.azure.cosmos.models.CosmosItemResponse;
 import scc.data.models.AuctionDAO;
 import scc.data.models.BidDAO;
 import scc.data.models.QuestionDAO;
@@ -10,13 +9,13 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 public interface DBLayer {
-    UserDAO updateUser(UserDAO newUser);
+    Optional<UserDAO> updateUser(UserDAO newUser);
 
     boolean delUserByNick(String nickname);
     
-    Optional<UserDAO> delUser(UserDAO user);
+    boolean delUser(UserDAO user);
 
-    UserDAO putUser(UserDAO user);
+    Optional<UserDAO> putUser(UserDAO user);
 
     Optional<UserDAO> getUserByNick(String nickname);
 
@@ -49,9 +48,9 @@ public interface DBLayer {
 
     Optional<QuestionDAO> getQuestionByID(String questionId);
 
-    void storeCookie(String key, String value);
+    Optional<String> storeCookie(String key, String value);
 
     Optional<String> getCookie(String key);
 
-    void deleteCookie(String key);
+    boolean deleteCookie(String key);
 }

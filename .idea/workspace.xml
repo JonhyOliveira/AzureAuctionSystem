@@ -4,56 +4,38 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7991c95c-82c2-46fc-9c8e-7c42557a1805" name="Changes" comment="Patch follow up">
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_mongodb_bson_4_8_0.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_mongodb_bson_record_codec_4_8_0.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_mongodb_mongodb_driver_core_4_8_0.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_mongodb_mongodb_driver_sync_4_8_0.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/docker-compose.yml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/scc2022-backend/Dockerfile" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/scc2022-backend/pom-northeu.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/scc2022-backend/src/scc/data/layers/DBLayer.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/scc2022-backend/src/scc/data/layers/MongoDBLayer.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/scc2022-backend/test/scc/data/layers/DBLayerTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__javax_ws_rs_javax_ws_rs_api_2_1_1.xml" beforeDir="false" />
+    <list default="true" id="7991c95c-82c2-46fc-9c8e-7c42557a1805" name="Changes" comment="Started migration of CosmosDB to MongoDB">
+      <change afterPath="$PROJECT_DIR$/scc2022-backend/src/scc/data/layers/storage/File.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/scc2022-backend/src/scc/data/layers/storage/FileSystemStorageLayer.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/scc2022-backend/src/scc/data/layers/storage/StorageLayer.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/scc2022-backend/src/scc/data/models/BaseDAO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/scc2022-backend/src/scc/data/models/MongoBaseDAO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Artillery/baseworkload.yml" beforeDir="false" afterPath="$PROJECT_DIR$/Artillery/baseworkload.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Artillery/test-utils.js" beforeDir="false" afterPath="$PROJECT_DIR$/Artillery/test-utils.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scc2022-backend/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/scc2022-backend/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scc2022-backend/scc2022-backend.iml" beforeDir="false" afterPath="$PROJECT_DIR$/scc2022-backend/scc2022-backend.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/docker-compose.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scc-project.iml" beforeDir="false" afterPath="$PROJECT_DIR$/scc-project.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scc2022-backend/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/scc2022-backend/Dockerfile" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/scc2022-backend/src/scc/data/DataProxy.java" beforeDir="false" afterPath="$PROJECT_DIR$/scc2022-backend/src/scc/data/DataProxy.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scc2022-backend/src/scc/data/layers/CosmosDBLayer.java" beforeDir="false" afterPath="$PROJECT_DIR$/scc2022-backend/src/scc/data/layers/CosmosDBLayer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scc2022-backend/src/scc/data/layers/BlobStorageLayer.java" beforeDir="false" afterPath="$PROJECT_DIR$/scc2022-backend/src/scc/data/layers/storage/BlobStorageLayer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scc2022-backend/src/scc/data/layers/CognitiveSearchLayer.java" beforeDir="false" afterPath="$PROJECT_DIR$/scc2022-backend/src/scc/data/layers/CognitiveSearchLayer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scc2022-backend/src/scc/data/layers/CosmosDBLayer.java" beforeDir="false" afterPath="$PROJECT_DIR$/scc2022-backend/src/scc/data/layers/db/CosmosDBLayer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scc2022-backend/src/scc/data/layers/DBLayer.java" beforeDir="false" afterPath="$PROJECT_DIR$/scc2022-backend/src/scc/data/layers/db/DBLayer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scc2022-backend/src/scc/data/layers/MongoDBLayer.java" beforeDir="false" afterPath="$PROJECT_DIR$/scc2022-backend/src/scc/data/layers/db/MongoDBLayer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scc2022-backend/src/scc/data/layers/RedisCacheLayer.java" beforeDir="false" afterPath="$PROJECT_DIR$/scc2022-backend/src/scc/data/layers/RedisCacheLayer.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/scc2022-backend/src/scc/data/models/AuctionDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/scc2022-backend/src/scc/data/models/AuctionDAO.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/scc2022-backend/src/scc/data/models/BidDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/scc2022-backend/src/scc/data/models/BidDAO.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/scc2022-backend/src/scc/data/models/CookieDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/scc2022-backend/src/scc/data/models/CookieDAO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scc2022-backend/src/scc/data/models/DAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/scc2022-backend/src/scc/data/models/CosmosBaseDAO.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/scc2022-backend/src/scc/data/models/QuestionDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/scc2022-backend/src/scc/data/models/QuestionDAO.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/scc2022-backend/src/scc/data/models/UserDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/scc2022-backend/src/scc/data/models/UserDAO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scc2022-backend/src/scc/srv/MainApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/scc2022-backend/src/scc/srv/MainApplication.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scc2022-backend/src/scc/session/Session.java" beforeDir="false" afterPath="$PROJECT_DIR$/scc2022-backend/src/scc/session/Session.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scc2022-backend/src/scc/srv/ControlResource.java" beforeDir="false" afterPath="$PROJECT_DIR$/scc2022-backend/src/scc/srv/ControlResource.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scc2022-backend/src/scc/srv/MediaResource.java" beforeDir="false" afterPath="$PROJECT_DIR$/scc2022-backend/src/scc/srv/MediaResource.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scc2022-backend/src/scc/srv/UserResource.java" beforeDir="false" afterPath="$PROJECT_DIR$/scc2022-backend/src/scc/srv/UserResource.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/scc2022-backend/test/scc/data/layers/CosmosDBLayerTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/scc2022-backend/test/scc/data/layers/CosmosDBLayerTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/blobstore.properties" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/database.properties" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/redis.properties" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/resources/blobstore.properties" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/resources/database.properties" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/resources/redis.properties" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/scc/data/Auction.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/scc/data/Bid.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/scc/data/DataProxy.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/scc/data/Question.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/scc/data/User.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/scc/data/layers/CosmosDBLayer.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/scc/data/layers/RedisCacheLayer.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/scc/data/models/AuctionDAO.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/scc/data/models/BidDAO.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/scc/data/models/DAO.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/scc/data/models/QuestionDAO.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/scc/data/models/UserDAO.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/scc/srv/AuctionResource.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/scc/srv/ControlResource.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/scc/srv/MainApplication.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/scc/srv/MediaResource.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/scc/srv/UserResource.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/scc/utils/Hash.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/scc2022-backend/test/scc/data/layers/DBLayerTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/scc2022-backend/test/scc/data/layers/DBLayerTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scc2022-backend/test/scc/data/layers/RedisCacheLayerTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/scc2022-backend/test/scc/data/layers/RedisCacheLayerTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scc2022-backend/test/scc/data/models/AuctionDAOTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/scc2022-backend/test/scc/data/models/AuctionDAOTest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -69,7 +51,9 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="JUnit5 Test Class" />
+        <option value="Jsp File" />
         <option value="Interface" />
+        <option value="Record" />
         <option value="Class" />
       </list>
     </option>
@@ -77,7 +61,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="8ca52d576c18732cbf274c56a0d105b5bfc4afb0" />
+        <entry key="$PROJECT_DIR$" value="stable" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -122,6 +106,9 @@
     ]
   }
 }]]></component>
+  <component name="ReactorSettings">
+    <option name="notificationShown" value="true" />
+  </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/scc2022-backend" />
@@ -136,18 +123,23 @@
       <recent name="" />
     </key>
     <key name="ExtractSuperBase.RECENT_KEYS">
+      <recent name="scc.data.layers.storage" />
       <recent name="scc.data.layers" />
+    </key>
+    <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
+      <recent name="scc.data.models" />
     </key>
     <key name="CreateTestDialog.RecentsKey">
       <recent name="scc.data.layers" />
     </key>
     <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="scc.data.models" />
       <recent name="scc.data.layers" />
       <recent name="data.layers" />
       <recent name="data" />
     </key>
   </component>
-  <component name="RunManager" selected="JUnit.DBLayerTest">
+  <component name="RunManager" selected="HTTP Request.scc2022_backend-endpoints | #6">
     <configuration default="true" type="AZURE_FUNCTION_SUPPORT" factoryName="Run Functions">
       <option name="appName" />
       <option name="appServicePlanName" />
@@ -179,11 +171,26 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration name="generated-requests | #6" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" nameIsGenerated="true" path="$APPLICATION_CONFIG_DIR$/scratches/generated-requests.http" index="6" requestIdentifier="#6" runType="Run single request">
+      <method v="2" />
+    </configuration>
+    <configuration name="scc2022_backend-endpoints | #1" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" nameIsGenerated="true" path="$APPLICATION_CONFIG_DIR$/scratches/scc2022_backend-endpoints.http" requestIdentifier="#1" runType="Run single request">
+      <method v="2" />
+    </configuration>
+    <configuration name="scc2022_backend-endpoints | #2" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" nameIsGenerated="true" path="$APPLICATION_CONFIG_DIR$/scratches/scc2022_backend-endpoints.http" index="2" requestIdentifier="#2" runType="Run single request">
+      <method v="2" />
+    </configuration>
+    <configuration name="scc2022_backend-endpoints | #3" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" nameIsGenerated="true" path="$APPLICATION_CONFIG_DIR$/scratches/scc2022_backend-endpoints.http" index="3" requestIdentifier="#3" runType="Run single request">
+      <method v="2" />
+    </configuration>
+    <configuration name="scc2022_backend-endpoints | #6" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" nameIsGenerated="true" path="$APPLICATION_CONFIG_DIR$/scratches/scc2022_backend-endpoints.http" index="6" requestIdentifier="#6" runType="Run single request">
+      <method v="2" />
+    </configuration>
     <configuration name="DBLayerTest" type="JUnit" factoryName="JUnit" nameIsGenerated="true">
       <module name="scc2022-backend" />
       <extension name="coverage">
         <pattern>
-          <option name="PATTERN" value="scc.data.layers.*" />
+          <option name="PATTERN" value="scc.data.layers.db.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
@@ -191,46 +198,6 @@
       <option name="MAIN_CLASS_NAME" value="scc.data.layers.DBLayerTest" />
       <option name="METHOD_NAME" value="" />
       <option name="TEST_OBJECT" value="class" />
-      <envs>
-        <env name="DB_NAME" value="scc2022-project-db" />
-        <env name="DB_CONNSTRING" value="mongodb://root:1234@localhost:27017/" />
-      </envs>
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="DBLayerTest.delUser" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="scc2022-backend" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="scc.data.layers.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="PACKAGE_NAME" value="scc.data.layers" />
-      <option name="MAIN_CLASS_NAME" value="scc.data.layers.DBLayerTest" />
-      <option name="METHOD_NAME" value="delUser" />
-      <option name="TEST_OBJECT" value="method" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="DBLayerTest.putUser" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="scc2022-backend" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="scc.data.layers.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="PACKAGE_NAME" value="scc.data.layers" />
-      <option name="MAIN_CLASS_NAME" value="scc.data.layers.DBLayerTest" />
-      <option name="METHOD_NAME" value="putUser" />
-      <option name="TEST_OBJECT" value="method" />
-      <envs>
-        <env name="DB_NAME" value="scc2022-project-db" />
-        <env name="DB_CONNSTRING" value="mongodb://root:1234@localhost:27017/" />
-      </envs>
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -319,10 +286,11 @@
       </MavenSettings>
       <method v="2" />
     </configuration>
-    <configuration name="Build image" type="docker-deploy" factoryName="dockerfile" server-name="Docker">
+    <configuration name="Build Web App image" type="docker-deploy" factoryName="dockerfile" server-name="Docker">
       <deployment type="dockerfile">
         <settings>
-          <option name="imageTag" value="jfvoliveira/scc2022-backend:v1" />
+          <option name="imageTag" value="jfvoliveira2001/scc2022-backend:v2" />
+          <option name="buildOnly" value="true" />
           <option name="containerName" value="" />
           <option name="portBindings">
             <list>
@@ -339,59 +307,25 @@
         <option name="Maven.BeforeRunTask" enabled="true" file="$PROJECT_DIR$/scc2022-backend//pom.xml" goal="clean compile package" />
       </method>
     </configuration>
-    <configuration name="docker-compose.yml: Compose Deployment" type="docker-deploy" factoryName="docker-compose.yml" temporary="true" server-name="Docker">
-      <deployment type="docker-compose.yml">
-        <settings>
-          <option name="sourceFilePath" value="docker-compose.yml" />
-        </settings>
-      </deployment>
-      <method v="2" />
-    </configuration>
-    <configuration name="docker-compose.yml.mongo-express: Compose Deployment" type="docker-deploy" factoryName="docker-compose.yml" temporary="true" server-name="Docker">
-      <deployment type="docker-compose.yml">
-        <settings>
-          <option name="services">
-            <list>
-              <option value="mongo-express" />
-            </list>
-          </option>
-          <option name="sourceFilePath" value="docker-compose.yml" />
-        </settings>
-      </deployment>
-      <method v="2" />
-    </configuration>
-    <configuration name="docker-compose.yml.mongo: Compose Deployment" type="docker-deploy" factoryName="docker-compose.yml" temporary="true" server-name="Docker">
-      <deployment type="docker-compose.yml">
-        <settings>
-          <option name="services">
-            <list>
-              <option value="mongo" />
-            </list>
-          </option>
-          <option name="sourceFilePath" value="docker-compose.yml" />
-        </settings>
-      </deployment>
-      <method v="2" />
-    </configuration>
     <list>
-      <item itemvalue="Docker.Build image" />
-      <item itemvalue="Docker.docker-compose.yml.mongo-express: Compose Deployment" />
-      <item itemvalue="Docker.docker-compose.yml.mongo: Compose Deployment" />
-      <item itemvalue="Docker.docker-compose.yml: Compose Deployment" />
+      <item itemvalue="Docker.Build Web App image" />
+      <item itemvalue="HTTP Request.generated-requests | #6" />
+      <item itemvalue="HTTP Request.scc2022_backend-endpoints | #1" />
+      <item itemvalue="HTTP Request.scc2022_backend-endpoints | #2" />
+      <item itemvalue="HTTP Request.scc2022_backend-endpoints | #3" />
+      <item itemvalue="HTTP Request.scc2022_backend-endpoints | #6" />
       <item itemvalue="JUnit.DBLayerTest" />
-      <item itemvalue="JUnit.DBLayerTest.delUser" />
-      <item itemvalue="JUnit.DBLayerTest.putUser" />
       <item itemvalue="Maven.Deploy App - WestEU" />
       <item itemvalue="Maven.Deploy App - NorthEU" />
       <item itemvalue="Maven.Deploy Functions" />
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="JUnit.DBLayerTest.delUser" />
-        <item itemvalue="JUnit.DBLayerTest.putUser" />
-        <item itemvalue="Docker.docker-compose.yml: Compose Deployment" />
-        <item itemvalue="Docker.docker-compose.yml.mongo-express: Compose Deployment" />
-        <item itemvalue="Docker.docker-compose.yml.mongo: Compose Deployment" />
+        <item itemvalue="HTTP Request.scc2022_backend-endpoints | #6" />
+        <item itemvalue="HTTP Request.scc2022_backend-endpoints | #3" />
+        <item itemvalue="HTTP Request.scc2022_backend-endpoints | #2" />
+        <item itemvalue="HTTP Request.scc2022_backend-endpoints | #1" />
+        <item itemvalue="HTTP Request.generated-requests | #6" />
       </list>
     </recent_temporary>
   </component>
@@ -406,7 +340,7 @@
       <workItem from="1668161665292" duration="25955000" />
       <workItem from="1668521667152" duration="978000" />
       <workItem from="1668949661139" duration="38960000" />
-      <workItem from="1669749071642" duration="19605000" />
+      <workItem from="1669749071642" duration="48852000" />
     </task>
     <task id="LOCAL-00001" summary="Added azure functions">
       <created>1668172376418</created>
@@ -541,7 +475,14 @@
       <option name="project" value="LOCAL" />
       <updated>1669067404640</updated>
     </task>
-    <option name="localTasksCounter" value="20" />
+    <task id="LOCAL-00020" summary="Started migration of CosmosDB to MongoDB">
+      <created>1669840902132</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1669840902132</updated>
+    </task>
+    <option name="localTasksCounter" value="21" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -591,7 +532,8 @@
     <MESSAGE value="Final version of test scripts" />
     <MESSAGE value="Patch" />
     <MESSAGE value="Patch follow up" />
-    <option name="LAST_COMMIT_MESSAGE" value="Patch follow up" />
+    <MESSAGE value="Started migration of CosmosDB to MongoDB" />
+    <option name="LAST_COMMIT_MESSAGE" value="Started migration of CosmosDB to MongoDB" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

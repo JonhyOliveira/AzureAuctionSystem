@@ -5,15 +5,17 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import scc.data.Auction;
 
 
-@JsonIgnoreProperties
-public final class AuctionDAO {
+@JsonIgnoreProperties(ignoreUnknown = true)
+public final class AuctionDAO extends BaseDAO {
 
-    @JsonProperty("id")
-    private String auctionID;
+    public static final String OwnerKey = "owner_nickname", EndKey = "end_time";
+
     private String title;
     private String description;
     private String thumbnailID;
+    @JsonProperty(OwnerKey)
     private String owner_nickname;
+    @JsonProperty(EndKey)
     private Long endTime;
     private Float minPrice;
     private boolean isClosed;
@@ -25,26 +27,25 @@ public final class AuctionDAO {
         this(auc.getAuctionID(), auc.getTitle(), auc.getDescription(), auc.getImageId(), auc.getOwnerNickname(), auc.getEndTime(), auc.getMinPrice(), auc.getIsClosed());
     }
 
-    public AuctionDAO(String auctionID, String title, String description, String thumbnailID, String owner_nickname, Long endTime, Float minPrice, boolean aucStatus){
-        super();
-        this.auctionID = auctionID;
+    public AuctionDAO(String auctionID, String title, String description, String thumbnailID, String owner_nickname, Long endTime, Float minPrice, boolean isClosed){
+        super(auctionID);
         this.title = title;
         this.description = description;
         this.thumbnailID = thumbnailID;
         this.owner_nickname = owner_nickname;
         this.endTime = endTime;
         this.minPrice = minPrice;
-        this.isClosed = aucStatus;
+        this.isClosed = isClosed;
     }
 
     public String getAuctionID()
     {
-        return auctionID;
+        return id;
     }
 
     @SuppressWarnings("unused")
-    public void setId(String auction_id) {
-        this.auctionID = auction_id;
+    public void setAuctionId(String auction_id) {
+        this.id = auction_id;
     }
 
     @SuppressWarnings("unused")
@@ -110,7 +111,7 @@ public final class AuctionDAO {
     }
 
     public Auction toAuction(){
-        return new Auction(auctionID, title, description, thumbnailID, owner_nickname, endTime, minPrice, isClosed);
+        return new Auction(id, title, description, thumbnailID, owner_nickname, endTime, minPrice, isClosed);
     }
 
 }

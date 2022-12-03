@@ -3,13 +3,9 @@ package scc.data.layers;
 import com.azure.core.credential.AzureKeyCredential;
 import com.azure.search.documents.SearchClient;
 import com.azure.search.documents.SearchClientBuilder;
-import com.azure.search.documents.models.SearchOptions;
 import scc.data.models.AuctionDAO;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.Objects;
-import java.util.Properties;
 import java.util.stream.Stream;
 
 public class CognitiveSearchLayer {

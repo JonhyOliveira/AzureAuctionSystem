@@ -1,15 +1,12 @@
-package scc.data.layers;
+package scc.data.layers.db;
 
 import com.azure.cosmos.*;
 import com.azure.cosmos.models.*;
 import scc.data.models.*;
 import scc.session.Session;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
 import java.util.Optional;
-import java.util.Properties;
 import java.util.stream.Stream;
 
 public class CosmosDBLayer implements DBLayer {
@@ -61,10 +58,14 @@ public class CosmosDBLayer implements DBLayer {
 	}
 
 	@Override
-	public UserDAO updateUser(UserDAO newUser)
+	public Optional<UserDAO> updateUser(UserDAO newUser)
 	{
 		init();
-		return users.upsertItem(newUser).getItem();
+		CosmosItemResponse<UserDAO> res = users.upsertItem(newUser);
+		if (res.getStatusCode() >= 200 && res.getStatusCode() < 300)
+			return Optional.of(res.getItem());
+		else
+			return Optional.empty();
 	}
 
 	@Override
@@ -77,15 +78,18 @@ public class CosmosDBLayer implements DBLayer {
 	
 	@Override
 	@SuppressWarnings("unused")
-	public Optional<UserDAO> delUser(UserDAO user) {
+	public boolean delUser(UserDAO user) {
 		init();
-		return Optional.ofNullable((UserDAO) users.deleteItem(user, new CosmosItemRequestOptions()).getItem());
+		int result = users.deleteItem(user, new CosmosItemRequestOptions()).getStatusCode();
+		return result >= 200 && result < 300;
 	}
 	
 	@Override
-	public UserDAO putUser(UserDAO user) {
+	public Optional<UserDAO> putUser(UserDAO user) {
 		init();
-		return users.createItem(user).getItem();
+		return Optional.of(users.createItem(user))
+				.filter(response -> response.getStatusCode() >= 200 && response.getStatusCode() < 300)
+				.map(CosmosItemResponse::getItem);
 	}
 	
 	@Override
@@ -207,22 +211,33 @@ public class CosmosDBLayer implements DBLayer {
 	}
 
 	@Override
-	public void storeCookie(String key, String value) {
+	public Optional<String> storeCookie(String key, String value) {
 		init();
-		cookies.upsertItem(new CookieDAO(key, value, Session.VALIDITY_SECONDS));
+		return Optional.of(cookies.upsertItem(new CookieDAO(key, value, Session.VALIDITY_SECONDS)))
+				.filter(res -> res.getStatusCode() >= 200 && res.getStatusCode() < 300)
+				.map(CosmosItemResponse::getItem)
+				.map(CookieDAO::getValue);
+
+
 	}
 
 	@Override
 	public Optional<String> getCookie(String key) {
 		init();
 		return cookies.queryItems("SELECT * FROM cookies WHERE cookies.id=\"" + key + "\"",
-				new CosmosQueryRequestOptions(), CookieDAO.class).stream().findAny().map(CookieDAO::getValue);
+				new CosmosQueryRequestOptions(), CookieDAO.class)
+				.stream()
+				.findAny()
+				.map(CookieDAO::getValue);
 	}
 
 	@Override
-	public void deleteCookie(String key) {
+	public boolean deleteCookie(String key) {
 		init();
-		getCookie(key).ifPresent(s -> cookies.deleteItem(s, new PartitionKey(s), new CosmosItemRequestOptions()));
+		return getCookie(key)
+				.map(s -> cookies.deleteItem(s, new PartitionKey(s), new CosmosItemRequestOptions()))
+				.filter(response -> response.getStatusCode() >= 200 && response.getStatusCode() < 300)
+				.isPresent();
 	}
 
 }

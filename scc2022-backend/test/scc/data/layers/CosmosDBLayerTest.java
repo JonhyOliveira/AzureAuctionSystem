@@ -1,20 +1,11 @@
 package scc.data.layers;
 
 import com.azure.cosmos.ConsistencyLevel;
-import com.azure.cosmos.CosmosClient;
 import com.azure.cosmos.CosmosClientBuilder;
 import com.azure.cosmos.CosmosDatabase;
-import com.azure.cosmos.implementation.apachecommons.text.translate.AggregateTranslator;
-import com.azure.cosmos.implementation.apachecommons.text.translate.UnicodeUnescaper;
-import com.azure.cosmos.models.CosmosContainerProperties;
-import com.azure.cosmos.models.CosmosDatabaseRequestOptions;
 import com.azure.cosmos.models.PartitionKey;
-import com.azure.cosmos.models.SqlQuerySpec;
-import org.apache.commons.lang3.StringEscapeUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
+import scc.data.layers.db.CosmosDBLayer;
 
 class CosmosDBLayerTest {
 

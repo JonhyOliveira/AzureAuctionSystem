@@ -2,6 +2,11 @@ package scc.data;
 
 import redis.clients.jedis.Jedis;
 import scc.data.layers.*;
+import scc.data.layers.db.DBLayer;
+import scc.data.layers.db.MongoDBLayer;
+import scc.data.layers.storage.File;
+import scc.data.layers.storage.FileSystemStorageLayer;
+import scc.data.layers.storage.StorageLayer;
 import scc.data.models.AuctionDAO;
 import scc.data.models.BidDAO;
 import scc.data.models.QuestionDAO;
@@ -10,7 +15,6 @@ import scc.data.models.UserDAO;
 import jakarta.ws.rs.core.NewCookie;
 import scc.session.Session;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -20,22 +24,10 @@ import java.util.stream.Collectors;
 public class DataProxy {
 
     private static final boolean USE_CACHE = !Boolean.parseBoolean(System.getenv("DISABLE_CACHE"));
-    private static final DBLayer dbLayer;
-
-    static {
-        try {
-            if (System.getenv().containsKey("DB_LAYER_CLASS"))
-                dbLayer = (DBLayer) Class.forName(System.getenv("DBLayerClass")).getDeclaredConstructor().newInstance();
-            else
-                dbLayer = null;
-        } catch (InvocationTargetException | InstantiationException | IllegalAccessException | NoSuchMethodException |
-                 ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
-    }
+    private static final DBLayer dbLayer = MongoDBLayer.getInstance();
+    private static final StorageLayer storageLayer = FileSystemStorageLayer.getInstance();
 
     private static final RedisCacheLayer cachingLayer = RedisCacheLayer.getInstance();
-    private static final BlobStorageLayer blobStorage = BlobStorageLayer.getInstance();
     private static final CognitiveSearchLayer searchLayer = CognitiveSearchLayer.getInstance();
 
     private static DataProxy instance;
@@ -56,7 +48,7 @@ public class DataProxy {
         if (dbLayer.getUserByNick(user.getNickname()).isPresent())
             return Optional.empty();
 
-        UserDAO u = dbLayer.putUser(new UserDAO(user));
+        UserDAO u = dbLayer.putUser(new UserDAO(user)).get();
 
         if (USE_CACHE)
             cachingLayer.putOnCache("u:" + u.getNickname(), u);
@@ -74,7 +66,7 @@ public class DataProxy {
     public Optional<User> updateUserInfo(String nickname, User newUser)
     {
         newUser.setNickname(nickname);
-        UserDAO u = dbLayer.updateUser(new UserDAO(newUser.hashPwd()));
+        UserDAO u = dbLayer.updateUser(new UserDAO(newUser.hashPwd())).get();
 
         if (USE_CACHE)
             cachingLayer.putOnCache("u:" + u.getNickname(), u, 60);
@@ -274,7 +266,7 @@ public class DataProxy {
      */
     public byte[] downloadImage(String imageID)
     {
-        return blobStorage.downloadBlob(imageID);
+        return storageLayer.downloadFile(imageID);
     }
 
     /**
@@ -284,7 +276,7 @@ public class DataProxy {
      */
     public boolean doesImageExist(String imageID)
     {
-        return blobStorage.blobExists(imageID);
+        return storageLayer.fileExists(imageID);
     }
 
     /**
@@ -293,15 +285,15 @@ public class DataProxy {
      * @param contents the contents of the file
      */
     public void uploadImage(String imageID, byte[] contents) {
-        blobStorage.createBlob(imageID, contents);
+        storageLayer.createFile(imageID, contents);
     }
 
     public void deleteImage(String imageID) {
-        blobStorage.deleteBlob(imageID);
+        storageLayer.deleteFile(imageID);
     }
 
     public List<String> listImages() {
-        return blobStorage.listImages().collect(Collectors.toList());
+        return storageLayer.listFiles().map(File::fileID).collect(Collectors.toList());
     }
 
     public void storeSession(NewCookie cookie, String nickname) {

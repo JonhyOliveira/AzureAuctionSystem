@@ -1,17 +1,13 @@
-package scc.data.layers;
+package scc.data.layers.storage;
 
 import com.azure.core.util.BinaryData;
 import com.azure.storage.blob.BlobClient;
 import com.azure.storage.blob.BlobContainerClient;
 import com.azure.storage.blob.BlobContainerClientBuilder;
-import com.azure.storage.blob.models.BlobItem;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Properties;
 import java.util.stream.Stream;
 
-public class BlobStorageLayer {
+public class BlobStorageLayer implements StorageLayer {
 
     private static BlobStorageLayer instance;
 
@@ -31,28 +27,33 @@ public class BlobStorageLayer {
                 .buildClient();
     }
 
-    public byte[] downloadBlob(String blobID)
+    @Override
+    public byte[] downloadFile(String fileID)
     {
-        BlobClient blob = containerClient.getBlobClient(blobID);
+        BlobClient blob = containerClient.getBlobClient(fileID);
         if (!blob.exists())
             return null;
 
         return blob.downloadContent().toBytes();
     }
 
-    public boolean blobExists(String blobID)
+    @Override
+    public boolean fileExists(String fileID)
     {
-        return containerClient.getBlobClient(blobID).exists();
+        return containerClient.getBlobClient(fileID).exists();
     }
 
-    public void createBlob(String blobID, byte[] data)
+    @Override
+    public void createFile(String fileID, byte[] data)
     {
-        containerClient.getBlobClient(blobID).upload(BinaryData.fromBytes(data));
+        containerClient.getBlobClient(fileID).upload(BinaryData.fromBytes(data));
     }
 
-    public Stream<String> listImages() {
-        return containerClient.listBlobs().stream().map(BlobItem::getName);
+    @Override
+    public Stream<File> listFiles() {
+        return containerClient.listBlobs().stream().map(File::fromBlob);
     }
 
-    public void deleteBlob(String blobID){ containerClient.getBlobClient(blobID).delete();}
+    @Override
+    public void deleteFile(String fileID){ containerClient.getBlobClient(fileID).delete();}
 }

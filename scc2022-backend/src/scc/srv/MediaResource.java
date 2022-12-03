@@ -2,18 +2,18 @@ package scc.srv;
 
 import jakarta.ws.rs.*;
 import scc.data.DataProxy;
-import scc.data.layers.BlobStorageLayer;
+import scc.data.layers.storage.BlobStorageLayer;
 import scc.utils.Hash;
 
 import jakarta.ws.rs.core.MediaType;
+
+import java.util.List;
 
 /**
  * Resource for managing media files, such as images.
  */
 @Path("/media")
 public class MediaResource {
-
-	static BlobStorageLayer blobStorage = BlobStorageLayer.getInstance();
 	private static final DataProxy dataProxy = DataProxy.getInstance();
 
 	public MediaResource() {}
@@ -61,7 +61,7 @@ public class MediaResource {
 	@GET
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON)
-	public String[] list() {
-		return dataProxy.listImages().toArray(new String[0]);
+	public List<String> list() {
+		return dataProxy.listImages();
 	}
 }

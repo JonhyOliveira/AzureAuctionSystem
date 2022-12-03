@@ -1,7 +1,7 @@
 package scc.session;
 
 public class Session {
-    public static final int VALIDITY_SECONDS = 3600;
+    public static final long VALIDITY_SECONDS = 3600L;
     public static final String COOKIE_NAME = "scc:session";
     private String nickname;
     private String cookieId;

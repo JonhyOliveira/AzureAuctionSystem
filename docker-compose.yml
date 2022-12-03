@@ -1,20 +1,45 @@
 version: '3.1'
 
 services:
-  mongo:
-    image: mongo
-    restart: always
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: 1234
-    ports:
-      - "27017:27017"
-  mongo-express:
+  mongo-manager:
     image: mongo-express
     restart: always
+    depends_on:
+      - mongo
     ports:
       - "8081:8081"
     environment:
       ME_CONFIG_MONGODB_ADMINUSERNAME: root
       ME_CONFIG_MONGODB_ADMINPASSWORD: example
       ME_CONFIG_MONGODB_URL: mongodb://root:1234@mongo:27017/
+  redis:
+    image: redis:6.2
+    environment:
+      ALLOW_EMPTY_PASSWORD: "yes"
+    expose:
+      - 6379
+  mongo:
+    image: mongo
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: 1234
+    volumes: # make db persist
+      - ./mongo-data:/data/db
+  web-app:
+    image: jfvoliveira2001/scc2022-backend:v2
+    restart: always
+    depends_on: # wait for mongo and redis to be ready
+      - mongo-manager
+      - redis
+    ports:
+      - "80:8080"
+    environment:
+      REDIS_HOSTNAME: redis
+      # REDIS_KEY:
+      REDIS_PORT: 6379
+      DB_CONNSTRING: mongodb://root:1234@mongo:27017/
+      DB_NAME: scc2022-project-db
+      BLOBSTORE_CONNSTRING: /var/blobstore
+    volumes: # FileSystem blob store location
+      - ./blobstore:/var/blobstore

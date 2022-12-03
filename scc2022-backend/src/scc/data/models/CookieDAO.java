@@ -1,26 +1,24 @@
 package scc.data.models;
 
-public final class CookieDAO {
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-    private String id;
+@JsonIgnoreProperties(ignoreUnknown = true)
+public final class CookieDAO extends BaseDAO {
     private String value;
-    private Integer ttl;
 
     public CookieDAO()
     {
-
     }
 
     public CookieDAO(String id, String value)
     {
-        this(id, value, -1);
+        this(id, value, null);
     }
 
-    public CookieDAO(String id, String value, Integer ttl)
+    public CookieDAO(String id, String value, Long ttl)
     {
-        this.id = id;
+        super(id, ttl);
         this.value = value;
-        this.ttl = ttl;
     }
 
     public String getId() {
@@ -37,13 +35,5 @@ public final class CookieDAO {
 
     public void setValue(String value) {
         this.value = value;
-    }
-
-    public Integer getTtl() {
-        return ttl;
-    }
-
-    public void setTtl(Integer ttl) {
-        this.ttl = ttl;
     }
 }
