@@ -125,55 +125,105 @@ public class MongoDBLayer implements DBLayer {
     @Override
     public Stream<UserDAO> getUsers() {
         init();
-        return null;
+        return users.find().map(Document::toJson).map(s -> {
+            try {
+                return mapper.readValue(s, UserDAO.class);
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException(e);
+            }
+        }).toStream();
     }
 
     @Override
     public Optional<AuctionDAO> getAuctionByID(String auctionID) {
         init();
-        return Optional.empty();
+        return Optional.of(auctions.find(Filters.eq("_id", auctionID)))
+                .map(documents -> documents.limit(1).iterator())
+                .filter(MongoCursor::hasNext)
+                .map(MongoCursor::next)
+                .map(Document::toJson)
+                .map(s -> {
+                    try {
+                        return mapper.readValue(s, AuctionDAO.class);
+                    } catch (JsonProcessingException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
     }
 
     @Override
     public Optional<AuctionDAO> putAuction(AuctionDAO auction) {
         init();
-        return Optional.empty();
+        try {
+            auctions.insertOne(Document.parse(mapper.writeValueAsString(auction)));
+            return Optional.of(auction);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
     public Optional<AuctionDAO> updateAuction(AuctionDAO auction) {
         init();
-        return Optional.empty();
+        try {
+            auctions.replaceOne(Filters.eq("_id", auction.getAuctionID()),
+                    Document.parse(mapper.writeValueAsString(auction)));
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
     public boolean delAuctionByID(String auctionID, String owner_nickname) {
         init();
-        return false;
+        return Objects.nonNull(auctions.findOneAndDelete(Filters.and(Filters.eq("_id", auctionID), Filters.eq("owner_nickname", owner_nickname))));
     }
 
     @Override
     public Stream<BidDAO> getBidsByAuctionID(String auctionID) {
         init();
-        return null;
+        return bids.find(Filters.eq("auctionID", auctionID)).map(Document::toJson).map(s -> {
+            try {
+                return mapper.readValue(s, BidDAO.class);
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException(e);
+            }
+        }).toStream();
     }
 
     @Override
     public Stream<BidDAO> getTopBidsByAuctionID(String auctionID, Long n) {
         init();
-        return null;
+        return bids.find(Filters.eq("auctionID", auctionID)).sort(Sorts.descending("amount")).limit(n.intValue()).map(Document::toJson).map(s -> {
+            try {
+                return mapper.readValue(s, BidDAO.class);
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException(e);
+            }
+        }).toStream();
     }
 
     @Override
     public Optional<BidDAO> putBid(BidDAO bid) {
         init();
-        return Optional.empty();
+        try {
+            bids.insertOne(Document.parse(mapper.writeValueAsString(bid)));
+            return Optional.of(bid);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
     public Stream<QuestionDAO> getQuestionsByAuctionID(String auctionID) {
         init();
-        return null;
+        return questions.find(Filters.eq("auctionID", auctionID)).map(Document::toJson).map(s -> {
+            try {
+                return mapper.readValue(s, QuestionDAO.class);
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException(e);
+            }
+        }).toStream();
     }
 
     @Override
