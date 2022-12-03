@@ -165,12 +165,15 @@ public class MongoDBLayer implements DBLayer {
     @Override
     public Optional<AuctionDAO> updateAuction(AuctionDAO auction) {
         init();
-        try {
-            auctions.replaceOne(Filters.eq("_id", auction.getAuctionID()),
-                    Document.parse(mapper.writeValueAsString(auction)));
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
+        return Optional.of(auctions.findOneAndReplace(Filters.eq("_id", auction.getAuctionID()), Document.parse(mapper.writeValueAsString(auction))))
+                .map(Document::toJson)
+                .map(s -> {
+                    try {
+                        return mapper.readValue(s, AuctionDAO.class);
+                    } catch (JsonProcessingException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
     }
 
     @Override
@@ -206,12 +209,13 @@ public class MongoDBLayer implements DBLayer {
     @Override
     public Optional<BidDAO> putBid(BidDAO bid) {
         init();
-        try {
-            bids.insertOne(Document.parse(mapper.writeValueAsString(bid)));
-            return Optional.of(bid);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
+        return Optional.of(bids.insertOne(Document.parse(mapper.writeValueAsString(bid))))
+                .map(InsertOneResult::getInsertedId)
+                .map(ObjectId::toHexString)
+                .map(id -> {
+                    bid.setBidID(id);
+                    return bid;
+                });
     }
 
     @Override
@@ -229,7 +233,13 @@ public class MongoDBLayer implements DBLayer {
     @Override
     public Stream<AuctionDAO> getAuctionsByUser(String nickname) {
         init();
-        return null;
+        return auctions.find(Filters.eq("owner_nickname", nickname)).map(Document::toJson).map(s -> {
+            try {
+                return mapper.readValue(s, AuctionDAO.class);
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException(e);
+            }
+        }).toStream();
     }
 
     @Override
