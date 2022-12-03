@@ -125,13 +125,7 @@ public class MongoDBLayer implements DBLayer {
     @Override
     public Stream<UserDAO> getUsers() {
         init();
-        return users.find().map(Document::toJson).map(s -> {
-            try {
-                return mapper.readValue(s, UserDAO.class);
-            } catch (JsonProcessingException e) {
-                throw new RuntimeException(e);
-            }
-        }).toStream();
+        return null;
     }
 
     @Override
@@ -149,15 +143,7 @@ public class MongoDBLayer implements DBLayer {
     @Override
     public Optional<AuctionDAO> updateAuction(AuctionDAO auction) {
         init();
-        return Optional.ofNullable(auctions.findOneAndReplace(Filters.eq("_id", auction.getId()), Document.parse(mapper.writeValueAsString(auction))))
-                .map(Document::toJson)
-                .map(s -> {
-                    try {
-                        return mapper.readValue(s, AuctionDAO.class);
-                    } catch (JsonProcessingException e) {
-                        throw new RuntimeException(e);
-                    }
-                });
+        return Optional.empty();
     }
 
     @Override
@@ -182,7 +168,6 @@ public class MongoDBLayer implements DBLayer {
     public Optional<BidDAO> putBid(BidDAO bid) {
         init();
         return Optional.empty();
-        
     }
 
     @Override
