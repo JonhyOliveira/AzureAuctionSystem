@@ -6,14 +6,17 @@ import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 import redis.clients.jedis.params.SetParams;
+import scc.data.layers.db.MongoDBLayer;
 
 import java.util.Optional;
+import java.util.logging.Logger;
 
 public class RedisCacheLayer {
 
 	private static final String REDIS_HOSTNAME = System.getenv("REDIS_HOSTNAME");
 	private static final String REDIS_KEY = System.getenv("REDIS_KEY");
 	private static final Integer REDIS_PORT = Integer.parseInt(System.getenv("REDIS_PORT"));
+	private static final Logger logger = Logger.getLogger(RedisCacheLayer.class.getName());
 	private static long DEFAULT_EXPIRATION = 3600;  //  TIME FOR AN OBJECT TO EXPIRE FROM CACHE
 
 	private static final ObjectMapper mapper = new ObjectMapper();
@@ -33,7 +36,7 @@ public class RedisCacheLayer {
 		poolConfig.setNumTestsPerEvictionRun(3);
 		poolConfig.setBlockWhenExhausted(true);
 		pool = new JedisPool(poolConfig, REDIS_HOSTNAME, REDIS_PORT, 1000, REDIS_KEY, false);
-
+		logger.warning("Connected.");
 		return pool;
 	}
 

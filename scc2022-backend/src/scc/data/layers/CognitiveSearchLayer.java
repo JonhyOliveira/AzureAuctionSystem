@@ -8,7 +8,7 @@ import scc.data.models.AuctionDAO;
 import java.util.Objects;
 import java.util.stream.Stream;
 
-public class CognitiveSearchLayer {
+public class CognitiveSearchLayer implements SearchLayer {
 
     private static final String AUCTIONS_INDEX = "cosmosdb-auction-index";
 
@@ -32,6 +32,7 @@ public class CognitiveSearchLayer {
         return instance;
     }
 
+    @Override
     public Stream<AuctionDAO> findAuction(String queryText)
     {
         return getClient().search(queryText).stream().map(searchResult -> searchResult.getDocument(AuctionDAO.class));

@@ -1,6 +1,7 @@
 package scc.data.layers.storage;
 
 import jakarta.ws.rs.NotAuthorizedException;
+import scc.data.layers.db.MongoDBLayer;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -15,6 +16,7 @@ import java.util.stream.StreamSupport;
 
 public class FileSystemStorageLayer implements StorageLayer {
 
+    private static final Logger logger = Logger.getLogger(FileSystemStorageLayer.class.getName());
     private static FileSystemStorageLayer instance;
 
     public static FileSystemStorageLayer getInstance() {
@@ -35,6 +37,8 @@ public class FileSystemStorageLayer implements StorageLayer {
         }
         if (!directory.isDirectory())
             throw new IllegalArgumentException("Path must specify a directory");
+
+        logger.warning("Connected.");
     }
 
     @Override
@@ -48,7 +52,6 @@ public class FileSystemStorageLayer implements StorageLayer {
 
     @Override
     public boolean fileExists(String fileID) {
-        Logger.getAnonymousLogger().warning(new java.io.File(directory, fileID).toString());
         return new java.io.File(directory, fileID).exists();
     }
 

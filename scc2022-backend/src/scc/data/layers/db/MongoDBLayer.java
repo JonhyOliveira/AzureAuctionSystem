@@ -8,6 +8,7 @@ import com.mongodb.client.model.ReplaceOptions;
 import com.mongodb.client.model.Sorts;
 
 import org.bson.Document;
+import scc.data.layers.SearchLayer;
 import scc.data.models.*;
 import scc.session.Session;
 
@@ -18,7 +19,7 @@ import java.util.logging.Logger;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-public class MongoDBLayer implements DBLayer {
+public class MongoDBLayer implements DBLayer, SearchLayer {
     private static MongoDBLayer instance;
     private static final ObjectMapper mapper = new ObjectMapper();
     private static final Logger logger = Logger.getLogger(MongoDBLayer.class.getName());
@@ -40,6 +41,7 @@ public class MongoDBLayer implements DBLayer {
     public MongoDBLayer(MongoClient client)
     {
         this.client = client;
+        logger.warning("Connected.");
     }
 
     private synchronized void init() {
@@ -47,7 +49,6 @@ public class MongoDBLayer implements DBLayer {
             return;
 
         db = client.getDatabase(System.getenv("DB_NAME"));
-        logger.info("Connected");
         users = db.getCollection("users");
         auctions = db.getCollection("auctions");
         bids = db.getCollection("bids");
@@ -243,7 +244,7 @@ public class MongoDBLayer implements DBLayer {
                     try {
                         return mapper.readValue(s, AuctionDAO.class);
                     } catch (JsonProcessingException e) {
-                        throw new RuntimeException(e);
+                        return null;
                     }
                 })
                 .filter(Objects::nonNull);
@@ -342,5 +343,20 @@ public class MongoDBLayer implements DBLayer {
     public boolean deleteCookie(String key) {
         init();
         return cookies.deleteOne(Filters.eq(CookieDAO.ID, key)).getDeletedCount() > 0;
+    }
+
+    @Override
+    public Stream<AuctionDAO> findAuction(String queryText) {
+        init();
+        return StreamSupport.stream(auctions.find(Filters.or(Filters.regex(AuctionDAO.Description, queryText),
+                        Filters.regex(AuctionDAO.Title, queryText))).map(Document::toJson).spliterator(), false)
+                .map(s -> {
+                    try {
+                        return mapper.readValue(s, AuctionDAO.class);
+                    } catch (JsonProcessingException e) {
+                        return null;
+                    }
+                })
+                .filter(Objects::nonNull);
     }
 }

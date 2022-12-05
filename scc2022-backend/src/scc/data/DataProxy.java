@@ -24,11 +24,18 @@ import java.util.stream.Collectors;
 public class DataProxy {
 
     private static final boolean USE_CACHE = !Boolean.parseBoolean(System.getenv("DISABLE_CACHE"));
-    private static final DBLayer dbLayer = MongoDBLayer.getInstance();
+    private static final DBLayer dbLayer;
     private static final StorageLayer storageLayer = FileSystemStorageLayer.getInstance();
 
     private static final RedisCacheLayer cachingLayer = RedisCacheLayer.getInstance();
-    private static final CognitiveSearchLayer searchLayer = CognitiveSearchLayer.getInstance();
+    private static final SearchLayer searchLayer;
+
+    static {
+        MongoDBLayer mongoDBLayer = MongoDBLayer.getInstance();
+
+        dbLayer = mongoDBLayer;
+        searchLayer = mongoDBLayer;
+    }
 
     private static DataProxy instance;
 

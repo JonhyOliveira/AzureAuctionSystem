@@ -8,7 +8,10 @@ import scc.data.Auction;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public final class AuctionDAO extends BaseDAO {
 
-    public static final String OwnerKey = "owner_nickname", EndKey = "end_time";
+    public static final String OwnerKey = "owner_nickname",
+            EndKey = "end_time",
+            Description = "description",
+            Title = "title";
 
     private String title;
     private String description;
