@@ -1,22 +1,22 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: image-store
+    name: image-store
 spec:
-  accessModes:
-    - ReadWriteMany
-  storageClassName: azurefile
-  resources:
-    requests:
-      storage: 5Gi
+    accessModes:
+        - ReadWriteMany
+    storageClassName: azurefile
+    resources:
+        requests:
+            storage: 5Gi
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: mongo-mount
+    name: mongo-mount
 spec:
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 1Gi
+    accessModes:
+        - ReadWriteOnce
+    resources:
+        requests:
+            storage: 1Gi
