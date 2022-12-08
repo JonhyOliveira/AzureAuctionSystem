@@ -1,5 +1,5 @@
 config:
-  target: 'https://scc2223-backend-northeu.azurewebsites.net/rest'
+  target: 'http://localhost/rest'
   http:
     timeout: 10
   plugins:
@@ -31,7 +31,7 @@ scenarios:
         - function: "genQueryTerm"    # 1. generate a random search term
         - get:                        # 2. get the results of the search
             name: "GET:/auction?query=*"
-            url: "/auction?query=\"{{ query }}\""
+            url: "/auction?query={{ query }}"
             capture:
               - json: $
                 as: "auctionsLst"

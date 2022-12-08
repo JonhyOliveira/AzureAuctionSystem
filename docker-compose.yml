@@ -10,16 +10,16 @@ services:
       - "8081:8081"
     environment:
       ME_CONFIG_MONGODB_ADMINUSERNAME: root
-      ME_CONFIG_MONGODB_ADMINPASSWORD: example
+      ME_CONFIG_MONGODB_ADMINPASSWORD: 1234
       ME_CONFIG_MONGODB_URL: mongodb://root:1234@mongo:27017/
   redis:
     image: redis:6.2
-    environment:
+    environment: # login with no password
       ALLOW_EMPTY_PASSWORD: "yes"
     expose:
       - 6379
   mongo:
-    image: mongo
+    image: mongo:6.03
     restart: always
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
@@ -27,7 +27,7 @@ services:
     volumes: # make db persist
       - ./mongo-data:/data/db
   web-app:
-    image: jfvoliveira2001/scc2022-backend:v2
+    image: jfvoliveira2001/scc2022-backend:v3
     restart: always
     depends_on: # wait for mongo and redis to be ready
       - mongo-manager
