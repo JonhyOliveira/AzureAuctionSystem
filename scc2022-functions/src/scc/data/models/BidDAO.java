@@ -8,7 +8,7 @@ import java.util.Objects;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public final class BidDAO extends BaseDAO {
 
-    public static final String AuctionID = "auction_id", Amount = "amount";
+    public static final String AuctionID = "auction_id", Bidder = "bidder_nickname", Amount = "amount";
     @JsonProperty(AuctionID)
     private String auctionID;
     private String bidder;

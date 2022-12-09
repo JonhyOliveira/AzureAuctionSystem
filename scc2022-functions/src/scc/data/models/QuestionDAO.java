@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public final class QuestionDAO extends BaseDAO {
 
-    public static final String AuctionID = "auction_id";
+    public static final String AuctionID = "auction_id", Questioner = "questioner_id";
     @JsonProperty(AuctionID)
     private String auctionID;
     private String questioner;
@@ -33,6 +33,7 @@ public final class QuestionDAO extends BaseDAO {
     }
 
     @SuppressWarnings("UnusedDeclaration")
+    @JsonProperty("questioner_id")
     public String getQuestioner(){
         return questioner;
     }
