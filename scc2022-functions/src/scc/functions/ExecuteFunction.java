@@ -8,11 +8,14 @@ import org.reflections.scanners.SubTypesScanner;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
 import java.util.Arrays;
 import java.util.Map;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class ExecuteFunction {
 
@@ -35,14 +38,27 @@ public class ExecuteFunction {
                         .anyMatch(parameter -> parameter.isAnnotationPresent(TimerTrigger.class)))
                 .collect(Collectors.toMap(method -> method.getAnnotation(FunctionName.class).value(), method -> method));
 
-        /* show available functions /
-        logger.info("Available functions:\n" + functions.entrySet().stream()
-                .map(stringMethodEntry -> String.format("%s ->\t%s.%s", stringMethodEntry.getKey(),
-                        stringMethodEntry.getValue().getDeclaringClass().getName(), stringMethodEntry.getValue().getName()))
-                .collect(Collectors.joining("\n"))); /* */
-
         if (args.length != 1 || !functions.containsKey(args[0])) {
             System.out.println("Incorrect argument. Provided argument should be one of " + functions.keySet() + ".");
+            /* show found functions details *
+            System.out.println("Available timer triggered functions:\n"
+                    + String.format("%20s | %-70s | %15s\n", "Function Name", "Path", "Schedule")
+                    + String.format("%20s | %-70s | %15s\n", "", "", "")
+                    + functions.entrySet().stream()
+                    .map(stringMethodEntry -> String.format("%20s | %-70s | %15s", stringMethodEntry.getKey(),
+                            stringMethodEntry.getValue().getDeclaringClass().getName() + "." + stringMethodEntry.getValue().getName(),
+                            Arrays.stream(stringMethodEntry.getValue().getParameterAnnotations())
+                                    .flatMap(Arrays::stream)
+                                    .map(annotation -> {
+                                        if (annotation.annotationType().equals(TimerTrigger.class)) {
+                                            return ((TimerTrigger) annotation).schedule();
+                                        }
+                                        else
+                                            return null;
+                                    })
+                                    .filter(Objects::nonNull)
+                                    .collect(Collectors.joining())))
+                    .collect(Collectors.joining("\n"))); /* */
             System.exit(1);
         }
 
