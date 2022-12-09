@@ -33,3 +33,4 @@ spec:
         app: redis
     ports:
         - port: 6379
+          name: redis

@@ -16,7 +16,7 @@ spec:
                 "kubernetes.io/os": linux
             containers:
                 - name: mongo
-                  image: mongo
+                  image: mongo:6.0.3
                   env:
                       - name: MONGO_INITDB_ROOT_USERNAME
                         value: root
@@ -24,7 +24,6 @@ spec:
                         value: root
                   ports:
                       - containerPort: 27017
-                        name: mongo
                   volumeMounts:
                       - mountPath: /data/db
                         name: db-store
@@ -43,3 +42,4 @@ spec:
         app: mongo
     ports:
         - port: 27017
+          name: mongo

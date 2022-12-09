@@ -3,14 +3,12 @@ kind: Deployment
 metadata:
     name: web-app
 spec:
-    replicas: 1
+    replicas: 1 # start with a single replica
     selector:
         matchLabels:
             app: web-app
     template:
         metadata:
-            annotations:
-                linkerd.io/inject: enabled
             labels:
                 app: web-app
         spec:
@@ -21,6 +19,7 @@ spec:
                   image: jfvoliveira2001/scc2022-backend:v3
                   ports:
                       - containerPort: 8080
+                        name: http
                   env:
                       - name: REDIS_HOSTNAME
                         value: redis
@@ -42,13 +41,13 @@ spec:
                       limits:
                           cpu: 2000m
                           memory: 2000Mi
-            initContainers:
+            initContainers: # waits for necessary services to be available
                 - name: wait-redis
                   image: busybox:1.28
-                  command: [ 'sh', '-c', 'until nslookup redis; sleep 2; done' ]
+                  command: [ 'sh', '-c', "until nslookup redis; do sleep 2; done;" ]
                 - name: wait-mongo
                   image: busybox:1.28
-                  command: [ 'sh', '-c', 'until nslookup mongo; sleep 2; done' ]
+                  command: [ 'sh', '-c', "until nslookup redis; do sleep 2; done;" ]
             volumes:
                 - name: blob-store-volume
                   persistentVolumeClaim:
@@ -59,14 +58,16 @@ kind: Service
 metadata:
     name: web-app
 spec:
-    type: LoadBalancer
+    type: LoadBalancer # expose service
     selector:
         app: web-app
     ports:
         - protocol: TCP
+          name: http
           targetPort: 8080
           port: 80
 ---
+# scales number of pods automatically
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
@@ -77,8 +78,8 @@ spec:
         kind: Deployment
         name: web-app
     minReplicas: 1
-    maxReplicas: 10
-    metrics:
+    maxReplicas: 5
+    metrics: # average resource targets
         - type: Resource
           resource:
               name: cpu

@@ -1,3 +1,4 @@
+# volume claim for web-app image store
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
@@ -5,11 +6,13 @@ metadata:
 spec:
     accessModes:
         - ReadWriteMany
+    # multiple instances can be active
     storageClassName: azurefile
     resources:
         requests:
             storage: 5Gi
 ---
+# volume claim for mongoDB
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:

@@ -1,0 +1,506 @@
+GET http://20.93.169.73/rest/media/BF4055783826EE43CCA17094C73908BB5B2C6F36
+Accept: application/octet-stream
+
+<> 2022-12-09T141616.200.octet-stream
+
+###
+
+GET http://20.93.169.73/rest/media/BF4055783826EE43CCA17094C73908BB5B2C6F36
+Accept: application/octet-stream
+
+<> 2022-12-09T141611.200.octet-stream
+
+###
+
+GET http://20.93.169.73/rest/media/BF4055783826EE43CCA17094C73908BB5B2C6F36
+
+<> 2022-12-09T141310.200.octet-stream
+
+###
+
+GET http://20.93.169.73/rest/media/BF4055783826EE43CCA17094C73908BB5B2C6F36
+
+<> 2022-12-09T141234.200.octet-stream
+
+###
+
+POST http://20.93.169.73/rest/media/
+Content-Type: application/octet-stream
+
+Olaola
+
+<> 2022-12-09T141153.200.txt
+
+###
+
+GET http://localhost/rest/auction?query=Nagasaki
+
+<> 2022-12-04T171039.200.json
+
+###
+
+GET http://localhost/rest/auction?query=/Nagasaki/
+
+<> 2022-12-04T171031.200.json
+
+###
+
+GET http://localhost/rest/auction?query=/Nagasaki/
+
+<> 2022-12-04T171028.200.json
+
+###
+
+GET http://localhost/rest/auction?query="Nagasaki"
+
+<> 2022-12-04T170957.200.json
+
+###
+
+GET http://localhost/rest/auction?query="Nagasaki"
+
+<> 2022-12-04T170918.500.txt
+
+###
+
+GET http://localhost/rest/auction?query="Nagasaki"
+
+<> 2022-12-04T170556.500.txt
+
+###
+
+POST http://localhost/rest/auction
+Content-Type: application/json
+
+{
+  "title": "teste",
+  "description": "teste",
+  "owner_nickname": "joao oladsiv",
+  "image_id": "F1E94BD8B44740BE47ACBEBEC2E3DF5B7E9197A9",
+  "end_time": 1763895069200,
+  "min_price": 1279,
+  "closed": false
+}
+
+<> 2022-12-03T145913.200.json
+
+###
+
+POST http://localhost/rest/user/auth
+Content-Type: application/json
+
+{
+  "nickname": "joao oladsiv",
+  "pwd": "1234"
+}
+
+###
+
+POST http://localhost/rest/user/auth
+Content-Type: application/json
+
+{
+  "nickname": "joao oladsiv",
+  "pwd": "1234"
+}
+
+###
+
+POST http://localhost/rest/user/auth
+Content-Type: application/json
+
+{
+  "nickname": "joao oladsiv",
+  "pwd": "1234"
+}
+
+###
+
+POST http://localhost/rest/user/auth
+Content-Type: application/json
+
+{
+  "nickname": "joao oladsiv",
+  "pwd": "1234"
+}
+
+<> 2022-12-03T145736.500.txt
+
+###
+
+POST http://localhost/rest/auction
+Content-Type: application/json
+
+{
+  "title": "teste",
+  "description": "teste",
+  "owner_nickname": "joao oladsiv",
+  "image_id": "F1E94BD8B44740BE47ACBEBEC2E3DF5B7E9197A9",
+  "end_time": 1763895069200,
+  "min_price": 1279,
+  "closed": false
+}
+
+<> 2022-12-03T131713.200.json
+
+###
+
+POST http://localhost/rest/auction
+Content-Type: application/json
+
+{
+  "title": "teste",
+  "description": "teste",
+  "owner_nickname": "joao oliv",
+  "image_id": "F1E94BD8B44740BE47ACBEBEC2E3DF5B7E9197A9",
+  "end_time": 1763895069200,
+  "min_price": 1279,
+  "closed": false
+}
+
+<> 2022-12-03T131700.400.txt
+
+###
+
+POST http://localhost/rest/user/auth
+Content-Type: application/json
+
+{
+  "nickname": "joao oladsiv",
+  "pwd": "1234"
+}
+
+###
+
+POST http://localhost/rest/user/auth
+Content-Type: application/json
+
+{
+  "nickname": "joao oladsiv",
+  "pwd": "1234"
+}
+
+###
+
+POST http://localhost/rest/user/auth
+Content-Type: application/json
+
+{
+  "nickname": "joao oladsiv",
+  "pwd": "1234"
+}
+
+###
+
+POST http://localhost/rest/user/
+Content-Type: application/json
+
+{
+  "nickname": "joao oladsiv",
+  "name": "joao",
+  "image_id": "DA39A3EE5E6B4B0D3255BFEF95601890AFD80709",
+  "pwd": "1234"
+}
+
+<> 2022-12-03T131620.200.json
+
+###
+
+POST http://localhost/rest/media/
+
+<> 2022-12-03T131608.200.txt
+
+###
+
+POST http://localhost/rest/user/auth
+Content-Type: application/json
+
+{
+  "nickname": "joao",
+  "pwd": "1234"
+}
+
+###
+
+POST http://localhost/rest/user/auth
+Content-Type: application/json
+
+{
+  "nickname": "joao",
+  "pwd": "1234"
+}
+
+###
+
+POST http://localhost/rest/user/auth
+Content-Type: application/json
+
+{
+  "nickname": "joao",
+  "pwd": "1234"
+}
+
+<> 2022-12-03T130452.500.txt
+
+###
+
+POST http://localhost/rest/user/auth
+Content-Type: application/json
+
+{
+  "nickname": "joao",
+  "pwd": "1234"
+}
+
+###
+
+POST http://localhost/rest/user/auth
+Content-Type: application/json
+
+{
+  "nickname": "joao",
+  "pwd": "1234"
+}
+
+###
+
+POST http://localhost/rest/user/auth
+Content-Type: application/json
+
+{
+  "nickname": "joao",
+  "pwd": "1234"
+}
+
+###
+
+POST http://localhost/rest/user/auth
+Content-Type: application/json
+
+{
+  "nickname": "joao",
+  "pwd": "1234"
+}
+
+###
+
+POST http://localhost/rest/user/auth
+Content-Type: application/json
+
+{
+  "nickname": "joao",
+  "pwd": "1234"
+}
+
+<> 2022-12-03T114734.500.txt
+
+###
+
+POST http://localhost/rest/user/auth
+Content-Type: application/json
+
+{
+  "nickname": "joao",
+  "pwd": "1234"
+}
+
+###
+
+POST http://localhost/rest/user/auth
+Content-Type: application/json
+
+{
+  "nickname": "joao",
+  "password": "1234"
+}
+
+<> 2022-12-03T114655.400.html
+
+###
+
+POST http://localhost/rest/user
+Content-Type: application/json
+
+{
+  "nickname": "joao",
+  "name": "Joao Oliveira",
+  "pwd": "1234",
+  "image_id": "9C936AC624D4ADF44A530C0F43775BAF2BC70A5"
+}
+
+<> 2022-12-03T114519.200.json
+
+###
+
+POST http://localhost/rest/media/
+Content-Type: application/octet-stream
+
+123123OlaoLa
+
+<> 2022-12-03T114511.200.txt
+
+###
+
+POST http://localhost/rest/user
+Content-Type: application/json
+
+{
+  "nickname": "joao",
+  "name": "Joao Oliveira",
+  "pwd": "1234",
+  "image_id": "pixtoa"
+}
+
+<> 2022-12-03T114441.404.txt
+
+###
+
+POST http://localhost/rest/user
+Content-Type: application/json
+
+{
+  "nickname": "joao",
+  "name": "Joao Oliveira",
+  "pwd": "1234",
+  "image_id": "pixtoa"
+}
+
+<> 2022-12-02T172410.200.json
+
+###
+
+POST http://localhost/rest/user
+Content-Type: application/json
+
+{
+  "nickname": "joao",
+  "name": "Joao Oliveira",
+  "pwd": "1234",
+  "image_id": "pixtoa"
+}
+
+<> 2022-12-02T172013.500.txt
+
+###
+
+POST http://localhost/rest/media
+Content-Type: application/octet-stream
+
+12345xx66
+
+<> 2022-12-02T171624.200.txt
+
+###
+
+POST http://localhost/rest/user
+Content-Type: application/json
+
+{
+  "nickname": "joao",
+  "name": "Joao Oliveira",
+  "pwd": "1234",
+  "image_id": "pixota"
+}
+
+<> 2022-12-02T171237.404.txt
+
+###
+
+POST http://localhost/rest/user
+Content-Type: application/json
+
+{
+  "nickname": "joao",
+  "name": "Joao Oliveira",
+  "pwd": "1234",
+  "image_id": "pixota"
+}
+
+<> 2022-12-02T170951.404.txt
+
+###
+
+POST http://localhost/rest/user
+Content-Type: application/json
+
+{
+  "nickname": "joao",
+  "name": "Joao Oliveira",
+  "pwd": "1234",
+  "image_id": "pixota"
+}
+
+<> 2022-12-02T170844.500.txt
+
+###
+
+POST http://localhost/rest/user
+Content-Type: application/json
+
+{
+  "nickname": "joao",
+  "name": "Joao Oliveira",
+  "pwd": "1234",
+  "image_id": "pixota"
+}
+
+<> 2022-12-02T170717.500.txt
+
+###
+
+POST http://localhost/rest/user
+Content-Type: application/json
+
+{
+  "nickname": "joao",
+  "name": "Joao Oliveira",
+  "pwd": "1234",
+  "image_id": "pixota"
+}
+
+<> 2022-12-02T170703.500.txt
+
+###
+
+POST http://localhost/rest/media
+Content-Type: application/octet-stream
+
+12345xx66
+
+<> 2022-12-02T163543.200.txt
+
+###
+
+POST http://localhost/rest/media
+Accept: application/octet-stream
+
+12345xx66
+
+<> 2022-12-02T163533.406.txt
+
+###
+
+GET https://scc-backend-58001-52949-57797.azurewebsites.net/rest/ctrl/version
+
+<> 2022-11-21T233641.200.txt
+
+###
+
+GET https://scc-backend-58001-52949-57797.azurewebsites.net/rest/ctrl/version
+
+<> 2022-11-21T231656.200.txt
+
+###
+
+GET https://scc-backend-58001-52949-57797.azurewebsites.net/rest/ctrl/version
+
+<> 2022-11-21T231653.200.txt
+
+###
+
+GET https://scc-backend-58001-52949-57797.azurewebsites.net/rest/ctrl/version
+
+<> 2022-11-21T231643.200.txt
+
+###
+
