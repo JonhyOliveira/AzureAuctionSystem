@@ -36,10 +36,10 @@ spec:
                         name: blob-store-volume
                   resources:
                       requests:
-                          cpu: 1000m
+                          cpu: 1.0
                           memory: 1000Mi
                       limits:
-                          cpu: 2000m
+                          cpu: 2.0
                           memory: 2000Mi
             initContainers: # waits for necessary services to be available
                 - name: wait-redis

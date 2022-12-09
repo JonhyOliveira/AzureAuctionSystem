@@ -1,0 +1,109 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+    name: clean_dangling_images
+    type: garbage-collect
+spec:
+    schedule: "30 03 * * *" # every day in the middle of the night (3h30)
+    jobTemplate:
+        spec:
+            template:
+                spec:
+                    containers:
+                        - name: gc-dangling_images
+                          image: jfvoliveira2001/scc2022-functions:latest
+                          imagePullPolicy: IfNotPresent
+                          command:
+                              - GCDanglingImages
+                          env:
+                              - name: DB_CONNSTRING
+                                value: "mongodb://root:root@mongo:27017/"
+                              - name: DB_NAME
+                                value: scc2022-project-db
+                              - name: BLOBSTORE_CONNSTRING
+                                value: /var/blobstore
+                          volumeMounts:
+                              - mountPath: /var/blobstore
+                                name: blob-store-volume
+                          resources:
+                              requests:
+                                  cpu: 100m
+                                  memory: 500Mi
+                              limits:
+                                  cpu: 300m
+                                  memory: 750Mi
+                    volumes:
+                        -   name: blob-store-volume
+                            persistentVolumeClaim:
+                                claimName: image-store
+                    restartPolicy: OnFailure
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+    name: remove_users
+    type: garbage-collect
+spec:
+    schedule: "*/10 * * * *" # every 10 minutes
+    jobTemplate:
+        spec:
+            template:
+                spec:
+                    containers:
+                        - name: gc-remove_users
+                          image: jfvoliveira2001/scc2022-functions:latest
+                          imagePullPolicy: IfNotPresent
+                          command:
+                              - GCRemoveUsers
+                          env:
+                              - name: REDIS_HOSTNAME
+                                value: redis
+                              - name: REDIS_PORT
+                                value: "6379"
+                              - name: DB_CONNSTRING
+                                value: "mongodb://root:root@mongo:27017/"
+                              - name: DB_NAME
+                                value: scc2022-project-db
+                          resources:
+                              requests:
+                                  cpu: 100m
+                                  memory: 500Mi
+                              limits:
+                                  cpu: 300m
+                                  memory: 750Mi
+                    restartPolicy: OnFailure
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+    name: close_auctions
+    type: consistency
+spec:
+    schedule: "*/2 * * * *" # every two minutes
+    jobTemplate:
+        spec:
+            template:
+                spec:
+                    containers:
+                        - name: auction_closer
+                          image: jfvoliveira2001/scc2022-functions:latest
+                          imagePullPolicy: IfNotPresent
+                          command:
+                              - CloseAuctions
+                          env:
+                              - name: DB_CONNSTRING
+                                value: "mongodb://root:root@mongo:27017/"
+                              - name: DB_NAME
+                                value: scc2022-project-db
+                          resources:
+                              requests:
+                                  cpu: 100m
+                                  memory: 500Mi
+                              limits:
+                                  cpu: 300m
+                                  memory: 750Mi
+                    volumes:
+                        -   name: blob-store-volume
+                            persistentVolumeClaim:
+                                claimName: image-store
+                    restartPolicy: OnFailure
