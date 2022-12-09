@@ -1,18 +1,23 @@
 package scc.data.layers.db;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.Filters;
 import org.bson.Document;
 import scc.data.models.AuctionDAO;
 import scc.data.models.BidDAO;
 import scc.data.models.QuestionDAO;
+import scc.data.models.UserDAO;
 
+import java.util.Objects;
 import java.util.Optional;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 public class MongoDBLayer implements DBLayer {
 
@@ -60,56 +65,95 @@ public class MongoDBLayer implements DBLayer {
     }
 
     @Override
-    public Optional<AuctionDAO> updateAuction(AuctionDAO auction) {
+    public Optional<AuctionDAO> updateAuction(AuctionDAO newAuction) {
         init();
-        return Optional.empty();
+        try {
+            auctions.replaceOne(Filters.eq(AuctionDAO.ID, newAuction.getAuctionID()),
+                    Document.parse(mapper.writeValueAsString(newAuction)));
+            return Optional.of(newAuction);
+        } catch (JsonProcessingException e) {
+            return Optional.empty();
+        }
     }
 
     @Override
     public Stream<AuctionDAO> getAuctionsByUser(String nickname) {
         init();
-        return null;
+        return StreamSupport.stream(auctions.find(Filters.eq(AuctionDAO.OwnerKey, nickname))
+                        .map(Document::toJson).spliterator(), false)
+                .map(s -> {
+                    try{
+                        return mapper.readValue(s, AuctionDAO.class);
+                    }catch (JsonProcessingException e){
+                        throw new RuntimeException(e);
+                    }
+                })
+                .filter(Objects::nonNull);
     }
 
     @Override
     public boolean delAuctionByID(String auctionID, String owner_nickname) {
         init();
-        return false;
+        return auctions.deleteOne(Filters.and(Filters.eq(AuctionDAO.ID, auctionID),
+        Filters.eq(AuctionDAO.OwnerKey, owner_nickname))).getDeletedCount() > 0;
     }
 
     @Override
     public Stream<String> getAllImagesFromTable(String table) {
         init();
-        return null;
+        return null; //TODO
     }
 
     @Override
     public Stream<BidDAO> getBidsByUser(String nickname) {
         init();
-        return null;
+        return StreamSupport.stream(bids.find(Filters.eq(BidDAO.Bidder, nickname))
+                .map(Document::toJson).spliterator(), false)
+                .map(s-> {
+                    try{
+                        return mapper.readValue(s, BidDAO.class);
+                    } catch (JsonProcessingException e) {
+                        return null;
+                    }
+                });
     }
 
     @Override
     public Stream<QuestionDAO> getQuestionsAskedByUser(String nickname) {
         init();
-        return null;
+        return StreamSupport.stream(questions.find(Filters.eq(QuestionDAO.Questioner, nickname))
+                .map(Document::toJson).spliterator(), false)
+                .map(s -> {
+                    try{
+                        return mapper.readValue(s, QuestionDAO.class);
+                    } catch (JsonProcessingException e){
+                        return null;
+                    }
+                });
     }
 
     @Override
-    public void updateBid(BidDAO bidDAO) {
+    public void updateBid(BidDAO bid) {
         init();
-
+        try{
+            bids.replaceOne(Filters.eq(BidDAO.ID, bid.getId()),
+                    Document.parse(mapper.writeValueAsString(bid)));
+        } catch (JsonProcessingException ignored){}
     }
 
     @Override
-    public void updateQuestion(QuestionDAO questionDAO) {
+    public void updateQuestion(QuestionDAO question) {
         init();
-
+        try{
+            questions.replaceOne(Filters.eq(QuestionDAO.ID, question.getId()),
+                    Document.parse(mapper.writeValueAsString(question)));
+        } catch (JsonProcessingException e){
+        }
     }
 
     @Override
     public boolean deleteUserByNickname(String nickname) {
         init();
-        return false;
+        return users.deleteOne(Filters.eq(UserDAO.ID, nickname)).getDeletedCount() > 0;
     }
 }
