@@ -4,7 +4,8 @@ import com.microsoft.azure.functions.ExecutionContext;
 import com.microsoft.azure.functions.annotation.BindingName;
 import com.microsoft.azure.functions.annotation.BlobTrigger;
 import com.microsoft.azure.functions.annotation.FunctionName;
-import scc.data.layers.BlobStorageLayer;
+import scc.data.layers.storage.BlobStorageLayer;
+import scc.data.layers.storage.StorageLayer;
 
 public class BlobStoreReplicationFunctions {
 
@@ -19,9 +20,9 @@ public class BlobStoreReplicationFunctions {
                                           final ExecutionContext context) {
         context.getLogger().info(String.format("Blob %s updated, replicating..", blobname));
 
-        BlobStorageLayer blobStorageLayer = new BlobStorageLayer(System.getenv("BLOBSTORE_STRINGREP"));
-        if (!blobStorageLayer.blobExists(blobname))
-            blobStorageLayer.createBlob(blobname, content);
+        StorageLayer blobStorageLayer = new BlobStorageLayer(System.getenv("BLOBSTORE_STRINGREP"));
+        if (!blobStorageLayer.fileExists(blobname))
+            blobStorageLayer.createFile(blobname, content);
 
     }
 
@@ -36,9 +37,9 @@ public class BlobStoreReplicationFunctions {
                                   final ExecutionContext context) {
         context.getLogger().info(String.format("Blob %s updated, replicating..", blobname));
 
-        BlobStorageLayer blobStorageLayer = new BlobStorageLayer(System.getenv("BLOBSTORE_CONNSTRING"));
-        if (!blobStorageLayer.blobExists(blobname))
-            blobStorageLayer.createBlob(blobname, content);
+        StorageLayer blobStorageLayer = new BlobStorageLayer(System.getenv("BLOBSTORE_CONNSTRING"));
+        if (!blobStorageLayer.fileExists(blobname))
+            blobStorageLayer.createFile(blobname, content);
     }
 
 }

@@ -5,16 +5,19 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import com.azure.cosmos.implementation.apachecommons.lang.NotImplementedException;
 import com.microsoft.azure.functions.annotation.*;
 import com.microsoft.azure.functions.*;
-import scc.data.layers.BlobStorageLayer;
-import scc.data.layers.CosmosDBLayer;
+import scc.data.layers.db.DBLayer;
+import scc.data.layers.db.MongoDBLayer;
+import scc.data.layers.storage.BlobStorageLayer;
+import scc.data.layers.db.CosmosDBLayer;
 import scc.data.layers.RedisCacheLayer;
+import scc.data.layers.storage.File;
+import scc.data.layers.storage.FileSystemStorageLayer;
+import scc.data.layers.storage.StorageLayer;
 
 /**
  * Azure Functions with Timer trigger for garbage collection.
@@ -31,7 +34,7 @@ public class GarbageCollectionFunctions {
             final ExecutionContext context) {
         context.getLogger().info("GC function executed @ " + LocalDateTime.now());
         RedisCacheLayer cacheLayer = RedisCacheLayer.getInstance();
-        CosmosDBLayer db = CosmosDBLayer.getInstance();
+        DBLayer db = MongoDBLayer.getInstance();
 
         AtomicLong usersDeleted = new AtomicLong();
         AtomicLong questionsUpdated = new AtomicLong();
@@ -81,23 +84,23 @@ public class GarbageCollectionFunctions {
             @TimerTrigger(name = "GCDanglingImagesTrigger", schedule = "0 */1 * * * *") String timerInfo,
             final ExecutionContext context) {
 
-        CosmosDBLayer db = CosmosDBLayer.getInstance();
-        BlobStorageLayer bs1 = new BlobStorageLayer(System.getenv("BLOBSTORE_CONNSTRING"));
-        BlobStorageLayer bs2 = new BlobStorageLayer(System.getenv("BLOBSTORE_STRINGREP"));
+        DBLayer db = MongoDBLayer.getInstance();
+        StorageLayer sL1 = FileSystemStorageLayer.getInstance(); // new BlobStorageLayer(System.getenv("BLOBSTORE_CONNSTRING"));
+        StorageLayer sL2 = FileSystemStorageLayer.getInstance(); // new BlobStorageLayer(System.getenv("BLOBSTORE_STRINGREP"));
 
         List<String> imagesFromUsers = db.getAllImagesFromTable("users").collect(Collectors.toList());
         List<String> imagesFromAuctions = db.getAllImagesFromTable("auctions").collect(Collectors.toList());
         Set<String> allImages = new HashSet<>(imagesFromUsers);
         allImages.addAll(imagesFromAuctions);
 
-        Set<String> imagesFromBS = bs1.listFiles().collect(Collectors.toSet());
-        imagesFromBS.addAll(bs2.listFiles().collect(Collectors.toSet()));
+        Set<String> imagesFromBS = sL1.listFiles().map(File::getFileID).collect(Collectors.toSet());
+        imagesFromBS.addAll(sL2.listFiles().map(File::getFileID).collect(Collectors.toSet()));
         long deleted = 0;
 
         for(String imgId : imagesFromBS){
             if(!allImages.contains(imgId)) {
-                bs1.deleteBlob(imgId);
-                bs2.deleteBlob(imgId);
+                sL1.deleteFile(imgId);
+                sL2.deleteFile(imgId);
                 deleted++;
             }
         }

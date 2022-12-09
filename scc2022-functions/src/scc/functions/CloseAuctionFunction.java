@@ -3,7 +3,9 @@ package scc.functions;
 import com.microsoft.azure.functions.ExecutionContext;
 import com.microsoft.azure.functions.annotation.FunctionName;
 import com.microsoft.azure.functions.annotation.TimerTrigger;
-import scc.data.layers.CosmosDBLayer;
+import scc.data.layers.db.CosmosDBLayer;
+import scc.data.layers.db.DBLayer;
+import scc.data.layers.db.MongoDBLayer;
 
 import java.time.LocalTime;
 import java.util.List;
@@ -22,7 +24,7 @@ public class CloseAuctionFunction {
             String timerInfo,
             final ExecutionContext context) {
 
-        CosmosDBLayer db = CosmosDBLayer.getInstance();
+        DBLayer db = MongoDBLayer.getInstance();
         context.getLogger().info("Auction closure executed @ " + LocalTime.now());
 
         // get auction that should be closing

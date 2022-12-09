@@ -1,34 +1,28 @@
-package scc.data;
+package scc.data.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.Objects;
 
-public final class BidDAO extends DAO {
+@JsonIgnoreProperties(ignoreUnknown = true)
+public final class BidDAO extends BaseDAO {
 
-    private String id;
+    public static final String AuctionID = "auction_id", Amount = "amount";
+    @JsonProperty(AuctionID)
     private String auctionID;
     private String bidder;
+    @JsonProperty(Amount)
     private Double amount;
 
     public BidDAO() {}
 
+
     public BidDAO(String id, String auctionID, String bidder, Double amount) {
-        this.id = id;
+        super(id);
         this.auctionID = auctionID;
         this.bidder = bidder;
         this.amount = amount;
-    }
-
-    @SuppressWarnings("unused")
-    public String getId()
-    {
-        return this.id;
-    }
-
-    @SuppressWarnings("unused")
-    public void setId(String id) {
-        this.id = id;
     }
 
     @SuppressWarnings("unused")

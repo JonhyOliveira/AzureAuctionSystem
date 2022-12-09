@@ -1,4 +1,4 @@
-package scc.data.layers;
+package scc.data.layers.storage;
 
 import com.azure.core.util.BinaryData;
 import com.azure.storage.blob.BlobClient;
@@ -6,13 +6,9 @@ import com.azure.storage.blob.BlobContainerClient;
 import com.azure.storage.blob.BlobContainerClientBuilder;
 import com.azure.storage.blob.models.BlobItem;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Properties;
-import java.util.logging.Logger;
 import java.util.stream.Stream;
 
-public class BlobStorageLayer {
+public class BlobStorageLayer implements StorageLayer {
 
     private static BlobStorageLayer instance;
 
@@ -32,7 +28,8 @@ public class BlobStorageLayer {
         return instance;
     }
 
-    public byte[] downloadBlob(String blobID)
+    @Override
+    public byte[] downloadFile(String blobID)
     {
         BlobClient blob = containerClient.getBlobClient(blobID);
         if (!blob.exists())
@@ -41,19 +38,22 @@ public class BlobStorageLayer {
         return blob.downloadContent().toBytes();
     }
 
-    public boolean blobExists(String blobID)
+    @Override
+    public boolean fileExists(String blobID)
     {
         return containerClient.getBlobClient(blobID).exists();
     }
 
-    public void createBlob(String blobID, byte[] data)
+    public void createFile(String blobID, byte[] data)
     {
         containerClient.getBlobClient(blobID).upload(BinaryData.fromBytes(data));
     }
 
-    public Stream<String> listFiles() {
-        return containerClient.listBlobs().stream().map(BlobItem::getName);
+    @Override
+    public Stream<File> listFiles() {
+        return containerClient.listBlobs().stream().map(File::fromBlob);
     }
 
-    public void deleteBlob(String blobID){ containerClient.getBlobClient(blobID).deleteIfExists();}
+    @Override
+    public void deleteFile(String blobID){ containerClient.getBlobClient(blobID).deleteIfExists();}
 }

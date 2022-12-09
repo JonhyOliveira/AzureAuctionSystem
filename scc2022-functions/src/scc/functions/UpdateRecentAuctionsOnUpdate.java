@@ -7,9 +7,8 @@ import com.microsoft.azure.functions.ExecutionContext;
 import com.microsoft.azure.functions.annotation.CosmosDBTrigger;
 import com.microsoft.azure.functions.annotation.FunctionName;
 import redis.clients.jedis.Jedis;
-import scc.data.AuctionDAO;
-import scc.data.UserDAO;
 import scc.data.layers.RedisCacheLayer;
+import scc.data.models.AuctionDAO;
 
 import java.util.Arrays;
 import java.util.List;

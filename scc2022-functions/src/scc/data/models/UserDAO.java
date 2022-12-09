@@ -1,36 +1,38 @@
-package scc.data;
+package scc.data.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * Represents a User, as stored in the database
  */
-public final class UserDAO extends DAO {
+@JsonIgnoreProperties(ignoreUnknown = true)
+public final class UserDAO extends BaseDAO {
 
-	private String nickname;
 	private String name;
+	@JsonProperty("password")
 	private String pwd;
+	@JsonProperty("photo_id")
 	private String photoId;
+	@JsonProperty(value = "to_delete",defaultValue = "false")
+	private boolean to_delete;
 
 	@SuppressWarnings("unused")
 	public UserDAO() {
 	}
-
 	public UserDAO(String nickname, String name, String pwd, String photoId) {
-		super();
-		this.nickname = nickname;
+		super(nickname);
 		this.name = name;
 		this.pwd = pwd;
 		this.photoId = photoId;
 	}
 
-	@JsonProperty("id")
 	public String getNickname() {
-		return nickname;
+		return id;
 	}
 	@SuppressWarnings("unused")
-    public void setId(String nickname) {
-		this.nickname = nickname;
+    public void setNickname(String nickname) {
+		this.id = nickname;
 	}
 	@SuppressWarnings("unused")
     public String getName() {
@@ -49,7 +51,6 @@ public final class UserDAO extends DAO {
 		this.pwd = pwd;
 	}
 	@SuppressWarnings("unused")
-	@JsonProperty("photo_id")
     public String getPhotoId() {
 		return photoId;
 	}
@@ -58,9 +59,18 @@ public final class UserDAO extends DAO {
 		this.photoId = photoId;
 	}
 
+	public boolean isToDelete() {
+		return to_delete;
+	}
+
+	public void setToDelete(boolean toDelete) {
+		this.to_delete = toDelete;
+	}
+
+
 	@Override
 	public String toString() {
-		return "UserDAO [_rid=" + _rid + ", _ts=" + _ts + ", id=" + nickname + ", name=" + name + ", pwd=" + pwd
+		return "UserDAO [nickname=" + id + ", name=" + name + ", pwd=" + pwd
 				+ ", photoId=" + photoId + " ]";
 	}
 

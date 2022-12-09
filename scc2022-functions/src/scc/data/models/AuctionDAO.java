@@ -1,17 +1,23 @@
-package scc.data;
+package scc.data.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public final class AuctionDAO extends DAO {
+public final class AuctionDAO extends BaseDAO {
 
-    private String auctionID;
+    public static final String OwnerKey = "owner_nickname",
+            EndKey = "end_time",
+            Description = "description",
+            Title = "title";
+
     private String title;
     private String description;
     private String thumbnailID;
+    @JsonProperty(OwnerKey)
     private String owner_nickname;
+    @JsonProperty(EndKey)
     private Long endTime;
     private Float minPrice;
     private boolean isClosed;
@@ -19,28 +25,25 @@ public final class AuctionDAO extends DAO {
     @SuppressWarnings("unused")
     public AuctionDAO(){ }
 
-
-    public AuctionDAO(String auctionID, String title, String description, String thumbnailID, String owner_nickname, Long endTime, Float minPrice, boolean aucStatus){
-        super();
-        this.auctionID = auctionID;
+    public AuctionDAO(String auctionID, String title, String description, String thumbnailID, String owner_nickname, Long endTime, Float minPrice, boolean isClosed){
+        super(auctionID);
         this.title = title;
         this.description = description;
         this.thumbnailID = thumbnailID;
         this.owner_nickname = owner_nickname;
         this.endTime = endTime;
         this.minPrice = minPrice;
-        this.isClosed = aucStatus;
+        this.isClosed = isClosed;
     }
 
-    @JsonProperty("id")
     public String getAuctionID()
     {
-        return auctionID;
+        return id;
     }
 
     @SuppressWarnings("unused")
-    public void setId(String auction_id) {
-        this.auctionID = auction_id;
+    public void setAuctionId(String auction_id) {
+        this.id = auction_id;
     }
 
     @SuppressWarnings("unused")
@@ -104,6 +107,5 @@ public final class AuctionDAO extends DAO {
     public void setClosed(boolean isOpen) {
         this.isClosed = isOpen;
     }
-
 
 }
