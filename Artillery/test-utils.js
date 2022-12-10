@@ -33,6 +33,8 @@ const fs = require('fs')
 const path = require('path')
 const {RandomModule} = require("@faker-js/faker");
 
+const userData = "users.data"
+
 var imagesIds = []
 var images = []
 var users = []
@@ -83,8 +85,8 @@ function loadData() {
 		}
 	})
 	var str;
-	if( fs.existsSync('users.data')) {
-		str = fs.readFileSync('users.data','utf8')
+	if( fs.existsSync(userData)) {
+		str = fs.readFileSync(userData,'utf8')
 		users = JSON.parse(str)
 	}
 }
@@ -142,7 +144,7 @@ function saveUserReply(requestParams, response, context, ee, next) {
 	if( response.statusCode >= 200 && response.statusCode < 300 && response.body.length > 0)  {
 		let u = JSON.parse( response.body)
 		users.push(u)
-		fs.writeFileSync('users.data', JSON.stringify(users));
+		fs.writeFileSync(userData, JSON.stringify(users));
 	}
 	return next()
 }
@@ -258,7 +260,7 @@ function genNewAuction(context, events, done) {
 	var maxQuestions = 2
 	if( typeof context.vars.maxQuestions !== 'undefined')
 		maxQuestions = context.vars.maxQuestions;
-	context.vars.endTime = Date.now() + 172800000 + random( 300000);
+	context.vars.endTime = Date.now() + random( 300000);
 	if( Math.random() > 0.2) {
 		context.vars.status = false;
 		context.vars.numBids = random( maxBids);

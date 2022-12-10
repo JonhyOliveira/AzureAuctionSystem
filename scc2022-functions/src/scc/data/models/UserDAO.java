@@ -9,10 +9,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public final class UserDAO extends BaseDAO {
 
+	public static final String PhotoID = "photo_id";
+
 	private String name;
 	@JsonProperty("password")
 	private String pwd;
-	@JsonProperty("photo_id")
+	@JsonProperty(PhotoID)
 	private String photoId;
 	@JsonProperty(value = "to_delete",defaultValue = "false")
 	private boolean to_delete;

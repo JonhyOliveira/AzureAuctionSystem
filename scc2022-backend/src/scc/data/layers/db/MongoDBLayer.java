@@ -253,7 +253,7 @@ public class MongoDBLayer implements DBLayer, SearchLayer {
     @Override
     public Stream<AuctionDAO> getAuctionsClosingInXMins(long x) {
         init();
-        return StreamSupport.stream(auctions.find(Filters.lte(AuctionDAO.EndKey, TimeUnit.MINUTES.toMillis(x))).map(Document::toJson).spliterator(), false)
+        return StreamSupport.stream(auctions.find(Filters.lte(AuctionDAO.EndKey, System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(x))).map(Document::toJson).spliterator(), false)
                 .map(s -> {
                     try {
                         return mapper.readValue(s, AuctionDAO.class);

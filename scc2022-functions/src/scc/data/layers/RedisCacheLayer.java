@@ -36,7 +36,7 @@ public class RedisCacheLayer {
 		poolConfig.setTestWhileIdle(true);
 		poolConfig.setNumTestsPerEvictionRun(3);
 		poolConfig.setBlockWhenExhausted(true);
-		instance = new JedisPool(poolConfig, REDIS_HOSTNAME, REDIS_PORT, 1000, REDIS_KEY, true);
+		instance = new JedisPool(poolConfig, REDIS_HOSTNAME, REDIS_PORT, 1000, REDIS_KEY, false);
 		return instance;
 	}
 

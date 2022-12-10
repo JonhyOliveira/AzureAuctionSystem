@@ -1,20 +1,21 @@
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-    name: clean_dangling_images
-    type: garbage-collect
+    name: clean.dangling-images
 spec:
     schedule: "30 03 * * *" # every day in the middle of the night (3h30)
     jobTemplate:
         spec:
             template:
+                metadata:
+                    labels:
+                        app: cron-task
                 spec:
                     containers:
-                        - name: gc-dangling_images
-                          image: jfvoliveira2001/scc2022-functions:latest
-                          imagePullPolicy: IfNotPresent
-                          command:
-                              - GCDanglingImages
+                        - name: gc-dangling-images
+                          image: jfvoliveira2001/scc2022-functions:v2
+                          imagePullPolicy: Always
+                          args: [ GCDanglingImages ]
                           env:
                               - name: DB_CONNSTRING
                                 value: "mongodb://root:root@mongo:27017/"
@@ -41,20 +42,21 @@ spec:
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-    name: remove_users
-    type: garbage-collect
+    name: clean.remove-users
 spec:
     schedule: "*/10 * * * *" # every 10 minutes
     jobTemplate:
         spec:
             template:
+                metadata:
+                    labels:
+                        app: cron-task
                 spec:
                     containers:
-                        - name: gc-remove_users
-                          image: jfvoliveira2001/scc2022-functions:latest
-                          imagePullPolicy: IfNotPresent
-                          command:
-                              - GCRemoveUsers
+                        - name: gc-remove-users
+                          image: jfvoliveira2001/scc2022-functions:v2
+                          imagePullPolicy: Always
+                          args: [ GCRemoveUsers ]
                           env:
                               - name: REDIS_HOSTNAME
                                 value: redis
@@ -76,20 +78,21 @@ spec:
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-    name: close_auctions
-    type: consistency
+    name: clean.close-auctions
 spec:
     schedule: "*/2 * * * *" # every two minutes
     jobTemplate:
         spec:
             template:
+                metadata:
+                    labels:
+                        app: cron-task
                 spec:
                     containers:
-                        - name: auction_closer
-                          image: jfvoliveira2001/scc2022-functions:latest
-                          imagePullPolicy: IfNotPresent
-                          command:
-                              - CloseAuctions
+                        - name: auction-closer
+                          image: jfvoliveira2001/scc2022-functions:v2
+                          imagePullPolicy: Always
+                          args: [ CloseAuctions ]
                           env:
                               - name: DB_CONNSTRING
                                 value: "mongodb://root:root@mongo:27017/"

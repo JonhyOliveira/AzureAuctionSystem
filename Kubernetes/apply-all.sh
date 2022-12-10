@@ -1,1 +1,1 @@
-awk 'BEGINFILE {print "---"}{print}' VolumeClaims.yaml MongoDB.yaml Redis.yaml Webapp.yaml | kubectl apply -f - --namespace=scc2022-backend
+awk 'BEGINFILE {print "---"}{print}' VolumeClaims.yaml MongoDB.yaml Redis.yaml Webapp.yaml CronJobs.yaml | kubectl apply -f - --namespace=scc2022-backend

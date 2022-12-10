@@ -10,9 +10,13 @@ public final class AuctionDAO extends BaseDAO {
     public static final String OwnerKey = "owner_nickname",
             EndKey = "end_time",
             Description = "description",
-            Title = "title";
+            Title = "title",
+            IsClosed = "closed",
+            ImageID = "thumbnail_id";
 
+    @JsonProperty(Title)
     private String title;
+    @JsonProperty(Description)
     private String description;
     private String thumbnailID;
     @JsonProperty(OwnerKey)
@@ -63,7 +67,7 @@ public final class AuctionDAO extends BaseDAO {
         this.description = description;
     }
     @SuppressWarnings("unused")
-    @JsonProperty("thumbnail_id")
+    @JsonProperty(ImageID)
     public String getThumbnailID() {
         return thumbnailID;
     }
@@ -99,7 +103,7 @@ public final class AuctionDAO extends BaseDAO {
         this.minPrice = Float.valueOf(minPrice);
     }
     @SuppressWarnings("unused")
-    @JsonProperty("closed")
+    @JsonProperty(IsClosed)
     public boolean isClosed() {
         return isClosed;
     }

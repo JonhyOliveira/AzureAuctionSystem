@@ -1,6 +1,7 @@
 package scc.data.layers.db;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
@@ -61,7 +62,8 @@ public class MongoDBLayer implements DBLayer {
     @Override
     public Stream<AuctionDAO> getClosingAuctions() {
         init();
-        return StreamSupport.stream(auctions.find(Filters.eq(AuctionDAO.StatusKey, AuctionDAO.Status.CLOSING.name()))
+        return StreamSupport.stream(auctions.find(Filters.and(Filters.eq(AuctionDAO.IsClosed, false),
+                                Filters.lte(AuctionDAO.EndKey, System.currentTimeMillis())))
                 .map(Document::toJson).spliterator(), false)
                 .map(s -> {
                     try{
@@ -113,7 +115,11 @@ public class MongoDBLayer implements DBLayer {
         return StreamSupport.stream(db.getCollection(table).find().map(Document::toJson).spliterator(), false)
                 .map(s -> {
                     try{
-                        return mapper.readTree(s).get("image").asText();
+                        JsonNode doc = mapper.readTree(s);
+                        if (doc.get(AuctionDAO.ImageID) != null)
+                            return doc.get(AuctionDAO.ImageID).asText();
+                        else
+                            return doc.get(UserDAO.PhotoID).asText();
                     } catch (JsonProcessingException e){
                         return null;
                     }

@@ -63,14 +63,14 @@ public class GarbageCollectionFunctions {
                 questionsUpdated.getAndIncrement();
             });
 
-            db.deleteUserByNickname(nickname);
-            usersDeleted.getAndIncrement();
+            if (db.deleteUserByNickname(nickname))
+                usersDeleted.getAndIncrement();
 
             op = cacheLayer.popFromSet("gc:users");
         }
 
         context.getLogger().info(String.format("Breakdown:\n\t%d users deleted." +
-                "\n\t%d auctions updated.\n\t%d bids updated.\n\t%d zquestions updated.", usersDeleted.get(),
+                "\n\t%d auctions updated.\n\t%d bids updated.\n\t%d questions updated.", usersDeleted.get(),
                 auctionsUpdated.get(), bidsUpdated.get(), questionsUpdated.get()));
 
     }
