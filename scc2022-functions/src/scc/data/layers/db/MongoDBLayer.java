@@ -61,7 +61,16 @@ public class MongoDBLayer implements DBLayer {
     @Override
     public Stream<AuctionDAO> getClosingAuctions() {
         init();
-        return null;
+        return StreamSupport.stream(auctions.find(Filters.eq(AuctionDAO.StatusKey, AuctionDAO.Status.CLOSING.name()))
+                .map(Document::toJson).spliterator(), false)
+                .map(s -> {
+                    try{
+                        return mapper.readValue(s, AuctionDAO.class);
+                    } catch (JsonProcessingException e){
+                        return null;
+                    }
+                })
+                .filter(Objects::nonNull);
     }
 
     @Override
@@ -101,7 +110,15 @@ public class MongoDBLayer implements DBLayer {
     @Override
     public Stream<String> getAllImagesFromTable(String table) {
         init();
-        return null; //TODO
+        return StreamSupport.stream(db.getCollection(table).find().map(Document::toJson).spliterator(), false)
+                .map(s -> {
+                    try{
+                        return mapper.readTree(s).get("image").asText();
+                    } catch (JsonProcessingException e){
+                        return null;
+                    }
+                })
+                .filter(Objects::nonNull);
     }
 
     @Override
