@@ -32,8 +32,8 @@ Here you can find how the project is organized. Each of these modules has a `REA
 ## Authors
 
 
-| Name                    | University prefix |
-| ----------------------- | :---------------: |
-| Romão Costa             |     rlm.costa     |
-| André Cordeiro          |    am.cordeiro    |
-| João Oliveira **(me)**  |   jfv.oliveira    |
+| Name                    | University prefix | Github Profile                                       |
+| ----------------------- | :---------------: | :--------------------------------------------------: |
+| Romão Costa             |     rlm.costa     | [@romaomcosta98](https://github.com/romaomcosta98)   |
+| André Cordeiro          |    am.cordeiro    | [@Andre-Cordeiro](https://github.com/Andre-Cordeiro) |
+| João Oliveira **(me)**  |   jfv.oliveira    | .                                                    |
