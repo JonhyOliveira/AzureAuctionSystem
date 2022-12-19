@@ -30,8 +30,8 @@ Here you can find how the project is organized. Each of these modules has a `REA
 ## Authors
 
 
-| Name                   | University prefix |
-| ---------------------- | :---------------: |
-| Romão Costa           |     rlm.costa     |
-| André Cordeiro        |    am.cordeiro    |
-| João Oliveira**(me)** |   jfv.oliveira   |
+| Name                    | University prefix |
+| ----------------------- | :---------------: |
+| Romão Costa             |     rlm.costa     |
+| André Cordeiro          |    am.cordeiro    |
+| João Oliveira **(me)**  |   jfv.oliveira    |
