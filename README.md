@@ -5,6 +5,8 @@ This project was developed during the 1st semester of 2022/23 for the **Cloud Co
 The development involved a first phase where the auction system was developed using Microsoft Azure's Cloud platform resources
 and a second phase where that system was migrated to a Kubernetes environment.
 
+**Note**: the system is ready for deployment in kubernetes as is.
+
 ## Goal ⭐️
 
 Understand how services available in cloud computing platforms can be used for creating applications that are
