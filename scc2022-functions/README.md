@@ -1,3 +1,6 @@
+**:star: Quirk**: At [ExecuteFunction](https://github.com/JonhyOliveira/AzureAuctionSystem/blob/e1da200a82c86b8ad95111ebdfd526e49ac687d3/scc2022-functions/src/scc/functions/ExecuteFunction.java) we leverage azure's annotations used in the first part of this project to find timer triggered tasks (CronJobs) 
+to be executed in k8s.
+
 # Deploying 
 
 Make sure your `pwd` is the `scc2022-functions` directory.
